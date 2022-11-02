@@ -13,7 +13,7 @@ class CameraNode(Node):
         super().__init__('camera_node')
         self.bridge = CvBridge()
         self.cap = None
-        self.settings = {'frequency': 30}
+        self.settings = {'frequency': 3}
         self.init_camera()
 
         # Listening to image_processing
