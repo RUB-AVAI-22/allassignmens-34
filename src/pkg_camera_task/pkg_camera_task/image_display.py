@@ -24,6 +24,8 @@ class ImageDisplay(Node):
 
     def callback(self, msg):
 
+        import pdb;pdb.set_trace()
+
         frame = self.bridge.imgmsg_to_cv2(msg)
         self.cv.imshow("preview", frame)
         #self.get_logger().info('-> %s' % "frame_received")

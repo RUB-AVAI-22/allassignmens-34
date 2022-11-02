@@ -59,7 +59,7 @@ class CameraNode(Node):
     def send_image(self):
         new_frame = self.capture_image()
         self.raw_camera_feed_pub.publish(self.bridge.cv2_to_imgmsg(new_frame))
-        #self.get_logger().info('<- %s' % "image_sent")
+        self.get_logger().info('<- %s' % "image_sent")
 
     def init_camera(self):
         self.cap = cv.VideoCapture(0)
