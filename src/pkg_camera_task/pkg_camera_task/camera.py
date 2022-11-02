@@ -71,6 +71,7 @@ class CameraNode(Node):
     def capture_image(self):
         # Capture frame-by-frame
         ret, frame = self.cap.read()
+        print('Image Captured')
         # if frame is read correctly ret is True
         if not ret:
             IOError("Can't receive frame (stream end?). Exiting ...")
