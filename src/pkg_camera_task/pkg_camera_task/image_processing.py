@@ -27,7 +27,7 @@ class ImageProcessor(Node):
         self.camera_snap_pub = self.create_publisher(Image, 'camera_snap', 10)
 
     def send_image(self, msg):
-
+        print('forwarding image')
         self.camera_feed_pub.publish(msg)
 
     def send_snap(self, msg):
