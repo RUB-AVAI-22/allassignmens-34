@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="camera-task_pkg" exec="turtlesim_node" name="camera" namespace="turtlesim1"/>
+  <node pkg="camera-task_pkg" exec="turtlesim_node" name="image_processing" namespace="turtlesim2"/>
+</launch>

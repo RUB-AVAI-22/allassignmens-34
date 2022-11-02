@@ -1,0 +1,7 @@
+Unfortunately my own webcam wasn't recognized by ubuntu. Thus I used the rtsp provided by Nicolas.
+
+The image processing node takes user arguments over the commandline on runtime.
+
+By typing a positive integer the capture frequency of the camera is changed.
+
+The command 'snap' takes a photo and saves it in the current directory.
