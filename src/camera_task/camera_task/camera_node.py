@@ -1,11 +1,11 @@
 import rclpy
 from rclpy.node import Node
 
+import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from rcl_interfaces.msg import SetParametersResult
 
-import cv2
 import numpy as np
 
 
