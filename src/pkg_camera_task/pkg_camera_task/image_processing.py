@@ -28,10 +28,12 @@ class ImageProcessor(Node):
 
     def send_image(self, msg):
         print('forwarding image')
-        self.camera_feed_pub.publish(msg)
+        resized_img = cv.resize(msg, (640,480), interpolation=cv.INTER_AREA)
+        self.camera_feed_pub.publish(resized_img)
 
     def send_snap(self, msg):
         print("snap received from camere, forwarding")
+
         self.camera_snap_pub.publish(msg)
 
     def controller(self, msg):
