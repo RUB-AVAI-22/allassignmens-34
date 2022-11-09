@@ -6,19 +6,19 @@ def generate_launch_description():
         Node(
             package='camera_task',
             namespace='camera_node',
-            executable='camera_task_node',
+            executable='camera_node',
             name='camera_node'
         ),
         Node(
             package='camera_task',
             namespace='image_processing_node',
-            executable='camera_task_node',
+            executable='image_processing_node',
             name='image_processing_node'
         ),
         Node(
             package='camera_task',
             namespace='image_display_node',
-            executable='camera_task_node',
+            executable='image_display_node',
             name='image_display_node'
         )
     ])

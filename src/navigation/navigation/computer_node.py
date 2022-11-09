@@ -24,7 +24,7 @@ class Computer_Node(Node):
 
         self.bridge = CvBridge()
 
-        self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.onrelease)
+        self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.listener.start()
 
     def cb_image(self, imgmsg):
