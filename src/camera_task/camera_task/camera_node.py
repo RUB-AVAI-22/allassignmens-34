@@ -17,7 +17,8 @@ class CameraNode(Node):
         self.publisher_ = self.create_publisher(Image, '/raw_image', 10)
 
         # camera stream
-        self.cap = cv2.VideoCapture('rtsp://web.nidaku.de:8554/avai')
+        #self.cap = cv2.VideoCapture('rtsp://web.nidaku.de:8554/avai')
+        self.cap = cv2.VideoCapture(0)
         self.bridge = CvBridge()
 
         # ros parameters
