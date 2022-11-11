@@ -43,6 +43,7 @@ class ImgDisplayNode(Node):
             if not os.path.exists(self.param_imgs_path.value):
                 os.makedirs(self.param_imgs_path.value)
             cv2.imwrite(os.path.join(self.param_imgs_path.value, str(datetime.datetime.now()).replace(' ', '_')+'.jpeg') , current_frame)
+            self.param_store_imgs = False
 
     def parameter_callback(self, parameters):
         for parameter in parameters:
