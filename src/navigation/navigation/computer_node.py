@@ -3,7 +3,8 @@ from rclpy.node import Node
 
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
-from geometry_msgs.msg import TwistStamped
+from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Vector3
 from rcl_interfaces.msg import SetParametersResult
 
 import cv2
@@ -15,10 +16,10 @@ class Computer_Node(Node):
 
     def __init__(self, name):
         super().__init__('computer_node')
-        self.action = TwistStamped()
-        self.action.header.frame_id = name
 
-        self.pub_action = self.create_publisher(TwistStamped, 'control_node/action', 10)
+        self.movement_vector = Vector3()
+        self.action = Twist()
+        self.pub_action = self.create_publisher(Twist, 'cmd_vel', 10)
 
         self.sub_img = self.create_subscription(Image, 'robot_node/image', self.cb_image, 10)
 
@@ -34,29 +35,45 @@ class Computer_Node(Node):
         cv2.waitKey(1)
 
     def on_press(self, key):
+
+        action = Twist()
+
         if key == keyboard.Key.up or key == keyboard.Key.down or keyboard.Key.left or keyboard.Key.right:
             if key == keyboard.Key.up:
-                self.action.twist.linear.x = 0.44
-                self.action.twist.angular.x = 0.0
-            elif key == keyboard.Key.down:
-                self.action.twist.linear.x = -0.44
-                self.action.twist.angular.x = 0.0
-            elif key == keyboard.Key.left:
-                self.action.twist.linear.x = 0.2
-                self.action.twist.angular.x = 1.0
-            elif key == keyboard.Key.right:
-                self.action.twist.linear.x = 0.2
-                self.action.twist.angular.x = -1.0
+                self.movement_vector.x += 0.75
 
-            self.action.header.stamp = self.get_clock().now().to_msg()
-            self.pub_action.publish(self.action)
+            elif key == keyboard.Key.down:
+                self.movement_vector.x += -0.75
+
+            elif key == keyboard.Key.left:
+                self.movement_vector.z += 0.75
+
+            elif key == keyboard.Key.right:
+                self.movement_vector.z += -0.75
+
+            action.linear.x = self.movement_vector.x
+            action.angular.z = self.movement_vector.z
+            self.pub_action.publish(action)
 
     def on_release(self, key):
-        if key == keyboard.Key.up or key == keyboard.Key.down or keyboard.Key.left or keyboard.Key.right:
-            self.action.twist.linear.x = 0.0
-            self.action.twist.angular.x = 0.0
-            self.action.header.stamp = self.get_clock().now().to_msg()
-            self.pub_action.publish(self.action)
+
+        action = Twist()
+
+        if key == keyboard.Key.up:
+            self.movement_vector.x = 0
+
+        elif key == keyboard.Key.down:
+            self.movement_vector.x = 0
+
+        elif key == keyboard.Key.left:
+            self.movement_vector.z = 0
+
+        elif key == keyboard.Key.right:
+            self.movement_vector.z = 0
+
+        action.linear.x = self.movement_vector.x
+        action.angular.z = self.movement_vector.z
+        self.pub_action.publish(action)
 
 
 def main(args=None):
