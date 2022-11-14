@@ -92,7 +92,7 @@ class Computer_Node(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    node = Computer_Node()
+    node = Computer_Node('R.C.')
     rclpy.spin(node)
 
     node.destroy_node()
