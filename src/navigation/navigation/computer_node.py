@@ -18,6 +18,7 @@ class Computer_Node(Node):
         super().__init__('computer_node')
 
         self.movement_vector = Vector3()
+        self.speed = 0.5
         self.action = Twist()
         self.pub_action = self.create_publisher(Twist, 'cmd_vel', 10)
 
@@ -38,18 +39,30 @@ class Computer_Node(Node):
 
         action = Twist()
 
-        if key == keyboard.Key.up or key == keyboard.Key.down or keyboard.Key.left or keyboard.Key.right:
+        if key == keyboard.Key.up or key == keyboard.Key.down or keyboard.Key.left or keyboard.Key.right or keyboard.Key.shift or keyboard.Key.ctrl or keyboard.Key.space:
+
             if key == keyboard.Key.up:
-                self.movement_vector.x += 0.75
+                self.movement_vector.x = self.speed
 
             elif key == keyboard.Key.down:
-                self.movement_vector.x += -0.75
+                self.movement_vector.x = -self.speed
 
             elif key == keyboard.Key.left:
-                self.movement_vector.z += 0.75
+                self.movement_vector.z = self.speed
 
             elif key == keyboard.Key.right:
-                self.movement_vector.z += -0.75
+                self.movement_vector.z = -self.speed
+
+            elif key == keyboard.Key.shift:
+                if self.speed <= 1:
+                    self.speed += 0.1
+
+            elif key == keyboard.Key.ctrl:
+                if self.speed >= 0:
+                    self.speed -= 0.1
+
+            elif key == keyboard.Key.space:
+                    self.speed = 0
 
             action.linear.x = self.movement_vector.x
             action.angular.z = self.movement_vector.z
