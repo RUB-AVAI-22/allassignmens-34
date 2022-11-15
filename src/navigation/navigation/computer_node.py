@@ -14,7 +14,7 @@ from pynput import keyboard
 
 class Computer_Node(Node):
 
-    def __init__(self, name):
+    def __init__(self):
         super().__init__('computer_node')
 
         self.movement_vector = Vector3()
@@ -92,7 +92,7 @@ class Computer_Node(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    node = Computer_Node('R.C.')
+    node = Computer_Node()
     rclpy.spin(node)
 
     node.destroy_node()
