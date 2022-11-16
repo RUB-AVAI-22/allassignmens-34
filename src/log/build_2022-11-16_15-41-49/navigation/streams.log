@@ -1,0 +1,25 @@
+[4.362s] Invoking command in '/home/ubuntu/allassignmens-34/src/navigation': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/navigation build --build-base /home/ubuntu/allassignmens-34/src/build/navigation/build install --prefix /home/ubuntu/allassignmens-34/src/install/navigation --record /home/ubuntu/allassignmens-34/src/build/navigation/install.log --single-version-externally-managed
+[5.241s] running egg_info
+[5.242s] writing ../build/navigation/navigation.egg-info/PKG-INFO
+[5.243s] writing dependency_links to ../build/navigation/navigation.egg-info/dependency_links.txt
+[5.244s] writing entry points to ../build/navigation/navigation.egg-info/entry_points.txt
+[5.245s] writing requirements to ../build/navigation/navigation.egg-info/requires.txt
+[5.245s] writing top-level names to ../build/navigation/navigation.egg-info/top_level.txt
+[5.418s] reading manifest file '../build/navigation/navigation.egg-info/SOURCES.txt'
+[5.422s] writing manifest file '../build/navigation/navigation.egg-info/SOURCES.txt'
+[5.422s] running build
+[5.423s] running build_py
+[5.423s] copying navigation/computer_node.py -> /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation
+[5.424s] running install
+[5.427s] running install_lib
+[5.431s] copying /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation/computer_node.py -> /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation
+[5.433s] byte-compiling /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation/computer_node.py to computer_node.cpython-38.pyc
+[5.443s] running install_data
+[5.444s] running install_egg_info
+[5.448s] removing '/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation-0.0.0-py3.8.egg-info' (and everything under it)
+[5.466s] Copying ../build/navigation/navigation.egg-info to /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation-0.0.0-py3.8.egg-info
+[5.470s] running install_scripts
+[5.543s] Installing computer_node script to /home/ubuntu/allassignmens-34/src/install/navigation/lib/navigation
+[5.544s] Installing robot_node script to /home/ubuntu/allassignmens-34/src/install/navigation/lib/navigation
+[5.544s] writing list of installed files to '/home/ubuntu/allassignmens-34/src/build/navigation/install.log'
+[5.671s] Invoked command in '/home/ubuntu/allassignmens-34/src/navigation' returned '0': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/navigation build --build-base /home/ubuntu/allassignmens-34/src/build/navigation/build install --prefix /home/ubuntu/allassignmens-34/src/install/navigation --record /home/ubuntu/allassignmens-34/src/build/navigation/install.log --single-version-externally-managed

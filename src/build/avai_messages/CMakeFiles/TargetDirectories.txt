@@ -1,0 +1,9 @@
+/home/ubuntu/allassignmens-34/src/build/avai_messages/CMakeFiles/install/strip.dir
+/home/ubuntu/allassignmens-34/src/build/avai_messages/CMakeFiles/install/local.dir
+/home/ubuntu/allassignmens-34/src/build/avai_messages/CMakeFiles/install.dir
+/home/ubuntu/allassignmens-34/src/build/avai_messages/CMakeFiles/list_install_components.dir
+/home/ubuntu/allassignmens-34/src/build/avai_messages/CMakeFiles/rebuild_cache.dir
+/home/ubuntu/allassignmens-34/src/build/avai_messages/CMakeFiles/edit_cache.dir
+/home/ubuntu/allassignmens-34/src/build/avai_messages/CMakeFiles/test.dir
+/home/ubuntu/allassignmens-34/src/build/avai_messages/CMakeFiles/avai_messages_uninstall.dir
+/home/ubuntu/allassignmens-34/src/build/avai_messages/CMakeFiles/uninstall.dir
