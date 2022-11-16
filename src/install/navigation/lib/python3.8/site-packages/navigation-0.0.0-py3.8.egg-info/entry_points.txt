@@ -1,0 +1,4 @@
+[console_scripts]
+computer_node = navigation.computer_node:main
+robot_node = navigation.robot_node:main
+

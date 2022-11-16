@@ -1,0 +1,23 @@
+running egg_info
+writing ../build/navigation/navigation.egg-info/PKG-INFO
+writing dependency_links to ../build/navigation/navigation.egg-info/dependency_links.txt
+writing entry points to ../build/navigation/navigation.egg-info/entry_points.txt
+writing requirements to ../build/navigation/navigation.egg-info/requires.txt
+writing top-level names to ../build/navigation/navigation.egg-info/top_level.txt
+reading manifest file '../build/navigation/navigation.egg-info/SOURCES.txt'
+writing manifest file '../build/navigation/navigation.egg-info/SOURCES.txt'
+running build
+running build_py
+copying navigation/computer_node.py -> /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation
+running install
+running install_lib
+copying /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation/computer_node.py -> /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation
+byte-compiling /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation/computer_node.py to computer_node.cpython-38.pyc
+running install_data
+running install_egg_info
+removing '/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation-0.0.0-py3.8.egg-info' (and everything under it)
+Copying ../build/navigation/navigation.egg-info to /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation-0.0.0-py3.8.egg-info
+running install_scripts
+Installing computer_node script to /home/ubuntu/allassignmens-34/src/install/navigation/lib/navigation
+Installing robot_node script to /home/ubuntu/allassignmens-34/src/install/navigation/lib/navigation
+writing list of installed files to '/home/ubuntu/allassignmens-34/src/build/navigation/install.log'

@@ -1,0 +1,277 @@
+[0.652s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[0.653s] DEBUG:colcon:Parsed command line arguments: Namespace(allow_overriding=[], ament_cmake_args=None, base_paths=['.'], build_base='build', catkin_cmake_args=None, catkin_skip_building_tests=False, cmake_args=None, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, cmake_target=None, cmake_target_skip_unavailable=False, continue_on_error=False, event_handlers=None, executor='parallel', ignore_user_meta=False, install_base='install', log_base=None, log_level=None, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7f1d0f97cb20>>, merge_install=False, metas=['./colcon.meta'], packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_end=None, packages_ignore=None, packages_ignore_regex=None, packages_select=None, packages_select_build_failed=False, packages_select_by_dep=None, packages_select_regex=None, packages_select_test_failures=False, packages_skip=None, packages_skip_build_finished=False, packages_skip_by_dep=None, packages_skip_regex=None, packages_skip_test_passed=False, packages_skip_up_to=None, packages_start=None, packages_up_to=None, packages_up_to_regex=None, parallel_workers=4, paths=None, symlink_install=False, test_result_base=None, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7f1d0f97cb20>, verb_name='build', verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7f1d0fa2af40>)
+[0.749s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.749s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.749s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.749s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.749s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.750s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.750s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/ubuntu/allassignmens-34/src'
+[0.750s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.750s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.751s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.751s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.751s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.751s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.751s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.751s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.751s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.792s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.792s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.792s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.793s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.793s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.793s] Level 1:colcon.colcon_core.package_identification:_identify(avai_messages) by extensions ['ignore', 'ignore_ament_install']
+[0.794s] Level 1:colcon.colcon_core.package_identification:_identify(avai_messages) by extension 'ignore'
+[0.794s] Level 1:colcon.colcon_core.package_identification:_identify(avai_messages) by extension 'ignore_ament_install'
+[0.794s] Level 1:colcon.colcon_core.package_identification:_identify(avai_messages) by extensions ['colcon_pkg']
+[0.795s] Level 1:colcon.colcon_core.package_identification:_identify(avai_messages) by extension 'colcon_pkg'
+[0.795s] Level 1:colcon.colcon_core.package_identification:_identify(avai_messages) by extensions ['colcon_meta']
+[0.795s] Level 1:colcon.colcon_core.package_identification:_identify(avai_messages) by extension 'colcon_meta'
+[0.795s] Level 1:colcon.colcon_core.package_identification:_identify(avai_messages) by extensions ['ros']
+[0.795s] Level 1:colcon.colcon_core.package_identification:_identify(avai_messages) by extension 'ros'
+[0.806s] DEBUG:colcon.colcon_core.package_identification:Package 'avai_messages' with type 'ros.ament_cmake' and name 'avai_messages'
+[0.806s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.806s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.807s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.807s] Level 1:colcon.colcon_core.package_identification:_identify(camera_task) by extensions ['ignore', 'ignore_ament_install']
+[0.807s] Level 1:colcon.colcon_core.package_identification:_identify(camera_task) by extension 'ignore'
+[0.808s] Level 1:colcon.colcon_core.package_identification:_identify(camera_task) by extension 'ignore_ament_install'
+[0.808s] Level 1:colcon.colcon_core.package_identification:_identify(camera_task) by extensions ['colcon_pkg']
+[0.808s] Level 1:colcon.colcon_core.package_identification:_identify(camera_task) by extension 'colcon_pkg'
+[0.808s] Level 1:colcon.colcon_core.package_identification:_identify(camera_task) by extensions ['colcon_meta']
+[0.808s] Level 1:colcon.colcon_core.package_identification:_identify(camera_task) by extension 'colcon_meta'
+[0.809s] Level 1:colcon.colcon_core.package_identification:_identify(camera_task) by extensions ['ros']
+[0.809s] Level 1:colcon.colcon_core.package_identification:_identify(camera_task) by extension 'ros'
+[0.812s] DEBUG:colcon.colcon_core.package_identification:Package 'camera_task' with type 'ros.ament_python' and name 'camera_task'
+[0.812s] Level 1:colcon.colcon_core.package_identification:_identify(demo_package) by extensions ['ignore', 'ignore_ament_install']
+[0.813s] Level 1:colcon.colcon_core.package_identification:_identify(demo_package) by extension 'ignore'
+[0.813s] Level 1:colcon.colcon_core.package_identification:_identify(demo_package) by extension 'ignore_ament_install'
+[0.813s] Level 1:colcon.colcon_core.package_identification:_identify(demo_package) by extensions ['colcon_pkg']
+[0.813s] Level 1:colcon.colcon_core.package_identification:_identify(demo_package) by extension 'colcon_pkg'
+[0.814s] Level 1:colcon.colcon_core.package_identification:_identify(demo_package) by extensions ['colcon_meta']
+[0.814s] Level 1:colcon.colcon_core.package_identification:_identify(demo_package) by extension 'colcon_meta'
+[0.814s] Level 1:colcon.colcon_core.package_identification:_identify(demo_package) by extensions ['ros']
+[0.814s] Level 1:colcon.colcon_core.package_identification:_identify(demo_package) by extension 'ros'
+[0.816s] DEBUG:colcon.colcon_core.package_identification:Package 'demo_package' with type 'ros.ament_python' and name 'demo_package'
+[0.817s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.817s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.817s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.818s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.818s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.818s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.819s] Level 1:colcon.colcon_core.package_identification:_identify(navigation) by extensions ['ignore', 'ignore_ament_install']
+[0.819s] Level 1:colcon.colcon_core.package_identification:_identify(navigation) by extension 'ignore'
+[0.819s] Level 1:colcon.colcon_core.package_identification:_identify(navigation) by extension 'ignore_ament_install'
+[0.820s] Level 1:colcon.colcon_core.package_identification:_identify(navigation) by extensions ['colcon_pkg']
+[0.820s] Level 1:colcon.colcon_core.package_identification:_identify(navigation) by extension 'colcon_pkg'
+[0.820s] Level 1:colcon.colcon_core.package_identification:_identify(navigation) by extensions ['colcon_meta']
+[0.820s] Level 1:colcon.colcon_core.package_identification:_identify(navigation) by extension 'colcon_meta'
+[0.820s] Level 1:colcon.colcon_core.package_identification:_identify(navigation) by extensions ['ros']
+[0.820s] Level 1:colcon.colcon_core.package_identification:_identify(navigation) by extension 'ros'
+[0.823s] DEBUG:colcon.colcon_core.package_identification:Package 'navigation' with type 'ros.ament_python' and name 'navigation'
+[0.823s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.823s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.823s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.824s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.824s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.936s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.936s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.948s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 4 installed packages in /home/ubuntu/allassignmens-34/src/install
+[0.958s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 332 installed packages in /opt/ros/foxy
+[0.969s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[1.294s] Level 5:colcon.colcon_core.verb:set package 'avai_messages' build argument 'cmake_args' from command line to 'None'
+[1.294s] Level 5:colcon.colcon_core.verb:set package 'avai_messages' build argument 'cmake_target' from command line to 'None'
+[1.295s] Level 5:colcon.colcon_core.verb:set package 'avai_messages' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.295s] Level 5:colcon.colcon_core.verb:set package 'avai_messages' build argument 'cmake_clean_cache' from command line to 'False'
+[1.295s] Level 5:colcon.colcon_core.verb:set package 'avai_messages' build argument 'cmake_clean_first' from command line to 'False'
+[1.295s] Level 5:colcon.colcon_core.verb:set package 'avai_messages' build argument 'cmake_force_configure' from command line to 'False'
+[1.295s] Level 5:colcon.colcon_core.verb:set package 'avai_messages' build argument 'ament_cmake_args' from command line to 'None'
+[1.295s] Level 5:colcon.colcon_core.verb:set package 'avai_messages' build argument 'catkin_cmake_args' from command line to 'None'
+[1.295s] Level 5:colcon.colcon_core.verb:set package 'avai_messages' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.295s] DEBUG:colcon.colcon_core.verb:Building package 'avai_messages' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ubuntu/allassignmens-34/src/build/avai_messages', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ubuntu/allassignmens-34/src/install/avai_messages', 'merge_install': False, 'path': '/home/ubuntu/allassignmens-34/src/avai_messages', 'symlink_install': False, 'test_result_base': None}
+[1.300s] Level 5:colcon.colcon_core.verb:set package 'camera_task' build argument 'cmake_args' from command line to 'None'
+[1.300s] Level 5:colcon.colcon_core.verb:set package 'camera_task' build argument 'cmake_target' from command line to 'None'
+[1.300s] Level 5:colcon.colcon_core.verb:set package 'camera_task' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.300s] Level 5:colcon.colcon_core.verb:set package 'camera_task' build argument 'cmake_clean_cache' from command line to 'False'
+[1.300s] Level 5:colcon.colcon_core.verb:set package 'camera_task' build argument 'cmake_clean_first' from command line to 'False'
+[1.300s] Level 5:colcon.colcon_core.verb:set package 'camera_task' build argument 'cmake_force_configure' from command line to 'False'
+[1.300s] Level 5:colcon.colcon_core.verb:set package 'camera_task' build argument 'ament_cmake_args' from command line to 'None'
+[1.301s] Level 5:colcon.colcon_core.verb:set package 'camera_task' build argument 'catkin_cmake_args' from command line to 'None'
+[1.301s] Level 5:colcon.colcon_core.verb:set package 'camera_task' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.301s] DEBUG:colcon.colcon_core.verb:Building package 'camera_task' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ubuntu/allassignmens-34/src/build/camera_task', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ubuntu/allassignmens-34/src/install/camera_task', 'merge_install': False, 'path': '/home/ubuntu/allassignmens-34/src/camera_task', 'symlink_install': False, 'test_result_base': None}
+[1.305s] Level 5:colcon.colcon_core.verb:set package 'demo_package' build argument 'cmake_args' from command line to 'None'
+[1.305s] Level 5:colcon.colcon_core.verb:set package 'demo_package' build argument 'cmake_target' from command line to 'None'
+[1.305s] Level 5:colcon.colcon_core.verb:set package 'demo_package' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.305s] Level 5:colcon.colcon_core.verb:set package 'demo_package' build argument 'cmake_clean_cache' from command line to 'False'
+[1.306s] Level 5:colcon.colcon_core.verb:set package 'demo_package' build argument 'cmake_clean_first' from command line to 'False'
+[1.306s] Level 5:colcon.colcon_core.verb:set package 'demo_package' build argument 'cmake_force_configure' from command line to 'False'
+[1.306s] Level 5:colcon.colcon_core.verb:set package 'demo_package' build argument 'ament_cmake_args' from command line to 'None'
+[1.306s] Level 5:colcon.colcon_core.verb:set package 'demo_package' build argument 'catkin_cmake_args' from command line to 'None'
+[1.306s] Level 5:colcon.colcon_core.verb:set package 'demo_package' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.306s] DEBUG:colcon.colcon_core.verb:Building package 'demo_package' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ubuntu/allassignmens-34/src/build/demo_package', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ubuntu/allassignmens-34/src/install/demo_package', 'merge_install': False, 'path': '/home/ubuntu/allassignmens-34/src/demo_package', 'symlink_install': False, 'test_result_base': None}
+[1.310s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'cmake_args' from command line to 'None'
+[1.310s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'cmake_target' from command line to 'None'
+[1.310s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.311s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'cmake_clean_cache' from command line to 'False'
+[1.311s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'cmake_clean_first' from command line to 'False'
+[1.311s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'cmake_force_configure' from command line to 'False'
+[1.311s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'ament_cmake_args' from command line to 'None'
+[1.311s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'catkin_cmake_args' from command line to 'None'
+[1.311s] Level 5:colcon.colcon_core.verb:set package 'navigation' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.311s] DEBUG:colcon.colcon_core.verb:Building package 'navigation' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ubuntu/allassignmens-34/src/build/navigation', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ubuntu/allassignmens-34/src/install/navigation', 'merge_install': False, 'path': '/home/ubuntu/allassignmens-34/src/navigation', 'symlink_install': False, 'test_result_base': None}
+[1.314s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[1.332s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[1.333s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ubuntu/allassignmens-34/src/avai_messages' with build type 'ament_cmake'
+[1.333s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ubuntu/allassignmens-34/src/avai_messages'
+[1.352s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[1.353s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.353s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.384s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/ubuntu/allassignmens-34/src/camera_task' with build type 'ament_python'
+[1.385s] Level 1:colcon.colcon_core.shell:create_environment_hook('camera_task', 'ament_prefix_path')
+[1.395s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/camera_task/share/camera_task/hook/ament_prefix_path.ps1'
+[1.398s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ubuntu/allassignmens-34/src/install/camera_task/share/camera_task/hook/ament_prefix_path.dsv'
+[1.400s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/camera_task/share/camera_task/hook/ament_prefix_path.sh'
+[1.408s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.408s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.438s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/ubuntu/allassignmens-34/src/demo_package' with build type 'ament_python'
+[1.439s] Level 1:colcon.colcon_core.shell:create_environment_hook('demo_package', 'ament_prefix_path')
+[1.448s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/demo_package/share/demo_package/hook/ament_prefix_path.ps1'
+[1.450s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ubuntu/allassignmens-34/src/install/demo_package/share/demo_package/hook/ament_prefix_path.dsv'
+[1.451s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/demo_package/share/demo_package/hook/ament_prefix_path.sh'
+[1.459s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.460s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.490s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/ubuntu/allassignmens-34/src/navigation' with build type 'ament_python'
+[1.491s] Level 1:colcon.colcon_core.shell:create_environment_hook('navigation', 'ament_prefix_path')
+[1.501s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/navigation/share/navigation/hook/ament_prefix_path.ps1'
+[1.503s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ubuntu/allassignmens-34/src/install/navigation/share/navigation/hook/ament_prefix_path.dsv'
+[1.505s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/navigation/share/navigation/hook/ament_prefix_path.sh'
+[1.512s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.512s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.569s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ubuntu/allassignmens-34/src/build/avai_messages': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/opt/ros/foxy /usr/bin/cmake --build /home/ubuntu/allassignmens-34/src/build/avai_messages -- -j4 -l4
+[2.478s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/ubuntu/allassignmens-34/src/camera_task'
+[2.486s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.486s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[3.369s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/ubuntu/allassignmens-34/src/demo_package'
+[3.377s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[3.378s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[4.268s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/ubuntu/allassignmens-34/src/navigation'
+[4.275s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[4.275s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[4.313s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ubuntu/allassignmens-34/src/build/avai_messages' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/opt/ros/foxy /usr/bin/cmake --build /home/ubuntu/allassignmens-34/src/build/avai_messages -- -j4 -l4
+[4.441s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ubuntu/allassignmens-34/src/build/avai_messages': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/opt/ros/foxy /usr/bin/cmake --install /home/ubuntu/allassignmens-34/src/build/avai_messages
+[4.481s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(avai_messages)
+[4.488s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ubuntu/allassignmens-34/src/build/avai_messages' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/opt/ros/foxy /usr/bin/cmake --install /home/ubuntu/allassignmens-34/src/build/avai_messages
+[4.507s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/avai_messages' for CMake module files
+[4.510s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/avai_messages' for CMake config files
+[4.511s] Level 1:colcon.colcon_core.shell:create_environment_hook('avai_messages', 'cmake_prefix_path')
+[4.517s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/hook/cmake_prefix_path.ps1'
+[4.519s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/hook/cmake_prefix_path.dsv'
+[4.520s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/hook/cmake_prefix_path.sh'
+[4.522s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/avai_messages/bin'
+[4.523s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/avai_messages/lib/pkgconfig/avai_messages.pc'
+[4.524s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/avai_messages/lib/python3.8/site-packages'
+[4.525s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/avai_messages/bin'
+[4.531s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.ps1'
+[4.535s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.dsv'
+[4.537s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.sh'
+[4.540s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.bash'
+[4.543s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.zsh'
+[4.546s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ubuntu/allassignmens-34/src/install/avai_messages/share/colcon-core/packages/avai_messages)
+[4.629s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(avai_messages)
+[4.640s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/avai_messages' for CMake module files
+[4.642s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/avai_messages' for CMake config files
+[4.642s] Level 1:colcon.colcon_core.shell:create_environment_hook('avai_messages', 'cmake_prefix_path')
+[4.648s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/hook/cmake_prefix_path.ps1'
+[4.650s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/hook/cmake_prefix_path.dsv'
+[4.651s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/hook/cmake_prefix_path.sh'
+[4.653s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/avai_messages/bin'
+[4.653s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/avai_messages/lib/pkgconfig/avai_messages.pc'
+[4.654s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/avai_messages/lib/python3.8/site-packages'
+[4.655s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/avai_messages/bin'
+[4.661s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.ps1'
+[4.663s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.dsv'
+[4.664s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.sh'
+[4.667s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.bash'
+[4.668s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.zsh'
+[4.669s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ubuntu/allassignmens-34/src/install/avai_messages/share/colcon-core/packages/avai_messages)
+[5.945s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ubuntu/allassignmens-34/src/demo_package': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/demo_package build --build-base /home/ubuntu/allassignmens-34/src/build/demo_package/build install --prefix /home/ubuntu/allassignmens-34/src/install/demo_package --record /home/ubuntu/allassignmens-34/src/build/demo_package/install.log --single-version-externally-managed
+[6.063s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ubuntu/allassignmens-34/src/camera_task': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/camera_task build --build-base /home/ubuntu/allassignmens-34/src/build/camera_task/build install --prefix /home/ubuntu/allassignmens-34/src/install/camera_task --record /home/ubuntu/allassignmens-34/src/build/camera_task/install.log --single-version-externally-managed
+[6.132s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ubuntu/allassignmens-34/src/navigation': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/navigation build --build-base /home/ubuntu/allassignmens-34/src/build/navigation/build install --prefix /home/ubuntu/allassignmens-34/src/install/navigation --record /home/ubuntu/allassignmens-34/src/build/navigation/install.log --single-version-externally-managed
+[7.289s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/demo_package' for CMake module files
+[7.291s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ubuntu/allassignmens-34/src/demo_package' returned '0': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/demo_package build --build-base /home/ubuntu/allassignmens-34/src/build/demo_package/build install --prefix /home/ubuntu/allassignmens-34/src/install/demo_package --record /home/ubuntu/allassignmens-34/src/build/demo_package/install.log --single-version-externally-managed
+[7.292s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/demo_package' for CMake config files
+[7.295s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/demo_package/lib'
+[7.300s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/demo_package/bin'
+[7.301s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/demo_package/lib/pkgconfig/demo_package.pc'
+[7.302s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages'
+[7.302s] Level 1:colcon.colcon_core.shell:create_environment_hook('demo_package', 'pythonpath')
+[7.308s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/demo_package/share/demo_package/hook/pythonpath.ps1'
+[7.310s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ubuntu/allassignmens-34/src/install/demo_package/share/demo_package/hook/pythonpath.dsv'
+[7.311s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/demo_package/share/demo_package/hook/pythonpath.sh'
+[7.314s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/demo_package/bin'
+[7.315s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(demo_package)
+[7.322s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/demo_package/share/demo_package/package.ps1'
+[7.324s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ubuntu/allassignmens-34/src/install/demo_package/share/demo_package/package.dsv'
+[7.325s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/demo_package/share/demo_package/package.sh'
+[7.328s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/demo_package/share/demo_package/package.bash'
+[7.330s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/demo_package/share/demo_package/package.zsh'
+[7.333s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ubuntu/allassignmens-34/src/install/demo_package/share/colcon-core/packages/demo_package)
+[7.387s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/camera_task' for CMake module files
+[7.389s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ubuntu/allassignmens-34/src/camera_task' returned '0': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/camera_task build --build-base /home/ubuntu/allassignmens-34/src/build/camera_task/build install --prefix /home/ubuntu/allassignmens-34/src/install/camera_task --record /home/ubuntu/allassignmens-34/src/build/camera_task/install.log --single-version-externally-managed
+[7.390s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/camera_task' for CMake config files
+[7.392s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/camera_task/lib'
+[7.392s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/camera_task/bin'
+[7.392s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/camera_task/lib/pkgconfig/camera_task.pc'
+[7.393s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages'
+[7.393s] Level 1:colcon.colcon_core.shell:create_environment_hook('camera_task', 'pythonpath')
+[7.400s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/camera_task/share/camera_task/hook/pythonpath.ps1'
+[7.401s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ubuntu/allassignmens-34/src/install/camera_task/share/camera_task/hook/pythonpath.dsv'
+[7.403s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/camera_task/share/camera_task/hook/pythonpath.sh'
+[7.404s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/camera_task/bin'
+[7.405s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(camera_task)
+[7.412s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/camera_task/share/camera_task/package.ps1'
+[7.415s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ubuntu/allassignmens-34/src/install/camera_task/share/camera_task/package.dsv'
+[7.416s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/camera_task/share/camera_task/package.sh'
+[7.419s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/camera_task/share/camera_task/package.bash'
+[7.420s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/camera_task/share/camera_task/package.zsh'
+[7.422s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ubuntu/allassignmens-34/src/install/camera_task/share/colcon-core/packages/camera_task)
+[7.438s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/navigation' for CMake module files
+[7.440s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/navigation' for CMake config files
+[7.442s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/navigation/lib'
+[7.443s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/navigation/bin'
+[7.443s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/navigation/lib/pkgconfig/navigation.pc'
+[7.444s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages'
+[7.445s] Level 1:colcon.colcon_core.shell:create_environment_hook('navigation', 'pythonpath')
+[7.451s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/navigation/share/navigation/hook/pythonpath.ps1'
+[7.457s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/ubuntu/allassignmens-34/src/install/navigation/share/navigation/hook/pythonpath.dsv'
+[7.459s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ubuntu/allassignmens-34/src/navigation' returned '0': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/navigation build --build-base /home/ubuntu/allassignmens-34/src/build/navigation/build install --prefix /home/ubuntu/allassignmens-34/src/install/navigation --record /home/ubuntu/allassignmens-34/src/build/navigation/install.log --single-version-externally-managed
+[7.460s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/ubuntu/allassignmens-34/src/install/navigation/share/navigation/hook/pythonpath.sh'
+[7.463s] Level 1:colcon.colcon_core.environment:checking '/home/ubuntu/allassignmens-34/src/install/navigation/bin'
+[7.463s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(navigation)
+[7.471s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/navigation/share/navigation/package.ps1'
+[7.473s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/ubuntu/allassignmens-34/src/install/navigation/share/navigation/package.dsv'
+[7.475s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/navigation/share/navigation/package.sh'
+[7.477s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/navigation/share/navigation/package.bash'
+[7.479s] INFO:colcon.colcon_core.shell:Creating package script '/home/ubuntu/allassignmens-34/src/install/navigation/share/navigation/package.zsh'
+[7.481s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/ubuntu/allassignmens-34/src/install/navigation/share/colcon-core/packages/navigation)
+[7.481s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[7.482s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[7.483s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[7.483s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[7.516s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.notify_send': Could not find 'notify-send'
+[7.516s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[7.516s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[7.516s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[7.536s] DEBUG:colcon.colcon_notification.desktop_notification.notify2:Failed to initialize notify2: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.Notifications was not provided by any .service files
+[7.538s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[7.546s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ubuntu/allassignmens-34/src/install/local_setup.ps1'
+[7.550s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/ubuntu/allassignmens-34/src/install/_local_setup_util_ps1.py'
+[7.556s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ubuntu/allassignmens-34/src/install/setup.ps1'
+[7.564s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ubuntu/allassignmens-34/src/install/local_setup.sh'
+[7.566s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/ubuntu/allassignmens-34/src/install/_local_setup_util_sh.py'
+[7.568s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ubuntu/allassignmens-34/src/install/setup.sh'
+[7.574s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ubuntu/allassignmens-34/src/install/local_setup.bash'
+[7.576s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ubuntu/allassignmens-34/src/install/setup.bash'
+[7.582s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/ubuntu/allassignmens-34/src/install/local_setup.zsh'
+[7.583s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/ubuntu/allassignmens-34/src/install/setup.zsh'

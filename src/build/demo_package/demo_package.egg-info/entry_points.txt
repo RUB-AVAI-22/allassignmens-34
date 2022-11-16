@@ -1,0 +1,4 @@
+[console_scripts]
+pub = demo_package.pub:main
+sub = demo_package.sub:main
+

@@ -1,0 +1,10 @@
+Metadata-Version: 1.2
+Name: demo-package
+Version: 2022.11.0
+Summary: This package contains the default demo publisher and subscriber
+Home-page: UNKNOWN
+Maintainer: Nicolas Kuhl
+Maintainer-email: nicolas.kuhl@rub.de
+License: Apache License, Version 2.0
+Description: UNKNOWN
+Platform: UNKNOWN

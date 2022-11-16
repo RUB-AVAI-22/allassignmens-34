@@ -1,0 +1,46 @@
+[0.293s] Invoking command in '/home/ubuntu/allassignmens-34/src/build/avai_messages': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake /home/ubuntu/allassignmens-34/src/avai_messages -DCMAKE_INSTALL_PREFIX=/home/ubuntu/allassignmens-34/src/install/avai_messages
+[2.416s] -- The C compiler identification is GNU 9.4.0
+[3.596s] -- The CXX compiler identification is GNU 9.4.0
+[3.701s] -- Check for working C compiler: /usr/bin/cc
+[4.119s] -- Check for working C compiler: /usr/bin/cc -- works
+[4.132s] -- Detecting C compiler ABI info
+[4.423s] -- Detecting C compiler ABI info - done
+[4.490s] -- Detecting C compile features
+[4.493s] -- Detecting C compile features - done
+[4.509s] -- Check for working CXX compiler: /usr/bin/c++
+[4.812s] -- Check for working CXX compiler: /usr/bin/c++ -- works
+[4.816s] -- Detecting CXX compiler ABI info
+[5.131s] -- Detecting CXX compiler ABI info - done
+[5.199s] -- Detecting CXX compile features
+[5.202s] -- Detecting CXX compile features - done
+[5.328s] -- Found ament_cmake: 0.9.11 (/opt/ros/foxy/share/ament_cmake/cmake)
+[5.597s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+[5.598s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[6.723s] -- Found ament_lint_auto: 0.9.7 (/opt/ros/foxy/share/ament_lint_auto/cmake)
+[7.208s] -- Added test 'copyright' to check source files copyright and LICENSE
+[7.237s] -- Added test 'lint_cmake' to check CMake code style
+[7.242s] -- Added test 'xmllint' to check XML markup files
+[7.267s] -- Configuring done
+[7.275s] -- Generating done
+[7.281s] -- Build files have been written to: /home/ubuntu/allassignmens-34/src/build/avai_messages
+[7.533s] Invoked command in '/home/ubuntu/allassignmens-34/src/build/avai_messages' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake /home/ubuntu/allassignmens-34/src/avai_messages -DCMAKE_INSTALL_PREFIX=/home/ubuntu/allassignmens-34/src/install/avai_messages
+[7.535s] Invoking command in '/home/ubuntu/allassignmens-34/src/build/avai_messages': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/ubuntu/allassignmens-34/src/build/avai_messages -- -j4 -l4
+[7.716s] Invoked command in '/home/ubuntu/allassignmens-34/src/build/avai_messages' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/ubuntu/allassignmens-34/src/build/avai_messages -- -j4 -l4
+[7.857s] Invoking command in '/home/ubuntu/allassignmens-34/src/build/avai_messages': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/ubuntu/allassignmens-34/src/build/avai_messages
+[7.878s] -- Install configuration: ""
+[7.878s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/ament_index/resource_index/package_run_dependencies/avai_messages
+[7.879s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/ament_index/resource_index/parent_prefix_path/avai_messages
+[7.880s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/ament_prefix_path.sh
+[7.880s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/ament_prefix_path.dsv
+[7.881s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/path.sh
+[7.881s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/path.dsv
+[7.882s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.bash
+[7.882s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.sh
+[7.883s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.zsh
+[7.883s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.dsv
+[7.883s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.dsv
+[7.884s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/ament_index/resource_index/packages/avai_messages
+[7.885s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/cmake/avai_messagesConfig.cmake
+[7.885s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/cmake/avai_messagesConfig-version.cmake
+[7.886s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.xml
+[7.895s] Invoked command in '/home/ubuntu/allassignmens-34/src/build/avai_messages' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/ubuntu/allassignmens-34/src/build/avai_messages

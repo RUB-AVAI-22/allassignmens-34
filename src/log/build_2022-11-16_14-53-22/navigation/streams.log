@@ -1,0 +1,44 @@
+[5.741s] Invoking command in '/home/ubuntu/allassignmens-34/src/navigation': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/navigation build --build-base /home/ubuntu/allassignmens-34/src/build/navigation/build install --prefix /home/ubuntu/allassignmens-34/src/install/navigation --record /home/ubuntu/allassignmens-34/src/build/navigation/install.log --single-version-externally-managed
+[6.541s] running egg_info
+[6.543s] creating ../build/navigation/navigation.egg-info
+[6.543s] writing ../build/navigation/navigation.egg-info/PKG-INFO
+[6.544s] writing dependency_links to ../build/navigation/navigation.egg-info/dependency_links.txt
+[6.545s] writing entry points to ../build/navigation/navigation.egg-info/entry_points.txt
+[6.545s] writing requirements to ../build/navigation/navigation.egg-info/requires.txt
+[6.546s] writing top-level names to ../build/navigation/navigation.egg-info/top_level.txt
+[6.564s] writing manifest file '../build/navigation/navigation.egg-info/SOURCES.txt'
+[6.729s] reading manifest file '../build/navigation/navigation.egg-info/SOURCES.txt'
+[6.732s] writing manifest file '../build/navigation/navigation.egg-info/SOURCES.txt'
+[6.733s] running build
+[6.734s] running build_py
+[6.735s] creating /home/ubuntu/allassignmens-34/src/build/navigation/build
+[6.735s] creating /home/ubuntu/allassignmens-34/src/build/navigation/build/lib
+[6.736s] creating /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation
+[6.736s] copying navigation/robot_node.py -> /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation
+[6.736s] copying navigation/new.py -> /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation
+[6.736s] copying navigation/__init__.py -> /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation
+[6.737s] copying navigation/computer_node.py -> /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation
+[6.737s] running install
+[6.738s] running install_lib
+[6.741s] creating /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation
+[6.741s] copying /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation/robot_node.py -> /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation
+[6.742s] copying /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation/new.py -> /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation
+[6.742s] copying /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation/__init__.py -> /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation
+[6.742s] copying /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation/computer_node.py -> /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation
+[6.743s] byte-compiling /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation/robot_node.py to robot_node.cpython-38.pyc
+[6.748s] byte-compiling /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation/new.py to new.cpython-38.pyc
+[6.750s] byte-compiling /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation/__init__.py to __init__.cpython-38.pyc
+[6.751s] byte-compiling /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation/computer_node.py to computer_node.cpython-38.pyc
+[6.752s] running install_data
+[6.754s] creating /home/ubuntu/allassignmens-34/src/install/navigation/share/ament_index
+[6.754s] creating /home/ubuntu/allassignmens-34/src/install/navigation/share/ament_index/resource_index
+[6.755s] creating /home/ubuntu/allassignmens-34/src/install/navigation/share/ament_index/resource_index/packages
+[6.755s] copying resource/navigation -> /home/ubuntu/allassignmens-34/src/install/navigation/share/ament_index/resource_index/packages
+[6.755s] copying package.xml -> /home/ubuntu/allassignmens-34/src/install/navigation/share/navigation
+[6.756s] running install_egg_info
+[6.761s] Copying ../build/navigation/navigation.egg-info to /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation-0.0.0-py3.8.egg-info
+[6.762s] running install_scripts
+[6.829s] Installing computer_node script to /home/ubuntu/allassignmens-34/src/install/navigation/lib/navigation
+[6.831s] Installing robot_node script to /home/ubuntu/allassignmens-34/src/install/navigation/lib/navigation
+[6.832s] writing list of installed files to '/home/ubuntu/allassignmens-34/src/build/navigation/install.log'
+[6.905s] Invoked command in '/home/ubuntu/allassignmens-34/src/navigation' returned '0': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/navigation build --build-base /home/ubuntu/allassignmens-34/src/build/navigation/build install --prefix /home/ubuntu/allassignmens-34/src/install/navigation --record /home/ubuntu/allassignmens-34/src/build/navigation/install.log --single-version-externally-managed
