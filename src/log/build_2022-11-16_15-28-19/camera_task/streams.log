@@ -1,0 +1,23 @@
+[6.004s] Invoking command in '/home/ubuntu/allassignmens-34/src/camera_task': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/camera_task build --build-base /home/ubuntu/allassignmens-34/src/build/camera_task/build install --prefix /home/ubuntu/allassignmens-34/src/install/camera_task --record /home/ubuntu/allassignmens-34/src/build/camera_task/install.log --single-version-externally-managed
+[6.896s] running egg_info
+[6.897s] writing ../build/camera_task/camera_task.egg-info/PKG-INFO
+[6.898s] writing dependency_links to ../build/camera_task/camera_task.egg-info/dependency_links.txt
+[6.899s] writing entry points to ../build/camera_task/camera_task.egg-info/entry_points.txt
+[6.900s] writing requirements to ../build/camera_task/camera_task.egg-info/requires.txt
+[6.900s] writing top-level names to ../build/camera_task/camera_task.egg-info/top_level.txt
+[7.085s] reading manifest file '../build/camera_task/camera_task.egg-info/SOURCES.txt'
+[7.132s] writing manifest file '../build/camera_task/camera_task.egg-info/SOURCES.txt'
+[7.132s] running build
+[7.133s] running build_py
+[7.133s] running install
+[7.134s] running install_lib
+[7.142s] running install_data
+[7.143s] running install_egg_info
+[7.149s] removing '/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task-0.0.0-py3.8.egg-info' (and everything under it)
+[7.150s] Copying ../build/camera_task/camera_task.egg-info to /home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task-0.0.0-py3.8.egg-info
+[7.177s] running install_scripts
+[7.241s] Installing camera_node script to /home/ubuntu/allassignmens-34/src/install/camera_task/lib/camera_task
+[7.242s] Installing image_display_node script to /home/ubuntu/allassignmens-34/src/install/camera_task/lib/camera_task
+[7.243s] Installing image_processing_node script to /home/ubuntu/allassignmens-34/src/install/camera_task/lib/camera_task
+[7.244s] writing list of installed files to '/home/ubuntu/allassignmens-34/src/build/camera_task/install.log'
+[7.324s] Invoked command in '/home/ubuntu/allassignmens-34/src/camera_task' returned '0': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/camera_task build --build-base /home/ubuntu/allassignmens-34/src/build/camera_task/build install --prefix /home/ubuntu/allassignmens-34/src/install/camera_task --record /home/ubuntu/allassignmens-34/src/build/camera_task/install.log --single-version-externally-managed

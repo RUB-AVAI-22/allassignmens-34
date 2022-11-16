@@ -63,7 +63,7 @@ class Computer_Node(Node):
                     self.speed -= 0.01
                     print(self.speed)
 
-            elif key == keyboard.Key.space:
+            if key == keyboard.Key.space:
                     self.speed = 0.0
                     print(self.speed)
 

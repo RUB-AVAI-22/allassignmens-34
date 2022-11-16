@@ -1,0 +1,20 @@
+running egg_info
+writing ../build/demo_package/demo_package.egg-info/PKG-INFO
+writing dependency_links to ../build/demo_package/demo_package.egg-info/dependency_links.txt
+writing entry points to ../build/demo_package/demo_package.egg-info/entry_points.txt
+writing requirements to ../build/demo_package/demo_package.egg-info/requires.txt
+writing top-level names to ../build/demo_package/demo_package.egg-info/top_level.txt
+reading manifest file '../build/demo_package/demo_package.egg-info/SOURCES.txt'
+writing manifest file '../build/demo_package/demo_package.egg-info/SOURCES.txt'
+running build
+running build_py
+running install
+running install_lib
+running install_data
+running install_egg_info
+removing '/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages/demo_package-2022.11.0-py3.8.egg-info' (and everything under it)
+Copying ../build/demo_package/demo_package.egg-info to /home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages/demo_package-2022.11.0-py3.8.egg-info
+running install_scripts
+Installing pub script to /home/ubuntu/allassignmens-34/src/install/demo_package/lib/demo_package
+Installing sub script to /home/ubuntu/allassignmens-34/src/install/demo_package/lib/demo_package
+writing list of installed files to '/home/ubuntu/allassignmens-34/src/build/demo_package/install.log'
