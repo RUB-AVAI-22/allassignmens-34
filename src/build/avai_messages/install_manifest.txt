@@ -1,0 +1,15 @@
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/ament_index/resource_index/package_run_dependencies/avai_messages
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/ament_index/resource_index/parent_prefix_path/avai_messages
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/ament_prefix_path.sh
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/ament_prefix_path.dsv
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/path.sh
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/path.dsv
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.bash
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.sh
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.zsh
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.dsv
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.dsv
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/ament_index/resource_index/packages/avai_messages
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/cmake/avai_messagesConfig.cmake
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/cmake/avai_messagesConfig-version.cmake
+/home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.xml

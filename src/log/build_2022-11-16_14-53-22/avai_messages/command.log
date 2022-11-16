@@ -1,0 +1,6 @@
+Invoking command in '/home/ubuntu/allassignmens-34/src/build/avai_messages': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake /home/ubuntu/allassignmens-34/src/avai_messages -DCMAKE_INSTALL_PREFIX=/home/ubuntu/allassignmens-34/src/install/avai_messages
+Invoked command in '/home/ubuntu/allassignmens-34/src/build/avai_messages' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake /home/ubuntu/allassignmens-34/src/avai_messages -DCMAKE_INSTALL_PREFIX=/home/ubuntu/allassignmens-34/src/install/avai_messages
+Invoking command in '/home/ubuntu/allassignmens-34/src/build/avai_messages': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/ubuntu/allassignmens-34/src/build/avai_messages -- -j4 -l4
+Invoked command in '/home/ubuntu/allassignmens-34/src/build/avai_messages' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --build /home/ubuntu/allassignmens-34/src/build/avai_messages -- -j4 -l4
+Invoking command in '/home/ubuntu/allassignmens-34/src/build/avai_messages': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/ubuntu/allassignmens-34/src/build/avai_messages
+Invoked command in '/home/ubuntu/allassignmens-34/src/build/avai_messages' returned '0': CMAKE_PREFIX_PATH=/opt/ros/foxy /usr/bin/cmake --install /home/ubuntu/allassignmens-34/src/build/avai_messages

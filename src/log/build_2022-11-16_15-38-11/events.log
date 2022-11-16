@@ -1,0 +1,165 @@
+[0.000000] (-) TimerEvent: {}
+[0.000317] (avai_messages) JobQueued: {'identifier': 'avai_messages', 'dependencies': OrderedDict()}
+[0.000647] (camera_task) JobQueued: {'identifier': 'camera_task', 'dependencies': OrderedDict()}
+[0.000770] (demo_package) JobQueued: {'identifier': 'demo_package', 'dependencies': OrderedDict()}
+[0.000934] (navigation) JobQueued: {'identifier': 'navigation', 'dependencies': OrderedDict()}
+[0.001045] (avai_messages) JobStarted: {'identifier': 'avai_messages'}
+[0.054469] (camera_task) JobStarted: {'identifier': 'camera_task'}
+[0.101486] (demo_package) JobStarted: {'identifier': 'demo_package'}
+[0.102175] (-) TimerEvent: {}
+[0.153268] (navigation) JobStarted: {'identifier': 'navigation'}
+[0.201443] (avai_messages) JobProgress: {'identifier': 'avai_messages', 'progress': 'cmake'}
+[0.202655] (-) TimerEvent: {}
+[0.204561] (avai_messages) JobProgress: {'identifier': 'avai_messages', 'progress': 'build'}
+[0.209535] (avai_messages) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ubuntu/allassignmens-34/src/build/avai_messages', '--', '-j4', '-l4'], 'cwd': '/home/ubuntu/allassignmens-34/src/build/avai_messages', 'env': OrderedDict([('SUDO_GID', '1000'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('MAIL', '/var/mail/root'), ('LANGUAGE', 'en_US:en'), ('USER', 'ubuntu'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib'), ('HOME', '/home/ubuntu'), ('OLDPWD', '/home/ubuntu/allassignmens-34'), ('ROS_PYTHON_VERSION', '3'), ('COLORTERM', 'truecolor'), ('container', 'lxc'), ('COLCON_PREFIX_PATH', '/home/ubuntu/allassignmens-34/src/install'), ('SUDO_UID', '1000'), ('ROS_DISTRO', 'foxy'), ('LOGNAME', 'ubuntu'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/foxy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':0'), ('LANG', 'de_DE.UTF-8'), ('XAUTHORITY', '/home/user/.Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('SUDO_COMMAND', '/usr/bin/lxc-attach -u 1000 -g 1000 -n tb-ros'), ('ROS_DOMAIN_ID', '34'), ('AMENT_PREFIX_PATH', '/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/home/ubuntu/allassignmens-34/src/install/avai_messages:/opt/ros/foxy'), ('SHELL', '/bin/bash'), ('SUDO_USER', 'user'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/ubuntu/allassignmens-34/src/build/avai_messages'), ('PYTHONPATH', '/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ubuntu/allassignmens-34/src/install/avai_messages:/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/opt/ros/foxy')]), 'shell': False}
+[0.303073] (-) TimerEvent: {}
+[0.403920] (-) TimerEvent: {}
+[0.504978] (-) TimerEvent: {}
+[0.606499] (-) TimerEvent: {}
+[0.709139] (-) TimerEvent: {}
+[0.810466] (-) TimerEvent: {}
+[0.911882] (-) TimerEvent: {}
+[1.014694] (-) TimerEvent: {}
+[1.121987] (-) TimerEvent: {}
+[1.223472] (-) TimerEvent: {}
+[1.324971] (-) TimerEvent: {}
+[1.426287] (-) TimerEvent: {}
+[1.527892] (-) TimerEvent: {}
+[1.629450] (-) TimerEvent: {}
+[1.730847] (-) TimerEvent: {}
+[1.832345] (-) TimerEvent: {}
+[1.934788] (-) TimerEvent: {}
+[2.037571] (-) TimerEvent: {}
+[2.138941] (-) TimerEvent: {}
+[2.240322] (-) TimerEvent: {}
+[2.341774] (-) TimerEvent: {}
+[2.443339] (-) TimerEvent: {}
+[2.544856] (-) TimerEvent: {}
+[2.646486] (-) TimerEvent: {}
+[2.747834] (-) TimerEvent: {}
+[2.849538] (-) TimerEvent: {}
+[2.952022] (-) TimerEvent: {}
+[2.983424] (avai_messages) CommandEnded: {'returncode': 0}
+[3.052357] (-) TimerEvent: {}
+[3.070451] (avai_messages) JobProgress: {'identifier': 'avai_messages', 'progress': 'install'}
+[3.111180] (avai_messages) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/ubuntu/allassignmens-34/src/build/avai_messages'], 'cwd': '/home/ubuntu/allassignmens-34/src/build/avai_messages', 'env': OrderedDict([('SUDO_GID', '1000'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('MAIL', '/var/mail/root'), ('LANGUAGE', 'en_US:en'), ('USER', 'ubuntu'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib'), ('HOME', '/home/ubuntu'), ('OLDPWD', '/home/ubuntu/allassignmens-34'), ('ROS_PYTHON_VERSION', '3'), ('COLORTERM', 'truecolor'), ('container', 'lxc'), ('COLCON_PREFIX_PATH', '/home/ubuntu/allassignmens-34/src/install'), ('SUDO_UID', '1000'), ('ROS_DISTRO', 'foxy'), ('LOGNAME', 'ubuntu'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/foxy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':0'), ('LANG', 'de_DE.UTF-8'), ('XAUTHORITY', '/home/user/.Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('SUDO_COMMAND', '/usr/bin/lxc-attach -u 1000 -g 1000 -n tb-ros'), ('ROS_DOMAIN_ID', '34'), ('AMENT_PREFIX_PATH', '/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/home/ubuntu/allassignmens-34/src/install/avai_messages:/opt/ros/foxy'), ('SHELL', '/bin/bash'), ('SUDO_USER', 'user'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/ubuntu/allassignmens-34/src/build/avai_messages'), ('PYTHONPATH', '/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ubuntu/allassignmens-34/src/install/avai_messages:/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/opt/ros/foxy')]), 'shell': False}
+[3.143366] (avai_messages) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[3.144946] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/ament_index/resource_index/package_run_dependencies/avai_messages\n'}
+[3.145747] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/ament_index/resource_index/parent_prefix_path/avai_messages\n'}
+[3.146271] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/ament_prefix_path.sh\n'}
+[3.146864] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/ament_prefix_path.dsv\n'}
+[3.147362] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/path.sh\n'}
+[3.147738] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/path.dsv\n'}
+[3.148092] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.bash\n'}
+[3.148343] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.sh\n'}
+[3.148584] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.zsh\n'}
+[3.148970] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.dsv\n'}
+[3.149254] (avai_messages) StdoutLine: {'line': b'-- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.dsv\n'}
+[3.149539] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/ament_index/resource_index/packages/avai_messages\n'}
+[3.149959] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/cmake/avai_messagesConfig.cmake\n'}
+[3.150259] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/cmake/avai_messagesConfig-version.cmake\n'}
+[3.150549] (avai_messages) StdoutLine: {'line': b'-- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.xml\n'}
+[3.153168] (-) TimerEvent: {}
+[3.165452] (avai_messages) CommandEnded: {'returncode': 0}
+[3.254342] (-) TimerEvent: {}
+[3.358292] (-) TimerEvent: {}
+[3.393319] (avai_messages) JobEnded: {'identifier': 'avai_messages', 'rc': 0}
+[3.458499] (-) TimerEvent: {}
+[3.559275] (-) TimerEvent: {}
+[3.659997] (-) TimerEvent: {}
+[3.760519] (-) TimerEvent: {}
+[3.861890] (-) TimerEvent: {}
+[3.962416] (-) TimerEvent: {}
+[4.062971] (-) TimerEvent: {}
+[4.163533] (-) TimerEvent: {}
+[4.264086] (-) TimerEvent: {}
+[4.364643] (-) TimerEvent: {}
+[4.465354] (-) TimerEvent: {}
+[4.565938] (-) TimerEvent: {}
+[4.575946] (navigation) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../build/navigation', 'build', '--build-base', '/home/ubuntu/allassignmens-34/src/build/navigation/build', 'install', '--prefix', '/home/ubuntu/allassignmens-34/src/install/navigation', '--record', '/home/ubuntu/allassignmens-34/src/build/navigation/install.log', '--single-version-externally-managed'], 'cwd': '/home/ubuntu/allassignmens-34/src/navigation', 'env': {'SUDO_GID': '1000', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'MAIL': '/var/mail/root', 'LANGUAGE': 'en_US:en', 'USER': 'ubuntu', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib', 'HOME': '/home/ubuntu', 'OLDPWD': '/home/ubuntu/allassignmens-34', 'ROS_PYTHON_VERSION': '3', 'COLORTERM': 'truecolor', 'container': 'lxc', 'COLCON_PREFIX_PATH': '/home/ubuntu/allassignmens-34/src/install', 'SUDO_UID': '1000', 'ROS_DISTRO': 'foxy', 'LOGNAME': 'ubuntu', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/foxy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'DISPLAY': ':0', 'LANG': 'de_DE.UTF-8', 'XAUTHORITY': '/home/user/.Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'SUDO_COMMAND': '/usr/bin/lxc-attach -u 1000 -g 1000 -n tb-ros', 'ROS_DOMAIN_ID': '34', 'AMENT_PREFIX_PATH': '/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/home/ubuntu/allassignmens-34/src/install/avai_messages:/opt/ros/foxy', 'SHELL': '/bin/bash', 'SUDO_USER': 'user', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'PWD': '/home/ubuntu/allassignmens-34/src/build/navigation', 'PYTHONPATH': '/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/ubuntu/allassignmens-34/src/install/avai_messages'}, 'shell': False}
+[4.590815] (demo_package) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../build/demo_package', 'build', '--build-base', '/home/ubuntu/allassignmens-34/src/build/demo_package/build', 'install', '--prefix', '/home/ubuntu/allassignmens-34/src/install/demo_package', '--record', '/home/ubuntu/allassignmens-34/src/build/demo_package/install.log', '--single-version-externally-managed'], 'cwd': '/home/ubuntu/allassignmens-34/src/demo_package', 'env': {'SUDO_GID': '1000', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'MAIL': '/var/mail/root', 'LANGUAGE': 'en_US:en', 'USER': 'ubuntu', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib', 'HOME': '/home/ubuntu', 'OLDPWD': '/home/ubuntu/allassignmens-34', 'ROS_PYTHON_VERSION': '3', 'COLORTERM': 'truecolor', 'container': 'lxc', 'COLCON_PREFIX_PATH': '/home/ubuntu/allassignmens-34/src/install', 'SUDO_UID': '1000', 'ROS_DISTRO': 'foxy', 'LOGNAME': 'ubuntu', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/foxy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'DISPLAY': ':0', 'LANG': 'de_DE.UTF-8', 'XAUTHORITY': '/home/user/.Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'SUDO_COMMAND': '/usr/bin/lxc-attach -u 1000 -g 1000 -n tb-ros', 'ROS_DOMAIN_ID': '34', 'AMENT_PREFIX_PATH': '/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/home/ubuntu/allassignmens-34/src/install/avai_messages:/opt/ros/foxy', 'SHELL': '/bin/bash', 'SUDO_USER': 'user', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'PWD': '/home/ubuntu/allassignmens-34/src/build/demo_package', 'PYTHONPATH': '/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/ubuntu/allassignmens-34/src/install/avai_messages'}, 'shell': False}
+[4.671289] (camera_task) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../build/camera_task', 'build', '--build-base', '/home/ubuntu/allassignmens-34/src/build/camera_task/build', 'install', '--prefix', '/home/ubuntu/allassignmens-34/src/install/camera_task', '--record', '/home/ubuntu/allassignmens-34/src/build/camera_task/install.log', '--single-version-externally-managed'], 'cwd': '/home/ubuntu/allassignmens-34/src/camera_task', 'env': {'SUDO_GID': '1000', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'MAIL': '/var/mail/root', 'LANGUAGE': 'en_US:en', 'USER': 'ubuntu', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib', 'HOME': '/home/ubuntu', 'OLDPWD': '/home/ubuntu/allassignmens-34', 'ROS_PYTHON_VERSION': '3', 'COLORTERM': 'truecolor', 'container': 'lxc', 'COLCON_PREFIX_PATH': '/home/ubuntu/allassignmens-34/src/install', 'SUDO_UID': '1000', 'ROS_DISTRO': 'foxy', 'LOGNAME': 'ubuntu', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/foxy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin', 'DISPLAY': ':0', 'LANG': 'de_DE.UTF-8', 'XAUTHORITY': '/home/user/.Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'SUDO_COMMAND': '/usr/bin/lxc-attach -u 1000 -g 1000 -n tb-ros', 'ROS_DOMAIN_ID': '34', 'AMENT_PREFIX_PATH': '/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/home/ubuntu/allassignmens-34/src/install/avai_messages:/opt/ros/foxy', 'SHELL': '/bin/bash', 'SUDO_USER': 'user', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'PWD': '/home/ubuntu/allassignmens-34/src/build/camera_task', 'PYTHONPATH': '/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages:/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/ubuntu/allassignmens-34/src/install/avai_messages'}, 'shell': False}
+[4.674627] (-) TimerEvent: {}
+[4.775288] (-) TimerEvent: {}
+[4.875796] (-) TimerEvent: {}
+[4.976414] (-) TimerEvent: {}
+[5.077105] (-) TimerEvent: {}
+[5.177800] (-) TimerEvent: {}
+[5.278386] (-) TimerEvent: {}
+[5.378928] (-) TimerEvent: {}
+[5.386568] (navigation) StdoutLine: {'line': b'running egg_info\n'}
+[5.388521] (navigation) StdoutLine: {'line': b'writing ../build/navigation/navigation.egg-info/PKG-INFO\n'}
+[5.389537] (navigation) StdoutLine: {'line': b'writing dependency_links to ../build/navigation/navigation.egg-info/dependency_links.txt\n'}
+[5.390310] (navigation) StdoutLine: {'line': b'writing entry points to ../build/navigation/navigation.egg-info/entry_points.txt\n'}
+[5.390937] (navigation) StdoutLine: {'line': b'writing requirements to ../build/navigation/navigation.egg-info/requires.txt\n'}
+[5.391469] (navigation) StdoutLine: {'line': b'writing top-level names to ../build/navigation/navigation.egg-info/top_level.txt\n'}
+[5.437112] (demo_package) StdoutLine: {'line': b'running egg_info\n'}
+[5.439073] (demo_package) StdoutLine: {'line': b'writing ../build/demo_package/demo_package.egg-info/PKG-INFO\n'}
+[5.439884] (demo_package) StdoutLine: {'line': b'writing dependency_links to ../build/demo_package/demo_package.egg-info/dependency_links.txt\n'}
+[5.440547] (demo_package) StdoutLine: {'line': b'writing entry points to ../build/demo_package/demo_package.egg-info/entry_points.txt\n'}
+[5.441114] (demo_package) StdoutLine: {'line': b'writing requirements to ../build/demo_package/demo_package.egg-info/requires.txt\n'}
+[5.441727] (demo_package) StdoutLine: {'line': b'writing top-level names to ../build/demo_package/demo_package.egg-info/top_level.txt\n'}
+[5.479093] (-) TimerEvent: {}
+[5.513606] (camera_task) StdoutLine: {'line': b'running egg_info\n'}
+[5.516730] (camera_task) StdoutLine: {'line': b'writing ../build/camera_task/camera_task.egg-info/PKG-INFO\n'}
+[5.518307] (camera_task) StdoutLine: {'line': b'writing dependency_links to ../build/camera_task/camera_task.egg-info/dependency_links.txt\n'}
+[5.519670] (camera_task) StdoutLine: {'line': b'writing entry points to ../build/camera_task/camera_task.egg-info/entry_points.txt\n'}
+[5.521062] (camera_task) StdoutLine: {'line': b'writing requirements to ../build/camera_task/camera_task.egg-info/requires.txt\n'}
+[5.521682] (camera_task) StdoutLine: {'line': b'writing top-level names to ../build/camera_task/camera_task.egg-info/top_level.txt\n'}
+[5.559230] (navigation) StdoutLine: {'line': b"reading manifest file '../build/navigation/navigation.egg-info/SOURCES.txt'\n"}
+[5.563962] (navigation) StdoutLine: {'line': b"writing manifest file '../build/navigation/navigation.egg-info/SOURCES.txt'\n"}
+[5.565076] (navigation) StdoutLine: {'line': b'running build\n'}
+[5.565670] (navigation) StdoutLine: {'line': b'running build_py\n'}
+[5.566466] (navigation) StdoutLine: {'line': b'copying navigation/computer_node.py -> /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation\n'}
+[5.567321] (navigation) StdoutLine: {'line': b'running install\n'}
+[5.570026] (navigation) StdoutLine: {'line': b'running install_lib\n'}
+[5.573625] (navigation) StdoutLine: {'line': b'copying /home/ubuntu/allassignmens-34/src/build/navigation/build/lib/navigation/computer_node.py -> /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation\n'}
+[5.575621] (navigation) StdoutLine: {'line': b'byte-compiling /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation/computer_node.py to computer_node.cpython-38.pyc\n'}
+[5.579300] (-) TimerEvent: {}
+[5.581697] (navigation) StdoutLine: {'line': b'running install_data\n'}
+[5.583519] (navigation) StdoutLine: {'line': b'running install_egg_info\n'}
+[5.588400] (navigation) StdoutLine: {'line': b"removing '/home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation-0.0.0-py3.8.egg-info' (and everything under it)\n"}
+[5.589583] (navigation) StdoutLine: {'line': b'Copying ../build/navigation/navigation.egg-info to /home/ubuntu/allassignmens-34/src/install/navigation/lib/python3.8/site-packages/navigation-0.0.0-py3.8.egg-info\n'}
+[5.592358] (navigation) StdoutLine: {'line': b'running install_scripts\n'}
+[5.604800] (demo_package) StdoutLine: {'line': b"reading manifest file '../build/demo_package/demo_package.egg-info/SOURCES.txt'\n"}
+[5.609000] (demo_package) StdoutLine: {'line': b"writing manifest file '../build/demo_package/demo_package.egg-info/SOURCES.txt'\n"}
+[5.609965] (demo_package) StdoutLine: {'line': b'running build\n'}
+[5.610600] (demo_package) StdoutLine: {'line': b'running build_py\n'}
+[5.611854] (demo_package) StdoutLine: {'line': b'running install\n'}
+[5.615420] (demo_package) StdoutLine: {'line': b'running install_lib\n'}
+[5.620663] (demo_package) StdoutLine: {'line': b'running install_data\n'}
+[5.622687] (demo_package) StdoutLine: {'line': b'running install_egg_info\n'}
+[5.629085] (demo_package) StdoutLine: {'line': b"removing '/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages/demo_package-2022.11.0-py3.8.egg-info' (and everything under it)\n"}
+[5.641529] (demo_package) StdoutLine: {'line': b'Copying ../build/demo_package/demo_package.egg-info to /home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages/demo_package-2022.11.0-py3.8.egg-info\n'}
+[5.653356] (demo_package) StdoutLine: {'line': b'running install_scripts\n'}
+[5.658330] (navigation) StdoutLine: {'line': b'Installing computer_node script to /home/ubuntu/allassignmens-34/src/install/navigation/lib/navigation\n'}
+[5.659104] (navigation) StdoutLine: {'line': b'Installing robot_node script to /home/ubuntu/allassignmens-34/src/install/navigation/lib/navigation\n'}
+[5.660505] (navigation) StdoutLine: {'line': b"writing list of installed files to '/home/ubuntu/allassignmens-34/src/build/navigation/install.log'\n"}
+[5.679586] (-) TimerEvent: {}
+[5.697398] (camera_task) StdoutLine: {'line': b"reading manifest file '../build/camera_task/camera_task.egg-info/SOURCES.txt'\n"}
+[5.701347] (camera_task) StdoutLine: {'line': b"writing manifest file '../build/camera_task/camera_task.egg-info/SOURCES.txt'\n"}
+[5.701862] (camera_task) StdoutLine: {'line': b'running build\n'}
+[5.706960] (camera_task) StdoutLine: {'line': b'running build_py\n'}
+[5.707533] (camera_task) StdoutLine: {'line': b'running install\n'}
+[5.708504] (camera_task) StdoutLine: {'line': b'running install_lib\n'}
+[5.716195] (camera_task) StdoutLine: {'line': b'running install_data\n'}
+[5.717032] (camera_task) StdoutLine: {'line': b'running install_egg_info\n'}
+[5.723917] (camera_task) StdoutLine: {'line': b"removing '/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task-0.0.0-py3.8.egg-info' (and everything under it)\n"}
+[5.726285] (camera_task) StdoutLine: {'line': b'Copying ../build/camera_task/camera_task.egg-info to /home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task-0.0.0-py3.8.egg-info\n'}
+[5.733390] (navigation) CommandEnded: {'returncode': 0}
+[5.734795] (demo_package) StdoutLine: {'line': b'Installing pub script to /home/ubuntu/allassignmens-34/src/install/demo_package/lib/demo_package\n'}
+[5.735361] (camera_task) StdoutLine: {'line': b'running install_scripts\n'}
+[5.735687] (demo_package) StdoutLine: {'line': b'Installing sub script to /home/ubuntu/allassignmens-34/src/install/demo_package/lib/demo_package\n'}
+[5.735994] (demo_package) StdoutLine: {'line': b"writing list of installed files to '/home/ubuntu/allassignmens-34/src/build/demo_package/install.log'\n"}
+[5.775241] (navigation) JobEnded: {'identifier': 'navigation', 'rc': 0}
+[5.780156] (-) TimerEvent: {}
+[5.795597] (camera_task) StdoutLine: {'line': b'Installing camera_node script to /home/ubuntu/allassignmens-34/src/install/camera_task/lib/camera_task\n'}
+[5.811872] (camera_task) StdoutLine: {'line': b'Installing image_display_node script to /home/ubuntu/allassignmens-34/src/install/camera_task/lib/camera_task\n'}
+[5.812139] (camera_task) StdoutLine: {'line': b'Installing image_processing_node script to /home/ubuntu/allassignmens-34/src/install/camera_task/lib/camera_task\n'}
+[5.812548] (demo_package) CommandEnded: {'returncode': 0}
+[5.814035] (camera_task) StdoutLine: {'line': b"writing list of installed files to '/home/ubuntu/allassignmens-34/src/build/camera_task/install.log'\n"}
+[5.847207] (demo_package) JobEnded: {'identifier': 'demo_package', 'rc': 0}
+[5.877082] (camera_task) CommandEnded: {'returncode': 0}
+[5.880709] (-) TimerEvent: {}
+[5.916022] (camera_task) JobEnded: {'identifier': 'camera_task', 'rc': 0}
+[5.919850] (-) EventReactorShutdown: {}

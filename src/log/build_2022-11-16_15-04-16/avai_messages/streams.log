@@ -1,0 +1,20 @@
+[0.255s] Invoking command in '/home/ubuntu/allassignmens-34/src/build/avai_messages': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/opt/ros/foxy /usr/bin/cmake --build /home/ubuntu/allassignmens-34/src/build/avai_messages -- -j4 -l4
+[2.868s] Invoked command in '/home/ubuntu/allassignmens-34/src/build/avai_messages' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/opt/ros/foxy /usr/bin/cmake --build /home/ubuntu/allassignmens-34/src/build/avai_messages -- -j4 -l4
+[2.979s] Invoking command in '/home/ubuntu/allassignmens-34/src/build/avai_messages': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/opt/ros/foxy /usr/bin/cmake --install /home/ubuntu/allassignmens-34/src/build/avai_messages
+[3.006s] -- Install configuration: ""
+[3.007s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/ament_index/resource_index/package_run_dependencies/avai_messages
+[3.007s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/ament_index/resource_index/parent_prefix_path/avai_messages
+[3.008s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/ament_prefix_path.sh
+[3.008s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/ament_prefix_path.dsv
+[3.009s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/path.sh
+[3.009s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/environment/path.dsv
+[3.009s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.bash
+[3.010s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.sh
+[3.011s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.zsh
+[3.011s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/local_setup.dsv
+[3.011s] -- Installing: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.dsv
+[3.012s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/ament_index/resource_index/packages/avai_messages
+[3.012s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/cmake/avai_messagesConfig.cmake
+[3.012s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/cmake/avai_messagesConfig-version.cmake
+[3.013s] -- Up-to-date: /home/ubuntu/allassignmens-34/src/install/avai_messages/share/avai_messages/package.xml
+[3.016s] Invoked command in '/home/ubuntu/allassignmens-34/src/build/avai_messages' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ubuntu/allassignmens-34/src/install/navigation:/home/ubuntu/allassignmens-34/src/install/demo_package:/home/ubuntu/allassignmens-34/src/install/camera_task:/opt/ros/foxy /usr/bin/cmake --install /home/ubuntu/allassignmens-34/src/build/avai_messages

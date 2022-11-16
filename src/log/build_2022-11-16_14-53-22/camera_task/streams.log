@@ -1,0 +1,45 @@
+[5.886s] Invoking command in '/home/ubuntu/allassignmens-34/src/camera_task': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/camera_task build --build-base /home/ubuntu/allassignmens-34/src/build/camera_task/build install --prefix /home/ubuntu/allassignmens-34/src/install/camera_task --record /home/ubuntu/allassignmens-34/src/build/camera_task/install.log --single-version-externally-managed
+[6.746s] running egg_info
+[6.747s] creating ../build/camera_task/camera_task.egg-info
+[6.748s] writing ../build/camera_task/camera_task.egg-info/PKG-INFO
+[6.748s] writing dependency_links to ../build/camera_task/camera_task.egg-info/dependency_links.txt
+[6.749s] writing entry points to ../build/camera_task/camera_task.egg-info/entry_points.txt
+[6.749s] writing requirements to ../build/camera_task/camera_task.egg-info/requires.txt
+[6.750s] writing top-level names to ../build/camera_task/camera_task.egg-info/top_level.txt
+[6.754s] writing manifest file '../build/camera_task/camera_task.egg-info/SOURCES.txt'
+[6.934s] reading manifest file '../build/camera_task/camera_task.egg-info/SOURCES.txt'
+[6.937s] writing manifest file '../build/camera_task/camera_task.egg-info/SOURCES.txt'
+[6.938s] running build
+[6.938s] running build_py
+[6.939s] creating /home/ubuntu/allassignmens-34/src/build/camera_task/build
+[6.939s] creating /home/ubuntu/allassignmens-34/src/build/camera_task/build/lib
+[6.939s] creating /home/ubuntu/allassignmens-34/src/build/camera_task/build/lib/camera_task
+[6.940s] copying camera_task/image_display_node.py -> /home/ubuntu/allassignmens-34/src/build/camera_task/build/lib/camera_task
+[6.941s] copying camera_task/__init__.py -> /home/ubuntu/allassignmens-34/src/build/camera_task/build/lib/camera_task
+[6.941s] copying camera_task/image_processing_node.py -> /home/ubuntu/allassignmens-34/src/build/camera_task/build/lib/camera_task
+[6.942s] copying camera_task/camera_node.py -> /home/ubuntu/allassignmens-34/src/build/camera_task/build/lib/camera_task
+[6.942s] running install
+[6.948s] running install_lib
+[6.949s] creating /home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task
+[6.951s] copying /home/ubuntu/allassignmens-34/src/build/camera_task/build/lib/camera_task/image_display_node.py -> /home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task
+[6.951s] copying /home/ubuntu/allassignmens-34/src/build/camera_task/build/lib/camera_task/__init__.py -> /home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task
+[6.951s] copying /home/ubuntu/allassignmens-34/src/build/camera_task/build/lib/camera_task/image_processing_node.py -> /home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task
+[6.951s] copying /home/ubuntu/allassignmens-34/src/build/camera_task/build/lib/camera_task/camera_node.py -> /home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task
+[6.955s] byte-compiling /home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task/image_display_node.py to image_display_node.cpython-38.pyc
+[6.960s] byte-compiling /home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task/__init__.py to __init__.cpython-38.pyc
+[6.961s] byte-compiling /home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task/image_processing_node.py to image_processing_node.cpython-38.pyc
+[6.962s] byte-compiling /home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task/camera_node.py to camera_node.cpython-38.pyc
+[6.963s] running install_data
+[6.970s] creating /home/ubuntu/allassignmens-34/src/install/camera_task/share/ament_index
+[6.971s] creating /home/ubuntu/allassignmens-34/src/install/camera_task/share/ament_index/resource_index
+[6.971s] creating /home/ubuntu/allassignmens-34/src/install/camera_task/share/ament_index/resource_index/packages
+[6.972s] copying resource/camera_task -> /home/ubuntu/allassignmens-34/src/install/camera_task/share/ament_index/resource_index/packages
+[6.979s] copying package.xml -> /home/ubuntu/allassignmens-34/src/install/camera_task/share/camera_task
+[6.980s] running install_egg_info
+[6.983s] Copying ../build/camera_task/camera_task.egg-info to /home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages/camera_task-0.0.0-py3.8.egg-info
+[6.983s] running install_scripts
+[7.060s] Installing camera_node script to /home/ubuntu/allassignmens-34/src/install/camera_task/lib/camera_task
+[7.061s] Installing image_display_node script to /home/ubuntu/allassignmens-34/src/install/camera_task/lib/camera_task
+[7.061s] Installing image_processing_node script to /home/ubuntu/allassignmens-34/src/install/camera_task/lib/camera_task
+[7.061s] writing list of installed files to '/home/ubuntu/allassignmens-34/src/build/camera_task/install.log'
+[7.329s] Invoked command in '/home/ubuntu/allassignmens-34/src/camera_task' returned '0': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/camera_task/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/camera_task build --build-base /home/ubuntu/allassignmens-34/src/build/camera_task/build install --prefix /home/ubuntu/allassignmens-34/src/install/camera_task --record /home/ubuntu/allassignmens-34/src/build/camera_task/install.log --single-version-externally-managed

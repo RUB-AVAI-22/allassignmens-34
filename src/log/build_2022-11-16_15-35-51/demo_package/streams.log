@@ -1,0 +1,22 @@
+[4.569s] Invoking command in '/home/ubuntu/allassignmens-34/src/demo_package': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/demo_package build --build-base /home/ubuntu/allassignmens-34/src/build/demo_package/build install --prefix /home/ubuntu/allassignmens-34/src/install/demo_package --record /home/ubuntu/allassignmens-34/src/build/demo_package/install.log --single-version-externally-managed
+[5.462s] running egg_info
+[5.464s] writing ../build/demo_package/demo_package.egg-info/PKG-INFO
+[5.464s] writing dependency_links to ../build/demo_package/demo_package.egg-info/dependency_links.txt
+[5.465s] writing entry points to ../build/demo_package/demo_package.egg-info/entry_points.txt
+[5.466s] writing requirements to ../build/demo_package/demo_package.egg-info/requires.txt
+[5.466s] writing top-level names to ../build/demo_package/demo_package.egg-info/top_level.txt
+[5.641s] reading manifest file '../build/demo_package/demo_package.egg-info/SOURCES.txt'
+[5.645s] writing manifest file '../build/demo_package/demo_package.egg-info/SOURCES.txt'
+[5.645s] running build
+[5.646s] running build_py
+[5.646s] running install
+[5.650s] running install_lib
+[5.660s] running install_data
+[5.662s] running install_egg_info
+[5.668s] removing '/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages/demo_package-2022.11.0-py3.8.egg-info' (and everything under it)
+[5.669s] Copying ../build/demo_package/demo_package.egg-info to /home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages/demo_package-2022.11.0-py3.8.egg-info
+[5.672s] running install_scripts
+[5.747s] Installing pub script to /home/ubuntu/allassignmens-34/src/install/demo_package/lib/demo_package
+[5.748s] Installing sub script to /home/ubuntu/allassignmens-34/src/install/demo_package/lib/demo_package
+[5.749s] writing list of installed files to '/home/ubuntu/allassignmens-34/src/build/demo_package/install.log'
+[5.883s] Invoked command in '/home/ubuntu/allassignmens-34/src/demo_package' returned '0': PYTHONPATH=/home/ubuntu/allassignmens-34/src/install/demo_package/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/demo_package build --build-base /home/ubuntu/allassignmens-34/src/build/demo_package/build install --prefix /home/ubuntu/allassignmens-34/src/install/demo_package --record /home/ubuntu/allassignmens-34/src/build/demo_package/install.log --single-version-externally-managed

@@ -1,0 +1,5 @@
+[console_scripts]
+camera_node = camera_task.camera_node:main
+image_display_node = camera_task.image_display_node:main
+image_processing_node = camera_task.image_processing_node:main
+
