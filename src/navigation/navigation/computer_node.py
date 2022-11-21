@@ -17,15 +17,23 @@ class Computer_Node(Node):
     def __init__(self):
         super().__init__('computer_node')
 
-        self.movement_vector = Vector3()
+        self.maxTransVelocity = 0.26 #in m/s
+        self.maxRotVelocity = 1.82 #in rad/s
         self.speed = 0.1
-        self.action = Twist()
+        self.acceleration = 0.01
+        
+        self.currentMovement = Vector3() #x = translational, z = rotational
+        self.desiredMovement = Vector3() #x = translational, z = rotational
+        
         self.pub_action = self.create_publisher(Twist, 'cmd_vel', 10)
 
         self.sub_img = self.create_subscription(Image, 'robot_node/image', self.cb_image, 10)
 
         self.bridge = CvBridge()
 
+        self.updateFrequency = 20
+        self.velocityControlClock = self.create_timer(1 / self.updateFrequency, self.updateVelocity)
+        
         self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.listener.start()
 
@@ -36,61 +44,70 @@ class Computer_Node(Node):
         cv2.waitKey(1)
 
     def on_press(self, key):
-
-        action = Twist()
+        speedChange = False
 
         if key == keyboard.Key.up or key == keyboard.Key.down or keyboard.Key.left or keyboard.Key.right or keyboard.Key.shift or keyboard.Key.ctrl or keyboard.Key.space:
 
             if key == keyboard.Key.up:
-                self.action.linear.x = self.speed
+                self.desiredMovement.x = self.speed
 
             elif key == keyboard.Key.down:
-                self.action.linear.x = -self.speed
+                self.desiredMovement.x = -self.speed
 
             elif key == keyboard.Key.left:
-                self.action.angular.z = 3*self.speed
+                self.desiredMovement.z = 7*self.speed*np.sign(self.desiredMovement.x)
 
             elif key == keyboard.Key.right:
-                self.action.angular.z = -3*self.speed
+                self.desiredMovement.z = -7*self.speed*np.sign(self.desiredMovement.x)
 
             elif key == keyboard.Key.shift:
-                if self.speed <= 0.2:
+                if self.speed <= self.maxTransVelocity:
                     self.speed += 0.01
-                    print(self.speed)
+                    speedChange = True
 
             elif key == keyboard.Key.ctrl:
                 if self.speed >= 0:
                     self.speed -= 0.01
-                    print(self.speed)
+                    speedChange = True
 
             elif key == keyboard.Key.space:
                     self.speed = 0.0
-                    print(self.speed)
+                    speedChange = True
 
-            action.linear = self.action.linear
-            action.angular = self.action.angular
-            self.pub_action.publish(action)
+            if speedChange:
+                print(f"New speed: {self.speed}")
+            
 
     def on_release(self, key):
 
-        action = Twist()
-
         if key == keyboard.Key.up:
-            self.action.linear.x = 0.0
+            self.desiredMovement.x = 0.0
 
         elif key == keyboard.Key.down:
-            self.action.linear.x = 0.0
+            self.desiredMovement.x = 0.0
 
         elif key == keyboard.Key.left:
-            self.action.angular.z = 0.0
+            self.desiredMovement.z = 0.0
 
         elif key == keyboard.Key.right:
-            self.action.angular.z  = 0.0
+            self.desiredMovement.z  = 0.0
 
-        action.linear = self.action.linear
-        action.angular = self.action.angular
-        self.pub_action.publish(action)
 
+    def updateVelocity(self):
+        action = Twist()
+        
+        distanceToDesiredVelocity = self.desiredMovement - self.currentMovement
+        
+        if distanceToDesiredVelocity.x > 0 or distanceToDesiredVelocity.z > 0:
+            self.currentMovement.x += min(distanceToDesiredVelocity.x, self.acceleration)
+            self.currentMovement.z += min(distanceToDesiredVelocity.x, 7*self.acceleration)
+            
+            
+            action.linear.x = self.currentMovement.x
+            action.angular.z = self.currentMovement.z
+            self.pub_action.publish(action)
+            
+            print(f"Updated current velocity to: {self.currentMovement.x} m/s, {self.currentMovement.z} rad/s")
 
 def main(args=None):
     rclpy.init(args=args)
