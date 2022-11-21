@@ -11,6 +11,8 @@ import cv2
 import numpy as np
 from pynput import keyboard
 
+from inputs import get_gamepad
+
 
 class Computer_Node(Node):
 
@@ -32,7 +34,9 @@ class Computer_Node(Node):
         self.bridge = CvBridge()
 
         self.updateFrequency = 20
-        self.velocityControlClock = self.create_timer(1 / self.updateFrequency, self.updateVelocity)
+        self.velocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateVelocity)
+        
+        self.controllerInputTimer = self.create_timer(1/self.updateFrequency, self.updateControllerInput)
         
         self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.listener.start()
@@ -107,7 +111,16 @@ class Computer_Node(Node):
             action.angular.z = self.currentMovement.z
             self.pub_action.publish(action)
             
-            print(f"Updated current velocity to: {self.currentMovement.x} m/s, {self.currentMovement.z} rad/s")
+            print(f"Current velocity: {self.currentMovement.x} m/s, {self.currentMovement.z} rad/s")
+            print(f"Desired velocity: {self.desiredMovement.x} m/s, {self.desiredMovement.z} rad/s")
+
+    def updateControllerInput(self):
+        events = get_gamepad()
+        for event in events:
+            if event.code == "HX":
+                self.desiredMovement.x = (event.state/32768)*self.maxTransVelocity
+            elif event.code == "HY":
+                self.desiredMovement.z = -(event.state/32768)*self.maxRotVelocity*np.sign(self.desiredMovement.x)
 
 def main(args=None):
     rclpy.init(args=args)
