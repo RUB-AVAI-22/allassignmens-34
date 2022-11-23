@@ -110,12 +110,12 @@ class Computer_Node(Node):
         distanceToDesiredVelocity.z = self.desiredMovement.z - self.currentMovement.z
 
         if abs(distanceToDesiredVelocity.x) >= self.acceleration:
-            self.currentMovement.x += self.acceleration*(2*(distanceToDesiredVelocity.x>0)-1)
+            self.currentMovement.x += self.acceleration*(2*(distanceToDesiredVelocity.x > 0)-1)
         else:
             self.currentMovement.x += distanceToDesiredVelocity.x
 
-        if abs(distanceToDesiredVelocity.z) >= 14*self.acceleration:
-            self.currentMovement.z += 14*self.acceleration*(2*(distanceToDesiredVelocity.z>0)-1)
+        if abs(distanceToDesiredVelocity.z) >= 20*self.acceleration:
+            self.currentMovement.z += 20*self.acceleration*(2*(distanceToDesiredVelocity.z > 0)-1)
         else:
             self.currentMovement.z += distanceToDesiredVelocity.z
 
