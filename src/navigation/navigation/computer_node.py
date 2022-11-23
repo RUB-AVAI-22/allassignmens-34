@@ -19,7 +19,7 @@ class Computer_Node(Node):
 
         self.maxTransVelocity = 0.26 #in m/s
         self.maxRotVelocity = 1.82 #in rad/s
-        self.speed = 0.1
+        self.speed = 0.5
         
         self.currentMovement = Vector3() #x = translational, z = rotational
         self.desiredMovement = Vector3() #x = translational, z = rotational
@@ -30,8 +30,8 @@ class Computer_Node(Node):
 
         self.bridge = CvBridge()
 
-        self.updateFrequency = 20
-        self.acceleration = 0.1/self.updateFrequency
+        self.updateFrequency = 5
+        self.acceleration = 0.25/self.updateFrequency
         self.velocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateVelocity)
 
         
@@ -56,16 +56,10 @@ class Computer_Node(Node):
                 self.desiredMovement.x = -self.speed*self.maxTransVelocity
 
             elif key == keyboard.Key.left:
-                if self.desiredMovement.x >= 0:
-                    self.desiredMovement.z = 7*self.speed*self.maxRotVelocity
-                else:
-                    self.desiredMovement.z = -7*self.speed*self.maxRotVelocity
+                self.desiredMovement.z = self.speed*self.maxRotVelocity * (2*(self.desiredMovement.x > 0)-1)
 
             elif key == keyboard.Key.right:
-                if self.desiredMovement.x >= 0:
-                    self.desiredMovement.z = -7*self.speed*self.maxRotVelocity
-                else:
-                    self.desiredMovement.z = 7*self.speed*self.maxRotVelocity
+                self.desiredMovement.z = -self.speed*self.maxRotVelocity * (2*(self.desiredMovement.x > 0)-1)
 
             elif key == keyboard.Key.shift:
                 if self.speed < 1:
@@ -110,12 +104,12 @@ class Computer_Node(Node):
         distanceToDesiredVelocity.z = self.desiredMovement.z - self.currentMovement.z
 
         if abs(distanceToDesiredVelocity.x) >= self.acceleration:
-            self.currentMovement.x += self.acceleration*(2*(distanceToDesiredVelocity.x > 0)-1)
+            self.currentMovement.x += self.acceleration * (2*(distanceToDesiredVelocity.x > 0)-1)
         else:
             self.currentMovement.x += distanceToDesiredVelocity.x
 
         if abs(distanceToDesiredVelocity.z) >= 20*self.acceleration:
-            self.currentMovement.z += 20*self.acceleration*(2*(distanceToDesiredVelocity.z > 0)-1)
+            self.currentMovement.z += 20*self.acceleration * (2*(distanceToDesiredVelocity.z > 0)-1)
         else:
             self.currentMovement.z += distanceToDesiredVelocity.z
 
