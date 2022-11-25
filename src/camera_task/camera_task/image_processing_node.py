@@ -6,6 +6,7 @@ from cv_bridge import CvBridge
 from sensor_msgs.msg import Image, CompressedImage
 
 import datetime
+import subprocess
 
 
 class ImgProcessingNode(Node):
@@ -22,12 +23,13 @@ class ImgProcessingNode(Node):
         print(f"received new image {datetime.datetime.now()}")
 
         img = self.bridge.imgmsg_to_cv2(msg)
+        # pass it to detector
+        img = subprocesses.run(['python3', 'detect.py', '--weights', 'best-int8_edgetpu.tflite', '--source', 'img'])
 
         # convert image to compressed image
         compressed_image = self.bridge.cv2_to_compressed_imgmsg(img)
         # publish compressed image
         self.publisher_.publish(compressed_image)
-
 
 def main(args=None):
     rclpy.init(args=args)
