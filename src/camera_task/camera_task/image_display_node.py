@@ -4,10 +4,13 @@ from rclpy.node import Node
 import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import CompressedImage
+from std_msgs.msg import Float32MultiArray
 from rcl_interfaces.msg import SetParametersResult
 
 import datetime
 import os
+
+import queue
 
 
 class ImgDisplayNode(Node):
@@ -20,6 +23,14 @@ class ImgDisplayNode(Node):
         # video subscriber
         self.bridge = CvBridge()
         self.subscriber = self.create_subscription(CompressedImage, '/proc_img', self.video_callback, 10)
+        self.bbox_subscriber = self.create_subscription(Float32MultiArray, '\bounding_boxes', self.bbox_callback, 10)
+
+        self.bbox_queue = queue.SimpleQueue()
+        self.image_queue = queue.SimpleQueue()
+
+        self.param_fps = self.get_parameter('FPS').value
+        self.timer = self.create_timer(1 / self.param_fps, self.annotation)
+
 
         # set parameters
         self.param_store_imgs = self.declare_parameter('store_imgs', False)
@@ -35,15 +46,36 @@ class ImgDisplayNode(Node):
     def video_callback(self, frame):
         if frame:
             current_frame = self.bridge.compressed_imgmsg_to_cv2(frame)
-            current_frame = cv2.resize(current_frame, (960, 480))
-            cv2.imshow('frame', current_frame)
-            cv2.waitKey(1)
+            image_queue.put(current_frame)
 
         if self.param_store_imgs:
             if not os.path.exists(self.param_imgs_path.value):
                 os.makedirs(self.param_imgs_path.value)
             cv2.imwrite(os.path.join(self.param_imgs_path.value, str(datetime.datetime.now()).replace(' ', '_')+'.jpeg') , current_frame)
             self.param_store_imgs = False
+    def bbox_callback(self, msg):
+        bboxes = msg.data
+
+        self.bbox_queue.put(bboxes)
+
+    def annotation(self):
+        if self.bbox_queue.qsize() >= 1 and self.image_queue.qsize() >= 1:
+            image = self.image_queue.get()
+            bboxes = self.bbox_queue.get()
+
+
+            # annotating image with detected bounding boxes
+            annotator = Annotator(image)
+            for *xyxy, conf, cls in pred[0]:
+                if conf > 0.7:
+                    annotator.box_label(xyxy, f'{self.classes[int(cls)]} {conf:.2f}')
+
+            annotated_image = annotator.result()
+
+
+            annotated_image = cv2.resize(annotated_image, (960, 480))
+            cv2.imshow('frame', current_frame)
+            cv2.waitKey(1)
 
     def parameter_callback(self, parameters):
         for parameter in parameters:
