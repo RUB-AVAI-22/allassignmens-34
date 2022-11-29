@@ -7,6 +7,9 @@ from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import Float32MultiArray
 from rcl_interfaces.msg import SetParametersResult
 
+
+from yolov5.utils.plots import Annotator
+
 import datetime
 import os
 
@@ -46,13 +49,15 @@ class ImgDisplayNode(Node):
     def video_callback(self, frame):
         if frame:
             current_frame = self.bridge.compressed_imgmsg_to_cv2(frame)
-            image_queue.put(current_frame)
+            self.image_queue.put(current_frame)
 
         if self.param_store_imgs:
             if not os.path.exists(self.param_imgs_path.value):
                 os.makedirs(self.param_imgs_path.value)
             cv2.imwrite(os.path.join(self.param_imgs_path.value, str(datetime.datetime.now()).replace(' ', '_')+'.jpeg') , current_frame)
             self.param_store_imgs = False
+            
+            
     def bbox_callback(self, msg):
         bboxes = msg.data
 
@@ -66,7 +71,7 @@ class ImgDisplayNode(Node):
 
             # annotating image with detected bounding boxes
             annotator = Annotator(image)
-            for *xyxy, conf, cls in pred[0]:
+            for *xyxy, conf, cls in bboxes:
                 if conf > 0.7:
                     annotator.box_label(xyxy, f'{self.classes[int(cls)]} {conf:.2f}')
 
@@ -74,7 +79,7 @@ class ImgDisplayNode(Node):
 
 
             annotated_image = cv2.resize(annotated_image, (960, 480))
-            cv2.imshow('frame', current_frame)
+            cv2.imshow('frame', annotated_image)
             cv2.waitKey(1)
 
     def parameter_callback(self, parameters):
