@@ -4,6 +4,7 @@ from rclpy.node import Node
 import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image, CompressedImage
+from std_msgs.msg import _float32_multi_array
 
 import datetime
 
@@ -24,7 +25,8 @@ class ImgProcessingNode(Node):
         self.subscriber_img = self.create_subscription(Image, '/raw_image', self.callback, 10)
         # publisher for compressed img data
         self.publisher_ = self.create_publisher(CompressedImage, '/proc_img', 10)
-        
+        self.bbox_publisher = self.create_publisher(_float32_multi_array, '/bounding_boxes', 10)
+
         #Initializing the yolov5 model
         self.targetWidth = 640
         self.targetHeight = 640
@@ -45,14 +47,10 @@ class ImgProcessingNode(Node):
         pred = self.model(prepared_image)
         pred = non_max_suppression(pred, 0.25, 0.45, [0, 1, 2], False, max_det=1000)
         
-        
-        #annotating image with detected bounding boxes
-        annotator = Annotator(original_image)
-        for *xyxy, conf, cls in pred[0]:
-            if conf > 0.7:
-                annotator.box_label(xyxy, f'{self.classes[int(cls)]} {conf:.2f}')
-
-        result_image = annotator.result()
+        #publish bounding boxes
+        bbox_msg = Float32MultiArray()
+        bbox_msg.data = pred
+        self.bbox_publisher.publish(bbox_msg)
 
         # convert image to compressed image
         compressed_image = self.bridge.cv2_to_compressed_imgmsg(result_image)
