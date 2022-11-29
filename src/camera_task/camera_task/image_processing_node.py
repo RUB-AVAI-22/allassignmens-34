@@ -4,15 +4,14 @@ from rclpy.node import Node
 import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image, CompressedImage
-from std_msgs.msg import _float32_multi_array
+from std_msgs.msg import Float32MultiArray
 
 import datetime
 
 import numpy as np
 
-from yolov5.utils.general import scale_boxes, non_max_suppression
+from yolov5.utils.general import non_max_suppression
 from yolov5.models.common import DetectMultiBackend
-from yolov5.utils.plots import Annotator, colors
 
 import torch
 
@@ -25,7 +24,7 @@ class ImgProcessingNode(Node):
         self.subscriber_img = self.create_subscription(Image, '/raw_image', self.callback, 10)
         # publisher for compressed img data
         self.publisher_ = self.create_publisher(CompressedImage, '/proc_img', 10)
-        self.bbox_publisher = self.create_publisher(_float32_multi_array, '/bounding_boxes', 10)
+        self.bbox_publisher = self.create_publisher(Float32MultiArray, '/bounding_boxes', 10)
 
         #Initializing the yolov5 model
         self.targetWidth = 640
