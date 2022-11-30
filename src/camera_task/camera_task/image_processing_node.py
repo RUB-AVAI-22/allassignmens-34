@@ -41,7 +41,7 @@ class ImgProcessingNode(Node):
         
         #preparing image for yolov5 network
         original_image = cv2.resize(original_image, (self.targetWidth, self.targetHeight))
-        prepared_image = torch.from_numpy(cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_RGB2BGR), 1, (self.targetWidth, self.targetHeight), swapRB=True, crop=False).astype(np.uint8)).to(self.model.device)
+        prepared_image = torch.from_numpy(cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 1, (self.targetWidth, self.targetHeight), crop=False).astype(np.uint8)).to(self.model.device)
         #prepared_image = torch.from_numpy(cv2.dnn.blobFromImage(original_image, 1, (self.targetWidth, self.targetHeight), swapRB=True, crop=False).astype(np.uint8)).to(self.model.device)
 
         #running the yolov5 network on the image
