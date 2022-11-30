@@ -48,7 +48,7 @@ class ImgProcessingNode(Node):
         
         #publish bounding boxes
         bbox_msg = Float32MultiArray()
-        bbox_msg.data = list(pred.float().numpy()[0].reshape(-1))
+        bbox_msg.data = list(pred[0].float().numpy().reshape(-1))
         self.bbox_publisher.publish(bbox_msg)
 
         # convert image to compressed image
