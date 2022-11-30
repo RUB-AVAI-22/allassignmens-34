@@ -9,6 +9,7 @@ from rcl_interfaces.msg import SetParametersResult
 
 
 from yolov5.utils.plots import Annotator
+import numpy as np
 
 import datetime
 import os
@@ -26,13 +27,12 @@ class ImgDisplayNode(Node):
         # video subscriber
         self.bridge = CvBridge()
         self.subscriber = self.create_subscription(CompressedImage, '/proc_img', self.video_callback, 10)
-        self.bbox_subscriber = self.create_subscription(Float32MultiArray, '\bounding_boxes', self.bbox_callback, 10)
+        self.bbox_subscriber = self.create_subscription(Float32MultiArray, '/bboxes', self.bbox_callback, 10)
 
         self.bbox_queue = queue.SimpleQueue()
         self.image_queue = queue.SimpleQueue()
 
-        self.param_fps = self.get_parameter('FPS').value
-        self.timer = self.create_timer(1 / self.param_fps, self.annotation)
+        self.timer = self.create_timer(1 / 20, self.annotation)
 
 
         # set parameters
@@ -59,7 +59,7 @@ class ImgDisplayNode(Node):
             
             
     def bbox_callback(self, msg):
-        bboxes = msg.data
+        bboxes = np.array(msg.data).reshape(-1, 8)
 
         self.bbox_queue.put(bboxes)
 
