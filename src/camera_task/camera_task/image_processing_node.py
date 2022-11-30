@@ -50,7 +50,7 @@ class ImgProcessingNode(Node):
         bboxes = pred[0]
 
         # annotating image with detected bounding boxes
-        annotator = Annotator(image)
+        annotator = Annotator(original_image)
         for *xyxy, conf, cls in bboxes:
             if conf > 0.7:
                 annotator.box_label(xyxy, f'{self.classes[int(cls)]} {conf:.2f}')
