@@ -45,14 +45,25 @@ class ImgProcessingNode(Node):
         #running the yolov5 network on the image
         pred = self.model(prepared_image)
         pred = non_max_suppression(pred, 0.25, 0.45, [0, 1, 2], False, max_det=1000)
+
+        bboxes = pred[0]
+
+        # annotating image with detected bounding boxes
+        annotator = Annotator(image)
+        for *xyxy, conf, cls in bboxes:
+            if conf > 0.7:
+                annotator.box_label(xyxy, f'{self.classes[int(cls)]} {conf:.2f}')
+
+        annotated_image = annotator.result()
         
         #publish bounding boxes
         bbox_msg = Float32MultiArray()
-        bbox_msg.data = list(pred[0].float().numpy().astype(np.float32).reshape(-1))
+        #bbox_msg.data = list(pred[0].float().numpy().astype(np.float32).reshape(-1))
+        bbox_msg.data = []
         self.bbox_publisher.publish(bbox_msg)
 
         # convert image to compressed image
-        compressed_image = self.bridge.cv2_to_compressed_imgmsg(original_image)
+        compressed_image = self.bridge.cv2_to_compressed_imgmsg(annotated_image)
         # publish compressed image
         self.publisher_.publish(compressed_image)
         
