@@ -24,7 +24,7 @@ class ImgProcessingNode(Node):
         self.subscriber_img = self.create_subscription(Image, '/raw_image', self.callback, 10)
         # publisher for compressed img data
         self.publisher_ = self.create_publisher(CompressedImage, '/proc_img', 10)
-        self.bbox_publisher = self.create_publisher(Float32MultiArray, '/bounding_boxes', 10)
+        self.bbox_publisher = self.create_publisher(Float32MultiArray, '/bboxes', 10)
 
         #Initializing the yolov5 model
         self.targetWidth = 640
@@ -48,7 +48,7 @@ class ImgProcessingNode(Node):
         
         #publish bounding boxes
         bbox_msg = Float32MultiArray()
-        bbox_msg.data = pred
+        bbox_msg.data = list(pred.float().numpy()[0].reshape(-1))
         self.bbox_publisher.publish(bbox_msg)
 
         # convert image to compressed image
