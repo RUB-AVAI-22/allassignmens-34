@@ -40,7 +40,7 @@ class ImgProcessingNode(Node):
         
         #preparing image for yolov5 network
         original_image = cv2.resize(original_image, (self.targetWidth, self.targetHeight))
-        prepared_image = torch.from_numpy(cv2.dnn.blobFromImage(original_image, 1/255, (self.targetWidth, self.targetHeight), swapRB=True, crop=False).astype(np.uint8)).to(self.model.device)
+        prepared_image = torch.from_numpy(cv2.dnn.blobFromImage(original_image, 1, (self.targetWidth, self.targetHeight), swapRB=True, crop=False).astype(np.uint8)).to(self.model.device)
 
         #running the yolov5 network on the image
         pred = self.model(prepared_image)
@@ -52,7 +52,7 @@ class ImgProcessingNode(Node):
         self.bbox_publisher.publish(bbox_msg)
 
         # convert image to compressed image
-        compressed_image = self.bridge.cv2_to_compressed_imgmsg(result_image)
+        compressed_image = self.bridge.cv2_to_compressed_imgmsg(originalImage)
         # publish compressed image
         self.publisher_.publish(compressed_image)
         
