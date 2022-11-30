@@ -26,7 +26,6 @@ class ImgProcessingNode(Node):
         # publisher for compressed img data
         self.publisher_ = self.create_publisher(CompressedImage, '/proc_img', 10)
         self.bbox_publisher = self.create_publisher(Float32MultiArray, '/bboxes', 10)
-        self.Annottator
 
         #Initializing the yolov5 model
         self.targetWidth = 640
