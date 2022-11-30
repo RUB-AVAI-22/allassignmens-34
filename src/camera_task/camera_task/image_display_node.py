@@ -44,7 +44,7 @@ class ImgDisplayNode(Node):
 
         # save video
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        self.out = cv2.VideoWriter('out.mp4', fourcc, 20.0, (960, 480), True)
+        self.out = cv2.VideoWriter('out.mp4', fourcc, 20.0, (640, 480), True)
 
     def video_callback(self, frame):
         if frame:
@@ -78,7 +78,7 @@ class ImgDisplayNode(Node):
             annotated_image = annotator.result()
 
 
-            annotated_image = cv2.resize(annotated_image, (960, 480))
+            annotated_image = cv2.resize(annotated_image, (640, 480))
             cv2.imshow('frame', annotated_image)
             cv2.waitKey(1)
 
