@@ -52,7 +52,7 @@ class ImgProcessingNode(Node):
         self.bbox_publisher.publish(bbox_msg)
 
         # convert image to compressed image
-        compressed_image = self.bridge.cv2_to_compressed_imgmsg(originalImage)
+        compressed_image = self.bridge.cv2_to_compressed_imgmsg(original_image)
         # publish compressed image
         self.publisher_.publish(compressed_image)
         
