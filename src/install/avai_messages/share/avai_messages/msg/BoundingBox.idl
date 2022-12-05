@@ -1,0 +1,22 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from avai_messages/msg/BoundingBox.msg
+// generated code does not contain a copyright notice
+
+
+module avai_messages {
+  module msg {
+    struct BoundingBox {
+      float x1;
+
+      float y1;
+
+      float x2;
+
+      float y2;
+
+      float conf;
+
+      float cls;
+    };
+  };
+};
