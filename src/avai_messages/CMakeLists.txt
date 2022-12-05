@@ -23,7 +23,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/bbox.msg"
+  "msg/BoundingBox.msg"
  )
 
 ament_export_dependencies(rosidl_default_runtime)
