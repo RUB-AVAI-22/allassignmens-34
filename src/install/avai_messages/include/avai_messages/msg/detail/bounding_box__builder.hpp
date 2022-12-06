@@ -52,64 +52,16 @@ private:
   ::avai_messages::msg::BoundingBox msg_;
 };
 
-class Init_BoundingBox_y2
+class Init_BoundingBox_coordinates
 {
 public:
-  explicit Init_BoundingBox_y2(::avai_messages::msg::BoundingBox & msg)
-  : msg_(msg)
-  {}
-  Init_BoundingBox_conf y2(::avai_messages::msg::BoundingBox::_y2_type arg)
-  {
-    msg_.y2 = std::move(arg);
-    return Init_BoundingBox_conf(msg_);
-  }
-
-private:
-  ::avai_messages::msg::BoundingBox msg_;
-};
-
-class Init_BoundingBox_x2
-{
-public:
-  explicit Init_BoundingBox_x2(::avai_messages::msg::BoundingBox & msg)
-  : msg_(msg)
-  {}
-  Init_BoundingBox_y2 x2(::avai_messages::msg::BoundingBox::_x2_type arg)
-  {
-    msg_.x2 = std::move(arg);
-    return Init_BoundingBox_y2(msg_);
-  }
-
-private:
-  ::avai_messages::msg::BoundingBox msg_;
-};
-
-class Init_BoundingBox_y1
-{
-public:
-  explicit Init_BoundingBox_y1(::avai_messages::msg::BoundingBox & msg)
-  : msg_(msg)
-  {}
-  Init_BoundingBox_x2 y1(::avai_messages::msg::BoundingBox::_y1_type arg)
-  {
-    msg_.y1 = std::move(arg);
-    return Init_BoundingBox_x2(msg_);
-  }
-
-private:
-  ::avai_messages::msg::BoundingBox msg_;
-};
-
-class Init_BoundingBox_x1
-{
-public:
-  Init_BoundingBox_x1()
+  Init_BoundingBox_coordinates()
   : msg_(::rosidl_runtime_cpp::MessageInitialization::SKIP)
   {}
-  Init_BoundingBox_y1 x1(::avai_messages::msg::BoundingBox::_x1_type arg)
+  Init_BoundingBox_conf coordinates(::avai_messages::msg::BoundingBox::_coordinates_type arg)
   {
-    msg_.x1 = std::move(arg);
-    return Init_BoundingBox_y1(msg_);
+    msg_.coordinates = std::move(arg);
+    return Init_BoundingBox_conf(msg_);
   }
 
 private:
@@ -127,7 +79,7 @@ template<>
 inline
 auto build<::avai_messages::msg::BoundingBox>()
 {
-  return avai_messages::msg::builder::Init_BoundingBox_x1();
+  return avai_messages::msg::builder::Init_BoundingBox_coordinates();
 }
 
 }  // namespace avai_messages

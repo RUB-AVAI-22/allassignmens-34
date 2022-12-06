@@ -5,14 +5,9 @@
 
 module avai_messages {
   module msg {
+    typedef float float__4[4];
     struct BoundingBox {
-      float x1;
-
-      float y1;
-
-      float x2;
-
-      float y2;
+      float__4 coordinates;
 
       float conf;
 

@@ -17,10 +17,7 @@ avai_messages__msg__BoundingBox__init(avai_messages__msg__BoundingBox * msg)
   if (!msg) {
     return false;
   }
-  // x1
-  // y1
-  // x2
-  // y2
+  // coordinates
   // conf
   // cls
   return true;
@@ -32,10 +29,7 @@ avai_messages__msg__BoundingBox__fini(avai_messages__msg__BoundingBox * msg)
   if (!msg) {
     return;
   }
-  // x1
-  // y1
-  // x2
-  // y2
+  // coordinates
   // conf
   // cls
 }
@@ -46,21 +40,11 @@ avai_messages__msg__BoundingBox__are_equal(const avai_messages__msg__BoundingBox
   if (!lhs || !rhs) {
     return false;
   }
-  // x1
-  if (lhs->x1 != rhs->x1) {
-    return false;
-  }
-  // y1
-  if (lhs->y1 != rhs->y1) {
-    return false;
-  }
-  // x2
-  if (lhs->x2 != rhs->x2) {
-    return false;
-  }
-  // y2
-  if (lhs->y2 != rhs->y2) {
-    return false;
+  // coordinates
+  for (size_t i = 0; i < 4; ++i) {
+    if (lhs->coordinates[i] != rhs->coordinates[i]) {
+      return false;
+    }
   }
   // conf
   if (lhs->conf != rhs->conf) {
@@ -81,14 +65,10 @@ avai_messages__msg__BoundingBox__copy(
   if (!input || !output) {
     return false;
   }
-  // x1
-  output->x1 = input->x1;
-  // y1
-  output->y1 = input->y1;
-  // x2
-  output->x2 = input->x2;
-  // y2
-  output->y2 = input->y2;
+  // coordinates
+  for (size_t i = 0; i < 4; ++i) {
+    output->coordinates[i] = input->coordinates[i];
+  }
   // conf
   output->conf = input->conf;
   // cls
