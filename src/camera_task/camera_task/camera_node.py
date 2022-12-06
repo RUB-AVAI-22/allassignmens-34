@@ -17,8 +17,8 @@ class CameraNode(Node):
         self.publisher_ = self.create_publisher(Image, '/raw_image', 10)
 
         # camera stream
-        #self.cap = cv2.VideoCapture('rtsp://web.nidaku.de:8554/avai')
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture('rtsp://web.nidaku.de:8554/avai')
+        #self.cap = cv2.VideoCapture(0)
         self.bridge = CvBridge()
 
         # ros parameters
@@ -32,6 +32,7 @@ class CameraNode(Node):
 
     def video_callback(self):
         ret, frame = self.cap.read()
+        
 
         if ret:
             msg = self.bridge.cv2_to_imgmsg(np.array(frame))

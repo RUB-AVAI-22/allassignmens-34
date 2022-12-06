@@ -37,65 +37,40 @@ void BoundingBox_fini_function(void * message_memory)
   typed_message->~BoundingBox();
 }
 
-static const ::rosidl_typesupport_introspection_cpp::MessageMember BoundingBox_message_member_array[6] = {
+size_t size_function__BoundingBox__coordinates(const void * untyped_member)
+{
+  (void)untyped_member;
+  return 4;
+}
+
+const void * get_const_function__BoundingBox__coordinates(const void * untyped_member, size_t index)
+{
+  const auto & member =
+    *reinterpret_cast<const std::array<float, 4> *>(untyped_member);
+  return &member[index];
+}
+
+void * get_function__BoundingBox__coordinates(void * untyped_member, size_t index)
+{
+  auto & member =
+    *reinterpret_cast<std::array<float, 4> *>(untyped_member);
+  return &member[index];
+}
+
+static const ::rosidl_typesupport_introspection_cpp::MessageMember BoundingBox_message_member_array[3] = {
   {
-    "x1",  // name
+    "coordinates",  // name
     ::rosidl_typesupport_introspection_cpp::ROS_TYPE_FLOAT,  // type
     0,  // upper bound of string
     nullptr,  // members of sub message
-    false,  // is array
-    0,  // array size
+    true,  // is array
+    4,  // array size
     false,  // is upper bound
-    offsetof(avai_messages::msg::BoundingBox, x1),  // bytes offset in struct
+    offsetof(avai_messages::msg::BoundingBox, coordinates),  // bytes offset in struct
     nullptr,  // default value
-    nullptr,  // size() function pointer
-    nullptr,  // get_const(index) function pointer
-    nullptr,  // get(index) function pointer
-    nullptr  // resize(index) function pointer
-  },
-  {
-    "y1",  // name
-    ::rosidl_typesupport_introspection_cpp::ROS_TYPE_FLOAT,  // type
-    0,  // upper bound of string
-    nullptr,  // members of sub message
-    false,  // is array
-    0,  // array size
-    false,  // is upper bound
-    offsetof(avai_messages::msg::BoundingBox, y1),  // bytes offset in struct
-    nullptr,  // default value
-    nullptr,  // size() function pointer
-    nullptr,  // get_const(index) function pointer
-    nullptr,  // get(index) function pointer
-    nullptr  // resize(index) function pointer
-  },
-  {
-    "x2",  // name
-    ::rosidl_typesupport_introspection_cpp::ROS_TYPE_FLOAT,  // type
-    0,  // upper bound of string
-    nullptr,  // members of sub message
-    false,  // is array
-    0,  // array size
-    false,  // is upper bound
-    offsetof(avai_messages::msg::BoundingBox, x2),  // bytes offset in struct
-    nullptr,  // default value
-    nullptr,  // size() function pointer
-    nullptr,  // get_const(index) function pointer
-    nullptr,  // get(index) function pointer
-    nullptr  // resize(index) function pointer
-  },
-  {
-    "y2",  // name
-    ::rosidl_typesupport_introspection_cpp::ROS_TYPE_FLOAT,  // type
-    0,  // upper bound of string
-    nullptr,  // members of sub message
-    false,  // is array
-    0,  // array size
-    false,  // is upper bound
-    offsetof(avai_messages::msg::BoundingBox, y2),  // bytes offset in struct
-    nullptr,  // default value
-    nullptr,  // size() function pointer
-    nullptr,  // get_const(index) function pointer
-    nullptr,  // get(index) function pointer
+    size_function__BoundingBox__coordinates,  // size() function pointer
+    get_const_function__BoundingBox__coordinates,  // get_const(index) function pointer
+    get_function__BoundingBox__coordinates,  // get(index) function pointer
     nullptr  // resize(index) function pointer
   },
   {
@@ -133,7 +108,7 @@ static const ::rosidl_typesupport_introspection_cpp::MessageMember BoundingBox_m
 static const ::rosidl_typesupport_introspection_cpp::MessageMembers BoundingBox_message_members = {
   "avai_messages::msg",  // message namespace
   "BoundingBox",  // message name
-  6,  // number of fields
+  3,  // number of fields
   sizeof(avai_messages::msg::BoundingBox),
   BoundingBox_message_member_array,  // message members
   BoundingBox_init_function,  // function to initialize message memory (memory has to be allocated)

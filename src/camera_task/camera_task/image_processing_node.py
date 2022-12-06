@@ -4,7 +4,8 @@ from rclpy.node import Node
 import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image, CompressedImage
-from std_msgs.msg import Float32MultiArray
+from avai_messages.msg import BoundingBox
+from avai_messages.msg import BoundingBoxes
 
 import datetime
 
@@ -25,13 +26,13 @@ class ImgProcessingNode(Node):
         self.subscriber_img = self.create_subscription(Image, '/raw_image', self.callback, 10)
         # publisher for compressed img data
         self.publisher_ = self.create_publisher(CompressedImage, '/proc_img', 10)
-        self.bbox_publisher = self.create_publisher(Float32MultiArray, '/bboxes', 10)
+        self.bbox_publisher = self.create_publisher(BoundingBoxes, '/bboxes', 10)
 
         #Initializing the yolov5 model
         self.targetWidth = 640
         self.targetHeight = 640
         self.classes = ['blue', 'orange', 'yellow']
-        self.model = DetectMultiBackend('best-int8_edgetpu.tflite')
+        self.model = DetectMultiBackend('best-uint8_edgetpu.tflite')
         self.model.warmup(imgsz=(1, self.targetWidth, self.targetHeight, 3))
 
     def callback(self, msg):
@@ -41,32 +42,31 @@ class ImgProcessingNode(Node):
         
         #preparing image for yolov5 network
         original_image = cv2.resize(original_image, (self.targetWidth, self.targetHeight))
-        #prepared_image = torch.from_numpy(cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 1, (self.targetWidth, self.targetHeight), crop=False).astype(np.uint8)).to(self.model.device)
+        prepared_image = torch.from_numpy(cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 1, (self.targetWidth, self.targetHeight), crop=False).astype(np.uint8)).to(self.model.device)
         #prepared_image = torch.from_numpy(cv2.dnn.blobFromImage(original_image, 1, (self.targetWidth, self.targetHeight), swapRB=True, crop=False).astype(np.uint8)).to(self.model.device)
-        prepared_image = torch.from_numpy(cv2.dnn.blobFromImage(original_image, 1, (self.targetWidth, self.targetHeight), crop=False).astype(np.uint8)).to(self.model.device)
+        #prepared_image = torch.from_numpy(cv2.dnn.blobFromImage(original_image, 1/255, (self.targetWidth, self.targetHeight), crop=False).astype(np.float32)).to(self.model.device)
 
         #running the yolov5 network on the image
         pred = self.model(prepared_image)
         pred = non_max_suppression(pred, 0.25, 0.45, [0, 1, 2], False, max_det=1000)
 
         bboxes = pred[0]
-
-        # annotating image with detected bounding boxes
-        annotator = Annotator(original_image)
-        for *xyxy, conf, cls in bboxes:
-            if conf > 0.7:
-                annotator.box_label(xyxy, f'{self.classes[int(cls)]} {conf:.2f}')
-
-        annotated_image = annotator.result()
         
         #publish bounding boxes
-        bbox_msg = Float32MultiArray()
-        #bbox_msg.data = list(pred[0].float().numpy().astype(np.float32).reshape(-1))
-        bbox_msg.data = []
+        bbox_msg = BoundingBoxes()
+        msgdata = []
+        for *xyxy, conf, cls in bboxes:
+            bbox = BoundingBox()
+            bbox.coordinates = [float(tensor) for tensor in xyxy]
+            bbox.conf = float(conf)
+            bbox.cls = float(cls)
+            msgdata.append(bbox)
+        bbox_msg.bboxes = msgdata
+
         self.bbox_publisher.publish(bbox_msg)
 
         # convert image to compressed image
-        compressed_image = self.bridge.cv2_to_compressed_imgmsg(annotated_image)
+        compressed_image = self.bridge.cv2_to_compressed_imgmsg(original_image)
         # publish compressed image
         self.publisher_.publish(compressed_image)
         

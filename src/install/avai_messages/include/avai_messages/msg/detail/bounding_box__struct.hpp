@@ -37,43 +37,28 @@ struct BoundingBox_
     if (rosidl_runtime_cpp::MessageInitialization::ALL == _init ||
       rosidl_runtime_cpp::MessageInitialization::ZERO == _init)
     {
-      this->x1 = 0.0f;
-      this->y1 = 0.0f;
-      this->x2 = 0.0f;
-      this->y2 = 0.0f;
+      std::fill<typename std::array<float, 4>::iterator, float>(this->coordinates.begin(), this->coordinates.end(), 0.0f);
       this->conf = 0.0f;
       this->cls = 0.0f;
     }
   }
 
   explicit BoundingBox_(const ContainerAllocator & _alloc, rosidl_runtime_cpp::MessageInitialization _init = rosidl_runtime_cpp::MessageInitialization::ALL)
+  : coordinates(_alloc)
   {
-    (void)_alloc;
     if (rosidl_runtime_cpp::MessageInitialization::ALL == _init ||
       rosidl_runtime_cpp::MessageInitialization::ZERO == _init)
     {
-      this->x1 = 0.0f;
-      this->y1 = 0.0f;
-      this->x2 = 0.0f;
-      this->y2 = 0.0f;
+      std::fill<typename std::array<float, 4>::iterator, float>(this->coordinates.begin(), this->coordinates.end(), 0.0f);
       this->conf = 0.0f;
       this->cls = 0.0f;
     }
   }
 
   // field types and members
-  using _x1_type =
-    float;
-  _x1_type x1;
-  using _y1_type =
-    float;
-  _y1_type y1;
-  using _x2_type =
-    float;
-  _x2_type x2;
-  using _y2_type =
-    float;
-  _y2_type y2;
+  using _coordinates_type =
+    std::array<float, 4>;
+  _coordinates_type coordinates;
   using _conf_type =
     float;
   _conf_type conf;
@@ -82,28 +67,10 @@ struct BoundingBox_
   _cls_type cls;
 
   // setters for named parameter idiom
-  Type & set__x1(
-    const float & _arg)
+  Type & set__coordinates(
+    const std::array<float, 4> & _arg)
   {
-    this->x1 = _arg;
-    return *this;
-  }
-  Type & set__y1(
-    const float & _arg)
-  {
-    this->y1 = _arg;
-    return *this;
-  }
-  Type & set__x2(
-    const float & _arg)
-  {
-    this->x2 = _arg;
-    return *this;
-  }
-  Type & set__y2(
-    const float & _arg)
-  {
-    this->y2 = _arg;
+    this->coordinates = _arg;
     return *this;
   }
   Type & set__conf(
@@ -161,16 +128,7 @@ struct BoundingBox_
   // comparison operators
   bool operator==(const BoundingBox_ & other) const
   {
-    if (this->x1 != other.x1) {
-      return false;
-    }
-    if (this->y1 != other.y1) {
-      return false;
-    }
-    if (this->x2 != other.x2) {
-      return false;
-    }
-    if (this->y2 != other.y2) {
+    if (this->coordinates != other.coordinates) {
       return false;
     }
     if (this->conf != other.conf) {

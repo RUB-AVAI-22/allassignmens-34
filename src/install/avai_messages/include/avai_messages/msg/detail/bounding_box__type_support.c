@@ -31,61 +31,16 @@ void BoundingBox__rosidl_typesupport_introspection_c__BoundingBox_fini_function(
   avai_messages__msg__BoundingBox__fini(message_memory);
 }
 
-static rosidl_typesupport_introspection_c__MessageMember BoundingBox__rosidl_typesupport_introspection_c__BoundingBox_message_member_array[6] = {
+static rosidl_typesupport_introspection_c__MessageMember BoundingBox__rosidl_typesupport_introspection_c__BoundingBox_message_member_array[3] = {
   {
-    "x1",  // name
+    "coordinates",  // name
     rosidl_typesupport_introspection_c__ROS_TYPE_FLOAT,  // type
     0,  // upper bound of string
     NULL,  // members of sub message
-    false,  // is array
-    0,  // array size
+    true,  // is array
+    4,  // array size
     false,  // is upper bound
-    offsetof(avai_messages__msg__BoundingBox, x1),  // bytes offset in struct
-    NULL,  // default value
-    NULL,  // size() function pointer
-    NULL,  // get_const(index) function pointer
-    NULL,  // get(index) function pointer
-    NULL  // resize(index) function pointer
-  },
-  {
-    "y1",  // name
-    rosidl_typesupport_introspection_c__ROS_TYPE_FLOAT,  // type
-    0,  // upper bound of string
-    NULL,  // members of sub message
-    false,  // is array
-    0,  // array size
-    false,  // is upper bound
-    offsetof(avai_messages__msg__BoundingBox, y1),  // bytes offset in struct
-    NULL,  // default value
-    NULL,  // size() function pointer
-    NULL,  // get_const(index) function pointer
-    NULL,  // get(index) function pointer
-    NULL  // resize(index) function pointer
-  },
-  {
-    "x2",  // name
-    rosidl_typesupport_introspection_c__ROS_TYPE_FLOAT,  // type
-    0,  // upper bound of string
-    NULL,  // members of sub message
-    false,  // is array
-    0,  // array size
-    false,  // is upper bound
-    offsetof(avai_messages__msg__BoundingBox, x2),  // bytes offset in struct
-    NULL,  // default value
-    NULL,  // size() function pointer
-    NULL,  // get_const(index) function pointer
-    NULL,  // get(index) function pointer
-    NULL  // resize(index) function pointer
-  },
-  {
-    "y2",  // name
-    rosidl_typesupport_introspection_c__ROS_TYPE_FLOAT,  // type
-    0,  // upper bound of string
-    NULL,  // members of sub message
-    false,  // is array
-    0,  // array size
-    false,  // is upper bound
-    offsetof(avai_messages__msg__BoundingBox, y2),  // bytes offset in struct
+    offsetof(avai_messages__msg__BoundingBox, coordinates),  // bytes offset in struct
     NULL,  // default value
     NULL,  // size() function pointer
     NULL,  // get_const(index) function pointer
@@ -127,7 +82,7 @@ static rosidl_typesupport_introspection_c__MessageMember BoundingBox__rosidl_typ
 static const rosidl_typesupport_introspection_c__MessageMembers BoundingBox__rosidl_typesupport_introspection_c__BoundingBox_message_members = {
   "avai_messages__msg",  // message namespace
   "BoundingBox",  // message name
-  6,  // number of fields
+  3,  // number of fields
   sizeof(avai_messages__msg__BoundingBox),
   BoundingBox__rosidl_typesupport_introspection_c__BoundingBox_message_member_array,  // message members
   BoundingBox__rosidl_typesupport_introspection_c__BoundingBox_init_function,  // function to initialize message memory (memory has to be allocated)

@@ -20,10 +20,7 @@ extern "C"
 // Struct defined in msg/BoundingBox in the package avai_messages.
 typedef struct avai_messages__msg__BoundingBox
 {
-  float x1;
-  float y1;
-  float x2;
-  float y2;
+  float coordinates[4];
   float conf;
   float cls;
 } avai_messages__msg__BoundingBox;

@@ -4,7 +4,8 @@ from rclpy.node import Node
 import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import CompressedImage
-from std_msgs.msg import Float32MultiArray
+from avai_messages.msg import BoundingBox
+from avai_messages.msg import BoundingBoxes
 from rcl_interfaces.msg import SetParametersResult
 
 
@@ -27,10 +28,11 @@ class ImgDisplayNode(Node):
         # video subscriber
         self.bridge = CvBridge()
         self.subscriber = self.create_subscription(CompressedImage, '/proc_img', self.video_callback, 10)
-        self.bbox_subscriber = self.create_subscription(Float32MultiArray, '/bboxes', self.bbox_callback, 10)
+        self.bbox_subscriber = self.create_subscription(BoundingBoxes, '/bboxes', self.bbox_callback, 10)
 
         self.bbox_queue = queue.SimpleQueue()
         self.image_queue = queue.SimpleQueue()
+        self.classes = ['blue', 'orange', 'yellow']
 
         self.timer = self.create_timer(1 / 20, self.annotation)
 
@@ -59,7 +61,14 @@ class ImgDisplayNode(Node):
             
             
     def bbox_callback(self, msg):
-        bboxes = np.array(msg.data).reshape(-1, 8)
+        bboxes = []
+        for bbox in msg.bboxes:
+            extractedBbox = []
+            extractedBbox.append(bbox.coordinates)
+            extractedBbox.append(bbox.conf)
+            extractedBbox.append(bbox.cls)
+            bboxes.append(extractedBbox)
+
 
         self.bbox_queue.put(bboxes)
 
@@ -73,7 +82,7 @@ class ImgDisplayNode(Node):
             annotator = Annotator(image)
             for *xyxy, conf, cls in bboxes:
                 if conf > 0.7:
-                    annotator.box_label(xyxy, f'{self.classes[int(cls)]} {conf:.2f}')
+                    annotator.box_label(xyxy[0], f'{self.classes[int(cls)]} {conf:.2f}')
 
             annotated_image = annotator.result()
 
