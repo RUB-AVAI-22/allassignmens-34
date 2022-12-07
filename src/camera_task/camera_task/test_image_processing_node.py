@@ -1,11 +1,13 @@
 import unittest
 import rclpy
-import image_display_node
+import image_processing_node
 
 from geometry_msgs.msg import Twist
 
 from rclpy.node import Node
-class CameraNodeTest(unittest.TestCase):
+
+
+class ImageProcessingNodeTest(unittest.TestCase):
 
     def setUp(self):
         cls.context = rclpy.context.Context()
