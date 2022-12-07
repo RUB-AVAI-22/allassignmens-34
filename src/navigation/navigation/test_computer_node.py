@@ -209,3 +209,5 @@ class computer_nodeTest(TestCase):
         #Cleanup
         comp_node.destroy_node()
 
+if __name__ == '__main__':
+    unittest.main()
