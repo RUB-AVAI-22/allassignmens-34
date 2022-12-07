@@ -1,13 +1,14 @@
 import rclpy
 from rclpy.node import Node
 
+import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 from rcl_interfaces.msg import SetParametersResult
 
-import cv2
+
 import numpy as np
 from pynput import keyboard
 
