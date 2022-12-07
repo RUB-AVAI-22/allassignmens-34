@@ -29,7 +29,7 @@ class SensorFusionNode(Node):
         self.bridge = CvBridge()
         self.proccessedImage_subscriber = self.create_subscription(CompressedImage, '/proc_img', self.video_callback, 10)
         self.boundingBox_subscriber = self.create_subscription(BoundingBoxes, '/bboxes', self.bbox_callback, 10)
-        self.lidar_subscriber = self.create_subscription(LaserScan, '/scan', self.lidar_callback, 10)
+        self.lidar_subscriber = self.create_subscription(LaserScan, '/scan', self.lidar_callback, 0)
 
         self.annotatedImage_publisher = self.create_publisher(CompressedImage, '/annotated_img', 10)
 
@@ -38,6 +38,8 @@ class SensorFusionNode(Node):
         self.classes = ['blue', 'orange', 'yellow']
 
         self.timer = self.create_timer(1 / 20, self.annotation)
+
+        print("Node started!")
 
     def video_callback(self, msg):
         if frame:
