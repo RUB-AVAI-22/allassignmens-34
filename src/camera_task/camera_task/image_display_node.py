@@ -36,6 +36,8 @@ class ImgDisplayNode(Node):
 
         self.timer = self.create_timer(1 / 20, self.annotation)
 
+        self.last_received_image = None
+        self.last_received_bbox = None
 
         # set parameters
         self.param_store_imgs = self.declare_parameter('store_imgs', False)
@@ -51,6 +53,7 @@ class ImgDisplayNode(Node):
     def video_callback(self, frame):
         if frame:
             current_frame = self.bridge.compressed_imgmsg_to_cv2(frame)
+            self.last_received_image = current_frame
             self.image_queue.put(current_frame)
 
         if self.param_store_imgs:
@@ -69,7 +72,7 @@ class ImgDisplayNode(Node):
             extractedBbox.append(bbox.cls)
             bboxes.append(extractedBbox)
 
-
+        self.last_received_bbox = extractedBbox
         self.bbox_queue.put(bboxes)
 
     def annotation(self):
@@ -102,6 +105,11 @@ class ImgDisplayNode(Node):
                 self.param_imgs_path = parameter.value
                 return SetParametersResult(successful=True)
 
+    def last_received_bbox(self):
+        return self.last_received_bbox
+
+    def last_received_image(self):
+        return self.last_received_image
 
 def main(args=None):
     cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
