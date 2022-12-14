@@ -121,6 +121,8 @@ class ImageProcessingNode(Node):
 
             #prediction = non_max_suppression(prediction, 0.25, 0.45, [0, 1, 2], False, max_det=1000)
 
+            print(prediction)
+
             return prediction
 
     def get_last_received_image(self):
