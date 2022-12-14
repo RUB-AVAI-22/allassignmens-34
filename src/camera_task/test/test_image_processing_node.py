@@ -1,22 +1,13 @@
 import unittest
 import cv2
 import rclpy
-import torch
 import os
-import numpy as np
 
 from cv_bridge import CvBridge
 
 from sensor_msgs.msg import Image
-from sensor_msgs.msg import CompressedImage
-
-from avai_messages.msg import BoundingBox
-from avai_messages.msg import BoundingBoxes
 
 from src.camera_task.camera_task.image_processing_node import ImageProcessingNode
-
-from yolov5.utils.general import non_max_suppression
-from yolov5.models.common import DetectMultiBackend
 
 from unittest import TestCase
 

@@ -2,10 +2,9 @@ import unittest
 import rclpy
 from src.camera_task.camera_task.camera_node import CameraNode
 
-from geometry_msgs.msg import Twist
+from unittest import TestCase
 
-from rclpy.node import Node
-class CameraNodeTest(unittest.TestCase):
+class CameraNodeTest(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         rclpy.init()
