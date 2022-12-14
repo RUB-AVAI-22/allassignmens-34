@@ -50,6 +50,8 @@ class ImgDisplayNode(Node):
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         self.out = cv2.VideoWriter('out.mp4', fourcc, 20.0, (640, 480), True)
 
+        cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
+
     def video_callback(self, frame):
         if frame:
             current_frame = self.bridge.compressed_imgmsg_to_cv2(frame)
@@ -72,7 +74,7 @@ class ImgDisplayNode(Node):
             extractedBbox.append(bbox.cls)
             bboxes.append(extractedBbox)
 
-        self.last_received_bbox = extractedBbox
+        self.last_received_bbox = bboxes
         self.bbox_queue.put(bboxes)
 
     def annotation(self):
@@ -105,14 +107,13 @@ class ImgDisplayNode(Node):
                 self.param_imgs_path = parameter.value
                 return SetParametersResult(successful=True)
 
-    def last_received_bbox(self):
+    def get_last_received_bbox(self):
         return self.last_received_bbox
 
-    def last_received_image(self):
+    def get_last_received_image(self):
         return self.last_received_image
 
 def main(args=None):
-    cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
 
     rclpy.init(args=args)
 
