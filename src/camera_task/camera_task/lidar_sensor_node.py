@@ -2,6 +2,8 @@ import numpy
 import time
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
+
 from sensor_msgs.msg._laser_scan import LaserScan
 
 class LidarSensorNode(Node):
@@ -10,7 +12,7 @@ class LidarSensorNode(Node):
         super().__init__('lidar_sensor_node')
 
         #Subscribe to Lidar
-        self.lidar_sensor_subscriber = self.create_subscription(LaserScan, '/scan', self.debug_showLaserScans, 10)
+        self.lidar_sensor_subscriber = self.create_subscription(LaserScan, '/scan', self.debug_showLaserScans, qos_profile_sensor_data)
 
         #Publisher for Clustered Points
         self.publisher = self.create_publisher(LaserScan, '/lidar_data', 10)
