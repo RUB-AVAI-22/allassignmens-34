@@ -27,7 +27,22 @@ jobs:
       - uses: ros-tooling/setup-ros@v0.3
         with:
           required-ros-distributions: foxy
-      - uses: ros-tooling/action-ros-ci@v0.2
+      - name: install prerequisites
+        run: |
+        pip3 install torch yolov5 tensorflow
+      - name: test demo_package
+        uses: ros-tooling/action-ros-ci@v0.2
         with:
           package-name: demo_package
           target-ros2-distro: foxy
+      - name: test camera_task
+        uses: ros-tooling/action-ros-ci@v0.2
+        with:
+          package-name: camera_task
+          target-ros2-distro: foxy
+      - name: test navigation
+        uses: ros-tooling/action-ros-ci@v0.2
+        with:
+          package-name: demo_package
+          target-ros2-distro: navigation
+
