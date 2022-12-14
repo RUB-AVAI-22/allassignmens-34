@@ -23,7 +23,8 @@ setup(
             'camera_node = camera_task.camera_node:main',
             'image_processing_node = camera_task.image_processing_node:main',
             'image_display_node = camera_task.image_display_node:main',
-            'sensor_fusion_node = camera_task.sensor_fusion_node:main'
+            'sensor_fusion_node = camera_task.sensor_fusion_node:main',
+            ''
         ],
     },
 )
