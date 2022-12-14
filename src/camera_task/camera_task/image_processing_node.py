@@ -119,7 +119,7 @@ class ImageProcessingNode(Node):
             else:
                 prediction = self.model(prepared_image)
 
-            prediction = non_max_suppression(prediction, 0.25, 0.45, [0, 1, 2], False, max_det=1000)
+            #prediction = non_max_suppression(prediction, 0.25, 0.45, [0, 1, 2], False, max_det=1000)
 
             return prediction
 
