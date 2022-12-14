@@ -90,7 +90,7 @@ class ImageProcessingNode(Node):
             prepared_image = torch.from_numpy(
                 cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 1,
                                       (self.targetWidth, self.targetHeight),
-                                      crop=False).astype(np.uint8)).to(self.model.device)
+                                      crop=False).astype(np.uint8))
         else:
             prepared_image = torch.from_numpy(
                 cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 1 / 255,
