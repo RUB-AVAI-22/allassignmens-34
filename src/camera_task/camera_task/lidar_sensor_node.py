@@ -3,17 +3,32 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg._laser_scan import LaserScan
 
-class ImgDisplayNode(Node):
+class LidarSensorNode(Node):
 
     def __init__(self):
         super().__init__('lidar_sensor_node')
 
         #Subscribe to Lidar
-        self.lidar_sensor_subscriber = self.create_subscription(LaserScan, '/sensor_msg', self.callback, 10)
+        self.lidar_sensor_subscriber = self.create_subscription(LaserScan, '/scan', self.debug_showLaserScans, 10)
 
         #Publisher for Clustered Points
-        self.publisher = self.create_publisher(int, '/lidar_data', 10)
+        self.publisher = self.create_publisher(LaserScan, '/lidar_data', 10)
 
 
     def debug_showLaserScans(self, laser_scan):
         print(laser_scan)
+
+
+def main(args=None):
+
+    rclpy.init(args=args)
+
+    node = LidarSensorNode()
+    rclpy.spin(node)
+
+    node.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
