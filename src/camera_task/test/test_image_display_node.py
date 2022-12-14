@@ -4,12 +4,10 @@ import cv2
 import rclpy
 from src.camera_task.camera_task.image_display_node import ImgDisplayNode
 
-from geometry_msgs.msg import Twist
-
-from rclpy.node import Node
+from unittest import TestCase
 
 
-class ImageDisplayNodeTest(unittest.TestCase):
+class ImageDisplayNodeTest(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         rclpy.init()
@@ -25,7 +23,7 @@ class ImageDisplayNodeTest(unittest.TestCase):
         self.image_display_node.destroy_node()
 
     def test_nothing_received_after_startup(self):
-        #No image/bbox received and queues are empty
+        # No image/bbox received and queues are empty
         assert self.image_display_node.get_last_received_image() is None
         assert self.image_display_node.get_last_received_bbox() is None
         assert self.image_display_node.image_queue.empty()
@@ -33,7 +31,6 @@ class ImageDisplayNodeTest(unittest.TestCase):
 
     def test_window_open_after_startup(self):
         assert cv2.getWindowProperty('frame', cv2.WND_PROP_VISIBLE) >= 1
-
 
 
 if __name__ == '__main__':

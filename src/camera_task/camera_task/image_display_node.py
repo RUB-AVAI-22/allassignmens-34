@@ -8,7 +8,6 @@ from avai_messages.msg import BoundingBox
 from avai_messages.msg import BoundingBoxes
 from rcl_interfaces.msg import SetParametersResult
 
-
 from yolov5.utils.plots import Annotator
 import numpy as np
 
@@ -61,10 +60,11 @@ class ImgDisplayNode(Node):
         if self.param_store_imgs:
             if not os.path.exists(self.param_imgs_path.value):
                 os.makedirs(self.param_imgs_path.value)
-            cv2.imwrite(os.path.join(self.param_imgs_path.value, str(datetime.datetime.now()).replace(' ', '_')+'.jpeg') , current_frame)
+            cv2.imwrite(
+                os.path.join(self.param_imgs_path.value, str(datetime.datetime.now()).replace(' ', '_') + '.jpeg'),
+                current_frame)
             self.param_store_imgs = False
-            
-            
+
     def bbox_callback(self, msg):
         bboxes = []
         for bbox in msg.bboxes:
@@ -82,7 +82,6 @@ class ImgDisplayNode(Node):
             image = self.image_queue.get()
             bboxes = self.bbox_queue.get()
 
-
             # annotating image with detected bounding boxes
             annotator = Annotator(image)
             for *xyxy, conf, cls in bboxes:
@@ -90,7 +89,6 @@ class ImgDisplayNode(Node):
                     annotator.box_label(xyxy[0], f'{self.classes[int(cls)]} {conf:.2f}')
 
             annotated_image = annotator.result()
-
 
             annotated_image = cv2.resize(annotated_image, (640, 480))
             cv2.imshow('frame', annotated_image)
@@ -113,8 +111,8 @@ class ImgDisplayNode(Node):
     def get_last_received_image(self):
         return self.last_received_image
 
-def main(args=None):
 
+def main(args=None):
     rclpy.init(args=args)
 
     node = ImgDisplayNode()
