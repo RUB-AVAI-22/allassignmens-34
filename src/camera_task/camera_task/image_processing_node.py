@@ -89,6 +89,7 @@ class ImageProcessingNode(Node):
         if self.edge_tpu:
             prepared_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
             prepared_image = prepared_image.astype(np.uint8)
+            prepared_image = np.expand_dims(prepared_image, axis=0)
             #prepared_image = torch.from_numpy(
             #    cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 1,
             #                          (self.targetWidth, self.targetHeight),
@@ -111,7 +112,6 @@ class ImageProcessingNode(Node):
                 yolov5_output = self.interpreter.get_output_details()[0]
                 yolov5_input = self.interpreter.get_input_details()[0]
                 print(yolov5_input)
-                print(prepared_image)
                 print(prepared_image.shape)
                 self.interpreter.set_tensor(yolov5_input['index'], prepared_image)
                 self.interpreter.invoke()
