@@ -43,7 +43,7 @@ class ImageProcessingNode(Node):
             self.classes = ['blue', 'orange', 'yellow']
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
-                self.model = DetectMultiBackend('models/best-uint8_edgetpu.tflite')
+                self.model = DetectMultiBackend('/models/best-uint8_edgetpu.tflite')
             else:
                 self.model = DetectMultiBackend('/models/best-fp16.tflite')
             self.model.warmup(imgsz=(1, self.targetWidth, self.targetHeight, 3))
