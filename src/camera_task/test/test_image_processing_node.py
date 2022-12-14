@@ -38,7 +38,7 @@ class ImageProcessingNodeTest(TestCase):
         self.image_processing_node.destroy_node()
 
     def test_initial_conditions(self):
-        assert self.image_processing_node.get_last_received_image() == None
+        assert self.image_processing_node.get_last_received_image() is None
 
 
 # Integration Tests (maybe move to separate file)

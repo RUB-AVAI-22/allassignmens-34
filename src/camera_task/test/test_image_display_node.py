@@ -26,8 +26,8 @@ class ImageDisplayNodeTest(unittest.TestCase):
 
     def test_nothing_received_after_startup(self):
         #No image/bbox received and queues are empty
-        assert None == self.image_display_node.get_last_received_image()
-        assert None == self.image_display_node.get_last_received_bbox()
+        assert self.image_display_node.get_last_received_image() is None
+        assert self.image_display_node.get_last_received_bbox() is None
         assert self.image_display_node.image_queue.empty()
         assert self.image_display_node.bbox_queue.empty()
 
