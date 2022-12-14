@@ -111,6 +111,8 @@ class ImageProcessingNode(Node):
                 yolov5_output = self.interpreter.get_output_details()[0]
                 yolov5_input = self.interpreter.get_input_details()[0]
                 print(yolov5_input)
+                print(prepared_image)
+                print(prepared_image.shape)
                 self.interpreter.set_tensor(yolov5_input['index'], prepared_image)
                 self.interpreter.invoke()
                 prediction = self.interpreter.get_tensor(yolov5_output['index'])
