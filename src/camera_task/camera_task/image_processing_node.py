@@ -24,7 +24,6 @@ class ImageProcessingNode(Node):
     def __init__(self, cone_detection, edge_tpu):
         super().__init__('image_processing_node')
 
-        self.path = "home/ubuntu/allassignmens-34/src/camera_task"
 
         self.bridge = CvBridge()
         # subscriber for raw img data
@@ -44,9 +43,9 @@ class ImageProcessingNode(Node):
             self.classes = ['blue', 'orange', 'yellow']
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
-                self.model = DetectMultiBackend('/gitProject/src/camera_task/models/best-uint8_edgetpu.tflite')
+                self.model = DetectMultiBackend('models/best-uint8_edgetpu.tflite')
             else:
-                self.model = DetectMultiBackend(self.path + '/models/best-fp16.tflite')
+                self.model = DetectMultiBackend('/models/best-fp16.tflite')
             self.model.warmup(imgsz=(1, self.targetWidth, self.targetHeight, 3))
 
     def callback(self, msg):
