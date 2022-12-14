@@ -6,7 +6,6 @@ from cv_bridge import CvBridge
 from sensor_msgs.msg import Image, CompressedImage
 from avai_messages.msg import BoundingBox
 from avai_messages.msg import BoundingBoxes
-
 import datetime
 import os
 
@@ -17,6 +16,7 @@ from yolov5.utils.general import non_max_suppression
 from yolov5.models.common import DetectMultiBackend
 
 import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 
 import torch
 
@@ -44,8 +44,8 @@ class ImageProcessingNode(Node):
             self.classes = ['blue', 'orange', 'yellow']
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
-                self.interpreter = tf.lite.Interpreter('models/best-int8_edgetpu.tflite',
-                                                      experimental_delegates=[tf.lite.load_delegate('libedgetpu.so.1')])
+                self.interpreter = tflite.Interpreter('models/best-int8_edgetpu.tflite',
+                                                      experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')])
                 self.interpreter.allocate_tensors()
                 #self.model = DetectMultiBackend('models/best-int8_edgetpu.tflite')
             else:
