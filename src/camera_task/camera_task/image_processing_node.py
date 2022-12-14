@@ -16,6 +16,8 @@ from yolov5.utils.plots import Annotator
 from yolov5.utils.general import non_max_suppression
 from yolov5.models.common import DetectMultiBackend
 
+import tensorflow as tf
+
 import torch
 
 
@@ -23,7 +25,6 @@ class ImageProcessingNode(Node):
 
     def __init__(self, cone_detection, edge_tpu):
         super().__init__('image_processing_node')
-
 
         self.bridge = CvBridge()
         # subscriber for raw img data
@@ -43,7 +44,10 @@ class ImageProcessingNode(Node):
             self.classes = ['blue', 'orange', 'yellow']
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
-                self.model = DetectMultiBackend('models/best-int8_edgetpu.tflite')
+                self.interpreter = tf.lite.Interpreter('models/best-int8_edgetpu.tflite',
+                                                      experimental_delegates=[tf.lite.load_delegate('libedgetpu.so.1')])
+                self.interpreter.allocate_tensors()
+                #self.model = DetectMultiBackend('models/best-int8_edgetpu.tflite')
             else:
                 self.model = DetectMultiBackend('models/best-fp16.tflite')
             self.model.warmup(imgsz=(1, self.targetWidth, self.targetHeight, 3))
@@ -101,7 +105,15 @@ class ImageProcessingNode(Node):
             prepared_image = self.prepare_image_for_model(original_image)
 
             # running the yolov5 network on the image
-            prediction = self.model(prepared_image)
+            if self.edge_tpu:
+                yolov5_output = self.interpreter.get_output_details()[0]
+                yolov5_input = self.interpreter.get_input_details()[0]
+                self.interpreter.set_tensor(yolov5_input['index'], prepared_image)
+                self.interpreter.invoke()
+                prediction = self.interpreter.get_tensor(yolov5_output['index'])
+            else:
+                prediction = self.model(prepared_image)
+
             prediction = non_max_suppression(prediction, 0.25, 0.45, [0, 1, 2], False, max_det=1000)
 
             return prediction
