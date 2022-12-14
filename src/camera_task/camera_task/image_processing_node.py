@@ -50,7 +50,7 @@ class ImageProcessingNode(Node):
                 #self.model = DetectMultiBackend('models/best-int8_edgetpu.tflite')
             else:
                 self.model = DetectMultiBackend('models/best-fp16.tflite')
-            self.model.warmup(imgsz=(1, self.targetWidth, self.targetHeight, 3))
+                self.model.warmup(imgsz=(1, self.targetWidth, self.targetHeight, 3))
 
     def callback(self, msg):
         self.get_logger().info(f"Received new raw image!")
