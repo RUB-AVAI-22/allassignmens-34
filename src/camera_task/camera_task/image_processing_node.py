@@ -87,7 +87,7 @@ class ImageProcessingNode(Node):
     def prepare_image_for_model(self, original_image):
         original_image = cv2.resize(original_image, (self.targetWidth, self.targetHeight))
         if self.edge_tpu:
-            prepared_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+            prepared_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGBA)
             prepared_image = prepared_image.astype(np.uint8)
             #prepared_image = torch.from_numpy(
             #    cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 1,
