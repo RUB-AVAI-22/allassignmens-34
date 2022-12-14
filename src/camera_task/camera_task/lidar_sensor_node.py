@@ -1,4 +1,5 @@
 import numpy
+import time
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg._laser_scan import LaserScan
@@ -16,11 +17,12 @@ class LidarSensorNode(Node):
 
 
     def debug_showLaserScans(self, laser_scan):
+        print(time.time())
         print(laser_scan)
 
 
 def main(args=None):
-
+    print('lidar_sensor_node startet')
     rclpy.init(args=args)
 
     node = LidarSensorNode()
