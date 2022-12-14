@@ -15,7 +15,7 @@ from yolov5.utils.plots import Annotator
 from yolov5.utils.general import non_max_suppression
 from yolov5.models.common import DetectMultiBackend
 
-import tensorflow as tf
+#import tensorflow as tf
 import tflite_runtime.interpreter as tflite
 
 import torch
