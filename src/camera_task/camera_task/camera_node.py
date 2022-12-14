@@ -11,14 +11,16 @@ import numpy as np
 
 class CameraNode(Node):
 
-    def __init__(self):
+    def __init__(self, use_webcam):
         super().__init__('camera_node')
         # publisher for raw img data
         self.publisher_ = self.create_publisher(Image, '/raw_image', 10)
 
         # camera stream
-        #self.cap = cv2.VideoCapture('rtsp://web.nidaku.de:8554/avai')
-        self.cap = cv2.VideoCapture(0)
+        if use_webcam:
+            self.cap = cv2.VideoCapture(0)
+        else:
+            self.cap = cv2.VideoCapture('rtsp://web.nidaku.de:8554/avai')
         self.bridge = CvBridge()
 
         # ros parameters
@@ -32,7 +34,6 @@ class CameraNode(Node):
 
     def video_callback(self):
         ret, frame = self.cap.read()
-        
 
         if ret:
             msg = self.bridge.cv2_to_imgmsg(np.array(frame))
@@ -58,7 +59,7 @@ class CameraNode(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    node = CameraNode()
+    node = CameraNode(False)
     rclpy.spin(node)
 
     node.destroy_node()
