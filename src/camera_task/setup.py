@@ -24,7 +24,7 @@ setup(
             'image_processing_node = camera_task.image_processing_node:main',
             'image_display_node = camera_task.image_display_node:main',
             'sensor_fusion_node = camera_task.sensor_fusion_node:main',
-            ''
+            'lidar_sensor_node = camera_task.lidar_sensor_node:main'
         ],
     },
 )

@@ -6,7 +6,6 @@ from cv_bridge import CvBridge
 from sensor_msgs.msg import Image, CompressedImage
 from avai_messages.msg import BoundingBox
 from avai_messages.msg import BoundingBoxes
-
 import datetime
 import os
 
@@ -16,7 +15,8 @@ from yolov5.utils.plots import Annotator
 from yolov5.utils.general import non_max_suppression
 from yolov5.models.common import DetectMultiBackend
 
-import tensorflow as tf
+#import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 
 import torch
 
@@ -44,13 +44,13 @@ class ImageProcessingNode(Node):
             self.classes = ['blue', 'orange', 'yellow']
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
-                self.interpreter = tf.lite.Interpreter('models/best-int8_edgetpu.tflite',
-                                                      experimental_delegates=[tf.lite.load_delegate('libedgetpu.so.1')])
+                self.interpreter = tflite.Interpreter('models/best-int8_edgetpu.tflite',
+                                                      experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')])
                 self.interpreter.allocate_tensors()
                 #self.model = DetectMultiBackend('models/best-int8_edgetpu.tflite')
             else:
                 self.model = DetectMultiBackend('models/best-fp16.tflite')
-            self.model.warmup(imgsz=(1, self.targetWidth, self.targetHeight, 3))
+                self.model.warmup(imgsz=(1, self.targetWidth, self.targetHeight, 3))
 
     def callback(self, msg):
         self.get_logger().info(f"Received new raw image!")
@@ -87,10 +87,13 @@ class ImageProcessingNode(Node):
     def prepare_image_for_model(self, original_image):
         original_image = cv2.resize(original_image, (self.targetWidth, self.targetHeight))
         if self.edge_tpu:
-            prepared_image = torch.from_numpy(
-                cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 1,
-                                      (self.targetWidth, self.targetHeight),
-                                      crop=False).astype(np.uint8)).to(self.model.device)
+            prepared_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+            prepared_image = prepared_image.astype(np.uint8)
+            prepared_image = np.expand_dims(prepared_image, axis=0)
+            #prepared_image = torch.from_numpy(
+            #    cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 1,
+            #                          (self.targetWidth, self.targetHeight),
+            #                          crop=False).astype(np.uint8))
         else:
             prepared_image = torch.from_numpy(
                 cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 1 / 255,
@@ -108,13 +111,18 @@ class ImageProcessingNode(Node):
             if self.edge_tpu:
                 yolov5_output = self.interpreter.get_output_details()[0]
                 yolov5_input = self.interpreter.get_input_details()[0]
+                print(yolov5_input)
+                print(prepared_image.shape)
                 self.interpreter.set_tensor(yolov5_input['index'], prepared_image)
                 self.interpreter.invoke()
                 prediction = self.interpreter.get_tensor(yolov5_output['index'])
             else:
                 prediction = self.model(prepared_image)
 
-            prediction = non_max_suppression(prediction, 0.25, 0.45, [0, 1, 2], False, max_det=1000)
+            #prediction = non_max_suppression(prediction, 0.25, 0.45, [0, 1, 2], False, max_det=1000)
+
+            print(prediction)
+            print(prediction[0][0])
 
             return prediction
 
