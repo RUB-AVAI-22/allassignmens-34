@@ -12,7 +12,7 @@ class LidarSensorNode(Node):
         self.lidar_sensor_subscriber = self.create_subscription(LaserScan, '/scan', self.debug_showLaserScans, 10)
 
         #Publisher for Clustered Points
-        self.publisher = self.create_publisher(int, '/lidar_data', 10)
+        self.publisher = self.create_publisher(LaserScan, '/lidar_data', 10)
 
 
     def debug_showLaserScans(self, laser_scan):
