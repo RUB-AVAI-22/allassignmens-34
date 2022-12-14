@@ -28,8 +28,7 @@ jobs:
         with:
           required-ros-distributions: foxy
       - name: install prerequisites
-        run: |
-        pip3 install torch yolov5 tensorflow
+        run: pip3 install torch yolov5 tensorflow
       - name: test demo_package
         uses: ros-tooling/action-ros-ci@v0.2
         with:
