@@ -6,17 +6,13 @@ from cv_bridge import CvBridge
 from sensor_msgs.msg import Image, CompressedImage
 from avai_messages.msg import BoundingBox
 from avai_messages.msg import BoundingBoxes
-import datetime
-import os
 
 import numpy as np
 
-from yolov5.utils.plots import Annotator
-from yolov5.utils.general import non_max_suppression
 from yolov5.models.common import DetectMultiBackend
 
-#import tensorflow as tf
-import tflite_runtime.interpreter as tflite
+import tensorflow as tf
+# import tflite_runtime.interpreter as tflite
 
 import torch
 
@@ -44,18 +40,35 @@ class ImageProcessingNode(Node):
             self.classes = ['blue', 'orange', 'yellow']
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
-                self.interpreter = tflite.Interpreter('models/best-int8_edgetpu.tflite',
-                                                      experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')])
+                self.interpreter = tf.lite.Interpreter('models/best-int8_edgetpu.tflite',
+                                                       experimental_delegates=[
+                                                           tf.lite.experimental.load_delegate('libedgetpu.so.1')])
                 self.interpreter.allocate_tensors()
-                #self.model = DetectMultiBackend('models/best-int8_edgetpu.tflite')
             else:
-                self.model = DetectMultiBackend('models/best-fp16.tflite')
-                self.model.warmup(imgsz=(1, self.targetWidth, self.targetHeight, 3))
+                self.interpreter = tf.lite.Interpreter('models/best-fp16.tflite')
+                self.interpreter.allocate_tensors()
+
+    def xywh2xyxy(self, boxes):
+        xyxy = np.zeros((len(boxes), 4))
+        xyxy[:, 0] = np.clip(boxes[:, 0] - (boxes[:, 2] / 2), 0, 1)
+        xyxy[:, 1] = np.clip(boxes[:, 1] - (boxes[:, 3] / 2), 0, 1)
+        xyxy[:, 2] = np.clip(boxes[:, 0] + (boxes[:, 2] / 2), 0, 1)
+        xyxy[:, 3] = np.clip(boxes[:, 1] + (boxes[:, 3] / 2), 0, 1)
+        return xyxy
+
+    def normalizedBoxesToImageSize(self, boxes, width, height):
+        denormalizedBoxes = np.zeros((len(boxes), 4))
+        denormalizedBoxes[:, 0] = boxes[:, 0] * width
+        denormalizedBoxes[:, 2] = boxes[:, 2] * width
+        denormalizedBoxes[:, 1] = boxes[:, 1] * height
+        denormalizedBoxes[:, 3] = boxes[:, 3] * height
+        return denormalizedBoxes
 
     def callback(self, msg):
         self.get_logger().info(f"Received new raw image!")
 
         original_image = self.bridge.imgmsg_to_cv2(msg)
+        original_image = cv2.resize(original_image, (self.targetWidth, self.targetHeight))
         self.last_received_image = original_image
 
         if self.cone_detection:
@@ -70,12 +83,12 @@ class ImageProcessingNode(Node):
         self.compressed_image_publisher.publish(compressed_image)
 
     def prediction_to_bounding_box_msg(self, prediction):
-        bboxes = prediction[0]
+        bboxes = prediction
 
         # publish bounding boxes
         bbox_msg = BoundingBoxes()
         msg_data = []
-        for *xyxy, conf, cls in bboxes:
+        for xyxy, conf, cls in bboxes:
             bbox = BoundingBox()
             bbox.coordinates = [float(tensor) for tensor in xyxy]
             bbox.conf = float(conf)
@@ -85,20 +98,14 @@ class ImageProcessingNode(Node):
         return bbox_msg
 
     def prepare_image_for_model(self, original_image):
-        original_image = cv2.resize(original_image, (self.targetWidth, self.targetHeight))
+        prepared_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+        prepared_image = np.expand_dims(prepared_image, axis=0)
+
         if self.edge_tpu:
-            prepared_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
             prepared_image = prepared_image.astype(np.uint8)
-            prepared_image = np.expand_dims(prepared_image, axis=0)
-            #prepared_image = torch.from_numpy(
-            #    cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 1,
-            #                          (self.targetWidth, self.targetHeight),
-            #                          crop=False).astype(np.uint8))
         else:
-            prepared_image = torch.from_numpy(
-                cv2.dnn.blobFromImage(cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB), 1 / 255,
-                                      (self.targetWidth, self.targetHeight),
-                                      crop=False).astype(np.float32)).to(self.model.device)
+            prepared_image = prepared_image.astype(np.float32)
+            prepared_image /= 255
 
         return prepared_image
 
@@ -107,24 +114,29 @@ class ImageProcessingNode(Node):
             # preparing image for yolov5 network
             prepared_image = self.prepare_image_for_model(original_image)
 
+            input_details = self.interpreter.get_input_details()[0]
+            output_details = self.interpreter.get_output_details()[0]
+            self.interpreter.set_tensor(input_details['index'], prepared_image)
+            self.interpreter.invoke()
+            prediction = self.interpreter.get_tensor(output_details['index'])
+            prediction = prediction[0]
+
+            boxes = prediction[:, :4]
+            boxes = self.xywh2xyxy(boxes)
+            scores = prediction[:, 4]
+            cls = [np.argmax(score) for score in prediction[:, 5:]]
+
             # running the yolov5 network on the image
-            if self.edge_tpu:
-                yolov5_output = self.interpreter.get_output_details()[0]
-                yolov5_input = self.interpreter.get_input_details()[0]
-                print(yolov5_input)
-                print(prepared_image.shape)
-                self.interpreter.set_tensor(yolov5_input['index'], prepared_image)
-                self.interpreter.invoke()
-                prediction = self.interpreter.get_tensor(yolov5_output['index'])
-            else:
-                prediction = self.model(prepared_image)
+            if not self.edge_tpu:
+                boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
 
-            #prediction = non_max_suppression(prediction, 0.25, 0.45, [0, 1, 2], False, max_det=1000)
+            selected_indices = tf.image.non_max_suppression(boxes, scores, max_output_size=10, iou_threshold=0.25)
+            selected_boxes = np.array(tf.gather(boxes, selected_indices))
+            selected_cls = np.array(tf.gather(cls, selected_indices))
+            selected_scores = np.array(tf.gather(scores, selected_indices))
+            bboxes = list(zip(selected_boxes, selected_scores, selected_cls))
 
-            print(prediction)
-            print(prediction[0][0])
-
-            return prediction
+            return bboxes
 
     def get_last_received_image(self):
         return self.last_received_image

@@ -84,9 +84,9 @@ class ImgDisplayNode(Node):
 
             # annotating image with detected bounding boxes
             annotator = Annotator(image)
-            for *xyxy, conf, cls in bboxes:
+            for xyxy, conf, cls in bboxes:
                 if conf > 0.7:
-                    annotator.box_label(xyxy[0], f'{self.classes[int(cls)]} {conf:.2f}')
+                    annotator.box_label(xyxy, f'{self.classes[int(cls)]} {conf:.2f}')
 
             annotated_image = annotator.result()
 
