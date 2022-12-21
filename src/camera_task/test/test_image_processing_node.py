@@ -2,6 +2,7 @@ import unittest
 import cv2
 import rclpy
 import os
+import numpy as np
 
 from cv_bridge import CvBridge
 
@@ -30,6 +31,43 @@ class ImageProcessingNodeTest(TestCase):
 
     def test_initial_conditions(self):
         assert self.image_processing_node.get_last_received_image() is None
+
+    def test_xywh2xyxy_sampleValues(self):
+        xywh_sample = np.array([[0.7, 0.4, 0.6, 0.2], [0.8, 0.9, 0.1, 0.1]])
+        xyxy_expected = np.array([[0.4, 0.3, 1, 0.5], [0.75, 0.85, 0.85, 0.95]])
+
+        xyxy_result = self.image_processing_node.xywh2xyxy(xywh_sample)
+
+        assert xyxy_expected.shape == xyxy_result.shape
+        assert np.testing.assert_array_equal(xyxy_expected.tolist(), xyxy_result.tolist())
+
+    def test_xywh2xyxy_emptySample(self):
+        xywh_sample = np.array([])
+        xyxy_expected = np.array([])
+
+        xyxy_result = self.image_processing_node.xywh2xyxy(xywh_sample)
+
+        assert xyxy_expected.shape == xyxy_result.shape
+        assert xyxy_expected.tolist() == xyxy_result.tolist()
+
+    def test_xywh2xyxy_noneSample(self):
+        xywh_sample = None
+
+        xyxy_result = self.image_processing_node.xywh2xyxy(xywh_sample)
+
+        assert xyxy_result is None
+
+    def test_boxNormalization_sampleValue(self):
+        width = 100
+        height = 100
+        normalized_sample = np.array([[0.1, 0.2, 0.3, 0.4]])
+        denormalized_expected = np.array([[10, 20, 30, 40]])
+
+        denormalized_result = self.image_processing_node.normalizedBoxesToImageSize(normalized_sample, width, height)
+
+        assert np.array_equal(denormalized_expected, denormalized_result)
+        assert np.array_equiv(denormalized_expected, denormalized_result)
+        assert np.allclose(denormalized_expected, denormalized_result)
 
 
 # Integration Tests (maybe move to separate file)
