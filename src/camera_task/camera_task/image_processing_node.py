@@ -12,7 +12,7 @@ import numpy as np
 from yolov5.models.common import DetectMultiBackend
 
 import tensorflow as tf
-# import tflite_runtime.interpreter as tflite
+import tflite_runtime.interpreter as tflite
 
 import torch
 
@@ -21,7 +21,7 @@ class ImageProcessingNode(Node):
 
     def __init__(self, cone_detection, edge_tpu):
         super().__init__('image_processing_node')
-
+        print("Starting image processing node!")
         self.bridge = CvBridge()
         # subscriber for raw img data
         self.raw_image_subscriber = self.create_subscription(Image, '/raw_image', self.callback, 10)
@@ -41,13 +41,17 @@ class ImageProcessingNode(Node):
             self.classes = ['blue', 'orange', 'yellow']
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
-                self.interpreter = tf.lite.Interpreter('models/best-int8_edgetpu.tflite',
+                print("Loading edge tpu model!")
+                self.interpreter = tflite.Interpreter('models/best-int8_edgetpu.tflite',
                                                        experimental_delegates=[
-                                                           tf.lite.experimental.load_delegate('libedgetpu.so.1')])
+                                                           tflite.load_delegate('libedgetpu.so.1')])
                 self.interpreter.allocate_tensors()
+                print("Successfully loaded model!")
             else:
-                self.interpreter = tf.lite.Interpreter('models/best-fp16.tflite')
+                print("Loading normal model!")
+                self.interpreter = tflite.Interpreter('models/best-fp16.tflite')
                 self.interpreter.allocate_tensors()
+                print("Successfully loaded model!")
 
     def xywh2xyxy(self, boxes):
         if boxes is None:
@@ -137,9 +141,7 @@ class ImageProcessingNode(Node):
             scores = prediction[:, 4]
             cls = [np.argmax(score) for score in prediction[:, 5:]]
 
-            # running the yolov5 network on the image
-            if not self.edge_tpu:
-                boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
+            boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
 
             selected_indices = tf.image.non_max_suppression(boxes, scores, max_output_size=10, iou_threshold=0.25)
             selected_boxes = np.array(tf.gather(boxes, selected_indices))
