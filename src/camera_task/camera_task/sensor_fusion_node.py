@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-
+from rclpy.qos import qos_profile_sensor_data
 import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import CompressedImage
@@ -29,7 +29,7 @@ class SensorFusionNode(Node):
         self.bridge = CvBridge()
         self.proccessedImage_subscriber = self.create_subscription(CompressedImage, '/proc_img', self.video_callback, 10)
         self.boundingBox_subscriber = self.create_subscription(BoundingBoxes, '/bboxes', self.bbox_callback, 10)
-        self.lidar_subscriber = self.create_subscription(LaserScan, '/scan', self.lidar_callback, 0)
+        self.lidar_subscriber = self.create_subscription(LaserScan, '/scan', self.lidar_callback, qos_profile_sensor_data))
 
         self.annotatedImage_publisher = self.create_publisher(CompressedImage, '/annotated_img', 10)
 
@@ -64,6 +64,7 @@ class SensorFusionNode(Node):
         # reads the lidar data and clusters the points in the camera fov
         # returns an array of points as (middle_point in degree, distance)
         # (31, 1.5) means right in the center of the camera there is a object 1,5m away
+        print("Lidar Data received")
         scan_fov = laser_scan.range[149:212]
         index = -1
         TOLERANCE = 0.05
@@ -113,7 +114,7 @@ def main(args=None):
     node = SensorFusionNode()
     rclpy.spin(node)
 
-    node.destroy_node()
+    node.destroyc_node()
     rclpy.shutdown()
 
 
