@@ -63,10 +63,10 @@ class ImageProcessingNode(Node):
 
 
         xyxy = np.zeros((len(boxes), 4))
-        xyxy[:, 0] = np.clip(boxes[:, 0] - (boxes[:, 2] / 2), 0, 1)
-        xyxy[:, 1] = np.clip(boxes[:, 1] - (boxes[:, 3] / 2), 0, 1)
-        xyxy[:, 2] = np.clip(boxes[:, 0] + (boxes[:, 2] / 2), 0, 1)
-        xyxy[:, 3] = np.clip(boxes[:, 1] + (boxes[:, 3] / 2), 0, 1)
+        xyxy[:, 0] = boxes[:, 0] - (boxes[:, 2] / 2)
+        xyxy[:, 1] = boxes[:, 1] - (boxes[:, 3] / 2)
+        xyxy[:, 2] = boxes[:, 0] + (boxes[:, 2] / 2)
+        xyxy[:, 3] = boxes[:, 1] + (boxes[:, 3] / 2)
         return xyxy
 
     def normalizedBoxesToImageSize(self, boxes, width, height):
@@ -135,7 +135,6 @@ class ImageProcessingNode(Node):
             prediction = prediction[0]
 
             boxes = prediction[:, :4]
-            print(f"bounding boxes of frame : {boxes}")
             boxes = self.xywh2xyxy(boxes)
             scores = prediction[:, 4]
             cls = [np.argmax(score) for score in prediction[:, 5:]]
@@ -150,6 +149,7 @@ class ImageProcessingNode(Node):
 
 
 
+            print(f"bounding boxes of frame : {bboxes}")
             return bboxes
 
     def get_last_received_image(self):
