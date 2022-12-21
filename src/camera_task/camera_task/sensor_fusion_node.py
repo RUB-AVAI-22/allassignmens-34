@@ -53,22 +53,23 @@ class SensorFusionNode(Node):
 
     def bbox_callback(self, msg):
         bboxes = []
+        dictonary = {}
         for bbox in msg.bboxes:
             extractedBbox = []
             extractedBbox.append(bbox.coordinates)
             extractedBbox.append(bbox.conf)
             extractedBbox.append(bbox.cls)
             bboxes.append(extractedBbox)
-
-
+        
         self.bbox_queue.put(bboxes)
+        
 
-    def lidar_callback(self, result):
+    def lidar_callback(self, msg):
         self.get_logger().info('Receiving lidar frame')
-        if result:
+        if msg:
 
-            angles = result[:,1]
-            distances = result[:,0]
+            angles = msg[:,1]
+            distances = msg[:,0]
 
             angles = np.array(angles)
             distances = np.array(distances)
@@ -83,7 +84,16 @@ class SensorFusionNode(Node):
             plt.ylim((top, bottom)) # rescale y axis, to match the grid orientation
             plt.grid(True)
             plt.show()
-
+            
+            for message in msg:
+                if self.bbox_queue.get() >= 1:
+                    bboxs = self.bbox_queue.get()
+                    for bbox in bboxs:
+                        bbox_range = message[0] * 10.3
+                        dictonary = {1: 'blue', 2: 'orange', 3: 'yellow'}
+                        if bbox.coordinates[0] <= bbox_range and bbox.coordinates.[2] >= bbox_range:
+                            print(f'cone {dictonary[bbox.cls + 1]} angel = {message[0]}, distance = {message[1]}')
+                
 
     def annotation(self):
         if self.bbox_queue.qsize() >= 1 and self.image_queue.qsize() >= 1:
