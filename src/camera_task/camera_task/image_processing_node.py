@@ -46,10 +46,12 @@ class ImageProcessingNode(Node):
                                                        experimental_delegates=[
                                                            tf.lite.experimental.load_delegate('libedgetpu.so.1')])
                 self.interpreter.allocate_tensors()
+                print("Successfully loaded model!")
             else:
                 print("Loading normal model!")
                 self.interpreter = tf.lite.Interpreter('models/best-fp16.tflite')
                 self.interpreter.allocate_tensors()
+                print("Successfully loaded model!")
 
     def xywh2xyxy(self, boxes):
         if boxes is None:
