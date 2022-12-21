@@ -67,8 +67,8 @@ class SensorFusionNode(Node):
         self.get_logger().info('Receiving lidar frame')
         if result:
 
-            angles = result[1]
-            distances = result[0]
+            angles = result[:,1]
+            distances = result[:,0]
 
             angles = np.array(angles)
             distances = np.array(distances)
