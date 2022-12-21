@@ -30,13 +30,14 @@ class ImageProcessingNode(Node):
         # publisher for bounding box data
         self.bounding_box_publisher = self.create_publisher(BoundingBoxes, '/bboxes', 10)
 
+        self.targetWidth = 640
+        self.targetHeight = 640
+
         self.last_received_image = None
         self.cone_detection = cone_detection
         self.edge_tpu = edge_tpu
         # Initializing the yolov5 model
         if cone_detection:
-            self.targetWidth = 640
-            self.targetHeight = 640
             self.classes = ['blue', 'orange', 'yellow']
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
@@ -49,6 +50,16 @@ class ImageProcessingNode(Node):
                 self.interpreter.allocate_tensors()
 
     def xywh2xyxy(self, boxes):
+        if boxes is None:
+            return None
+        if not len(boxes.shape) == 2:
+            return np.empty(0)
+        if boxes.shape[0] == 0:
+            return np.empty(0)
+        if not boxes.shape[1] == 4:
+            return np.empty(0)
+
+
         xyxy = np.zeros((len(boxes), 4))
         xyxy[:, 0] = np.clip(boxes[:, 0] - (boxes[:, 2] / 2), 0, 1)
         xyxy[:, 1] = np.clip(boxes[:, 1] - (boxes[:, 3] / 2), 0, 1)
