@@ -12,7 +12,7 @@ import numpy as np
 from yolov5.models.common import DetectMultiBackend
 
 import tensorflow as tf
-# import tflite_runtime.interpreter as tflite
+import tflite_runtime.interpreter as tflite
 
 import torch
 
@@ -42,14 +42,14 @@ class ImageProcessingNode(Node):
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
                 print("Loading edge tpu model!")
-                self.interpreter = tf.lite.Interpreter('models/best-int8_edgetpu.tflite',
+                self.interpreter = tflite.Interpreter('models/best-int8_edgetpu.tflite',
                                                        experimental_delegates=[
-                                                           tf.lite.experimental.load_delegate('libedgetpu.so.1')])
+                                                           tflite.experimental.load_delegate('libedgetpu.so.1')])
                 self.interpreter.allocate_tensors()
                 print("Successfully loaded model!")
             else:
                 print("Loading normal model!")
-                self.interpreter = tf.lite.Interpreter('models/best-fp16.tflite')
+                self.interpreter = tflite.Interpreter('models/best-fp16.tflite')
                 self.interpreter.allocate_tensors()
                 print("Successfully loaded model!")
 
