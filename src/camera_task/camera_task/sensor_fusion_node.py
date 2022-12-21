@@ -18,6 +18,11 @@ import os
 
 import queue
 
+import math
+import matplotlib.pyplot as plt
+from math import cos, sin, radians, pi
+
+
 
 class SensorFusionNode(Node):
     def __init__(self):
@@ -38,7 +43,6 @@ class SensorFusionNode(Node):
         self.classes = ['blue', 'orange', 'yellow']
 
         self.timer = self.create_timer(1 / 20, self.annotation)
-        self.currentLidarClusters = []
 
         print("Node started!")
 
@@ -49,43 +53,48 @@ class SensorFusionNode(Node):
 
     def bbox_callback(self, msg):
         bboxes = []
+        dictonary = {}
         for bbox in msg.bboxes:
             extractedBbox = []
             extractedBbox.append(bbox.coordinates)
             extractedBbox.append(bbox.conf)
             extractedBbox.append(bbox.cls)
             bboxes.append(extractedBbox)
-
-
+        
         self.bbox_queue.put(bboxes)
+        
 
-    def lidar_callback(self, laser_scan):
-        #self.get_logger().info('Receiving lidar frame')
-        # reads the lidar data and clusters the points in the camera fov
-        # returns an array of points as (middle_point in degree, distance)
-        # (31, 1.5) means right in the center of the camera there is a object 1,5m away
-        scan_fov = laser_scan.range[149:212]
-        index = -1
-        TOLERANCE = 0.05
-        last_value = 0
-        clusters = []
-        results = []
-        for current_degree, distance in enumerate(scan_fov):
-            if abs(distance - last_value) > distance * TOLERANCE and distance != 0:
-                clusters.append((current_degree, current_degree, distance))
-                last_value = distance
-                index += 1
-            elif distance != 0:
-                start, end, mean = clusters[index]
-                new_mean = mean + (distance - mean) / (current_degree - start + 1)
-                clusters[index] = (start, current_degree, new_mean)
-                last_value = distance
-        for cluster in clusters:
-            start, end, mean = cluster
-            #results.append((round(end - start), mean))
-            results.append((round((end+start)/2), mean))
-        print("Objects found my Lidar: ", results)
-        self.currentLidarClusters = results
+    def lidar_callback(self, msg):
+        self.get_logger().info('Receiving lidar frame')
+        if msg:
+
+            angles = msg[:,1]
+            distances = msg[:,0]
+
+            angles = np.array(angles)
+            distances = np.array(distances)
+            
+            ox = np.cos(ang) * dist
+            oy = np.sin(ang) * dist
+            
+            plt.figure(figsize=(6,10))
+            plt.plot([oy, np.zeros(np.size(oy))], [ox, np.zeros(np.size(oy))], "ro-") # lines from 0,0 to the
+            plt.axis("equal")
+            bottom, top = plt.ylim()  # return the current ylim
+            plt.ylim((top, bottom)) # rescale y axis, to match the grid orientation
+            plt.grid(True)
+            plt.show()
+            
+            for message in msg:
+                if self.bbox_queue.get() >= 1:
+                    bboxs = self.bbox_queue.get()
+                    for bbox in bboxs:
+                        bbox_range = message[0] * 10.3
+                        dictonary = {1: 'blue', 2: 'orange', 3: 'yellow'}
+                        if bbox.coordinates[0] <= bbox_range and bbox.coordinates.[2] >= bbox_range:
+                            print(f'cone {dictonary[bbox.cls + 1]} angel = {message[0]}, distance = {message[1]}')
+                
+
     def annotation(self):
         if self.bbox_queue.qsize() >= 1 and self.image_queue.qsize() >= 1:
             image = self.image_queue.get()
