@@ -38,6 +38,7 @@ class SensorFusionNode(Node):
         self.classes = ['blue', 'orange', 'yellow']
 
         self.timer = self.create_timer(1 / 20, self.annotation)
+        self.currentLidarClusters = []
 
         print("Node started!")
 
@@ -59,7 +60,7 @@ class SensorFusionNode(Node):
         self.bbox_queue.put(bboxes)
 
     def lidar_callback(self, laser_scan):
-        self.get_logger().info('Receiving lidar frame')
+        #self.get_logger().info('Receiving lidar frame')
         # reads the lidar data and clusters the points in the camera fov
         # returns an array of points as (middle_point in degree, distance)
         # (31, 1.5) means right in the center of the camera there is a object 1,5m away
@@ -83,7 +84,8 @@ class SensorFusionNode(Node):
             start, end, mean = cluster
             #results.append((round(end - start), mean))
             results.append((round((end+start)/2), mean))
-
+        print("Objects found my Lidar: ", results)
+        self.currentLidarClusters = results
     def annotation(self):
         if self.bbox_queue.qsize() >= 1 and self.image_queue.qsize() >= 1:
             image = self.image_queue.get()
