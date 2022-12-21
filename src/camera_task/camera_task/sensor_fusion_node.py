@@ -63,18 +63,13 @@ class SensorFusionNode(Node):
 
         self.bbox_queue.put(bboxes)
 
-    def lidar_callback(self, msg):
+    def lidar_callback(self, result):
         self.get_logger().info('Receiving lidar frame')
-        if msg:
-            print('LiDAR data recieved!')
-            
-            measures = [line.split(",") for line in msg]
-            angles = []
-            distances = []
-            
-            for measure in measures:
-                angles.append(float(measure[0]))
-                distances.append(float(measure[1]))
+        if result:
+
+            angles = result[1]
+            distances = result[0]
+
             angles = np.array(angles)
             distances = np.array(distances)
             
