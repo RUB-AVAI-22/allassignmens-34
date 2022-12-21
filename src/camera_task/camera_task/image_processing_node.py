@@ -135,6 +135,7 @@ class ImageProcessingNode(Node):
             prediction = prediction[0]
 
             boxes = prediction[:, :4]
+            print(f"bounding boxes of frame : {boxes}")
             boxes = self.xywh2xyxy(boxes)
             scores = prediction[:, 4]
             cls = [np.argmax(score) for score in prediction[:, 5:]]
@@ -147,7 +148,7 @@ class ImageProcessingNode(Node):
             selected_scores = np.array(tf.gather(scores, selected_indices))
             bboxes = list(zip(selected_boxes, selected_scores, selected_cls))
 
-            print(f"bounding boxes of frame : {bboxes}")
+
 
             return bboxes
 
