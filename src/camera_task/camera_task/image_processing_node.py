@@ -21,7 +21,7 @@ class ImageProcessingNode(Node):
 
     def __init__(self, cone_detection, edge_tpu):
         super().__init__('image_processing_node')
-
+        print("Starting image processing node!")
         self.bridge = CvBridge()
         # subscriber for raw img data
         self.raw_image_subscriber = self.create_subscription(Image, '/raw_image', self.callback, 10)
@@ -41,11 +41,13 @@ class ImageProcessingNode(Node):
             self.classes = ['blue', 'orange', 'yellow']
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
+                print("Loading edge tpu model!")
                 self.interpreter = tf.lite.Interpreter('models/best-int8_edgetpu.tflite',
                                                        experimental_delegates=[
                                                            tf.lite.experimental.load_delegate('libedgetpu.so.1')])
                 self.interpreter.allocate_tensors()
             else:
+                print("Loading normal model!")
                 self.interpreter = tf.lite.Interpreter('models/best-fp16.tflite')
                 self.interpreter.allocate_tensors()
 
