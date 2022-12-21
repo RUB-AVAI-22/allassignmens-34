@@ -58,8 +58,31 @@ class SensorFusionNode(Node):
 
         self.bbox_queue.put(bboxes)
 
-    def lidar_callback(self, msg):
+    def lidar_callback(self, laser_scan):
         self.get_logger().info('Receiving lidar frame')
+        # reads the lidar data and clusters the points in the camera fov
+        # returns an array of points as (middle_point in degree, distance)
+        # (31, 1.5) means right in the center of the camera there is a object 1,5m away
+        scan_fov = laser_scan.range[149:212]
+        index = -1
+        TOLERANCE = 0.05
+        last_value = 0
+        clusters = []
+        results = []
+        for current_degree, distance in enumerate(scan_fov):
+            if abs(distance - last_value) > distance * TOLERANCE and distance != 0:
+                clusters.append((current_degree, current_degree, distance))
+                last_value = distance
+                index += 1
+            elif distance != 0:
+                start, end, mean = clusters[index]
+                new_mean = mean + (distance - mean) / (current_degree - start + 1)
+                clusters[index] = (start, current_degree, new_mean)
+                last_value = distance
+        for cluster in clusters:
+            start, end, mean = cluster
+            #results.append((round(end - start), mean))
+            results.append((round((end+start)/2), mean))
 
     def annotation(self):
         if self.bbox_queue.qsize() >= 1 and self.image_queue.qsize() >= 1:
