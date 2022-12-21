@@ -71,10 +71,10 @@ class ImageProcessingNode(Node):
 
     def normalizedBoxesToImageSize(self, boxes, width, height):
         denormalizedBoxes = np.zeros((len(boxes), 4))
-        denormalizedBoxes[:, 0] = boxes[:, 0] * width
-        denormalizedBoxes[:, 2] = boxes[:, 2] * width
-        denormalizedBoxes[:, 1] = boxes[:, 1] * height
-        denormalizedBoxes[:, 3] = boxes[:, 3] * height
+        denormalizedBoxes[:, 0] = boxes[:, 0] * 4
+        denormalizedBoxes[:, 2] = boxes[:, 2] * 4
+        denormalizedBoxes[:, 1] = boxes[:, 1] * 4
+        denormalizedBoxes[:, 3] = boxes[:, 3] * 4
         return denormalizedBoxes
 
     def callback(self, msg):
@@ -139,7 +139,7 @@ class ImageProcessingNode(Node):
             scores = prediction[:, 4]
             cls = [np.argmax(score) for score in prediction[:, 5:]]
 
-            #boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
+            boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
 
             selected_indices = tf.image.non_max_suppression(boxes, scores, max_output_size=10, iou_threshold=0.25)
             selected_boxes = np.array(tf.gather(boxes, selected_indices))
