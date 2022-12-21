@@ -52,14 +52,14 @@ class ImageProcessingNode(Node):
                 print("Successfully loaded model!")
 
     def xywh2xyxy(self, boxes):
-        if boxes is None:
+        """if boxes is None:
             return None
         if not len(boxes.shape) == 2:
             return np.empty(0)
         if boxes.shape[0] == 0:
             return np.empty(0)
         if not boxes.shape[1] == 4:
-            return np.empty(0)
+            return np.empty(0)"""
 
 
         xyxy = np.zeros((len(boxes), 4))
