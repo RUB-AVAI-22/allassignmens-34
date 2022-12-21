@@ -141,7 +141,7 @@ class ImageProcessingNode(Node):
 
             boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
 
-            selected_indices = tf.image.non_max_suppression(boxes, scores, max_output_size=10, iou_threshold=0.25, score_threshold=40)
+            selected_indices = tf.image.non_max_suppression(boxes, scores, max_output_size=10, iou_threshold=0.25, score_threshold=40.0)
             selected_boxes = np.array(tf.gather(boxes, selected_indices))
             selected_cls = np.array(tf.gather(cls, selected_indices))
             selected_scores = np.array(tf.gather(scores, selected_indices))
