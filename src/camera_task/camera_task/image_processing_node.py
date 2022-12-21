@@ -44,7 +44,7 @@ class ImageProcessingNode(Node):
                 print("Loading edge tpu model!")
                 self.interpreter = tflite.Interpreter('models/best-int8_edgetpu.tflite',
                                                        experimental_delegates=[
-                                                           tflite.experimental.load_delegate('libedgetpu.so.1')])
+                                                           tflite.load_delegate('libedgetpu.so.1')])
                 self.interpreter.allocate_tensors()
                 print("Successfully loaded model!")
             else:
