@@ -71,10 +71,10 @@ class ImageProcessingNode(Node):
 
     def normalizedBoxesToImageSize(self, boxes, width, height):
         denormalizedBoxes = np.zeros((len(boxes), 4))
-        denormalizedBoxes[:, 0] = boxes[:, 0] * 4
-        denormalizedBoxes[:, 2] = boxes[:, 2] * 4
-        denormalizedBoxes[:, 1] = boxes[:, 1] * 4
-        denormalizedBoxes[:, 3] = boxes[:, 3] * 4
+        denormalizedBoxes[:, 0] = boxes[:, 0] * 5
+        denormalizedBoxes[:, 2] = boxes[:, 2] * 5
+        denormalizedBoxes[:, 1] = boxes[:, 1] * 5
+        denormalizedBoxes[:, 3] = boxes[:, 3] * 5
         return denormalizedBoxes
 
     def callback(self, msg):
