@@ -140,7 +140,7 @@ class ImageProcessingNode(Node):
             cls = [np.argmax(score) for score in prediction[:, 5:]]
 
             boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
-            print(boxes)
+            print(f"bounding boxes of frame : {boxes}")
 
             selected_indices = tf.image.non_max_suppression(boxes, scores, max_output_size=10, iou_threshold=0.25)
             selected_boxes = np.array(tf.gather(boxes, selected_indices))
