@@ -22,6 +22,10 @@ class CameraNodeTest(TestCase):
     def test_video_stream_open_after_startup(self):
         assert self.camera_node.cap.read()[0]
 
+    def test_fps(self):
+        assert self.camera_node.param_fps(-1)
+        assert self.camera_node.param_fps()
+
 
 if __name__ == '__main__':
     unittest.main()
