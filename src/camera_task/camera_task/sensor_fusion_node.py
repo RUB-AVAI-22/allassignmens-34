@@ -7,8 +7,8 @@ from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import LaserScan
 from avai_messages.msg import BoundingBox
 from avai_messages.msg import BoundingBoxes
-from avai_messages.msg import BoundingBoxWithRealCooridnates
-from avai_messages.msg import BoundingBoxesWithRealCooridnates
+from avai_messages.msg import BoundingBoxWithRealCoordinates
+from avai_messages.msg import BoundingBoxesWithRealCoordinates
 from rcl_interfaces.msg import SetParametersResult
 
 
@@ -32,7 +32,7 @@ class SensorFusionNode(Node):
         self.boundingBox_subscriber = self.create_subscription(BoundingBoxes, '/bboxes', self.bbox_callback, 10)
         self.lidar_subscriber = self.create_subscription(LaserScan, '/scan', self.lidar_callback, qos_profile_sensor_data)
 
-        self.bboxWithRealCoords_publisher = self.create_publisher(BoundingBoxesWithRealCooridnates, '/bboxes_realCoords', 10)
+        self.bboxWithRealCoords_publisher = self.create_publisher(BoundingBoxesWithRealCoordinates, '/bboxes_realCoords', 10)
 
         self.bbox_queue = queue.SimpleQueue()
         self.classes = ['blue', 'orange', 'yellow']
