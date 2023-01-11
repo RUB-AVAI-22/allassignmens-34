@@ -7,6 +7,8 @@ from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import LaserScan
 from avai_messages.msg import BoundingBox
 from avai_messages.msg import BoundingBoxes
+from avai_messages.msg import BoundingBoxWithRealCooridnates
+from avai_messages.msg import BoundingBoxesWithRealCooridnates
 from rcl_interfaces.msg import SetParametersResult
 
 
@@ -27,25 +29,19 @@ class SensorFusionNode(Node):
         # self.timer = self.create_timer(timer_period, self.control_callback)
         # video subscriber
         self.bridge = CvBridge()
-        self.proccessedImage_subscriber = self.create_subscription(CompressedImage, '/proc_img', self.video_callback, 10)
         self.boundingBox_subscriber = self.create_subscription(BoundingBoxes, '/bboxes', self.bbox_callback, 10)
-        self.lidar_subscriber = self.create_subscription(LaserScan, '/scan', self.lidar_callback, qos_profile_sensor_data))
+        self.lidar_subscriber = self.create_subscription(LaserScan, '/scan', self.lidar_callback, qos_profile_sensor_data)
 
-        self.annotatedImage_publisher = self.create_publisher(CompressedImage, '/annotated_img', 10)
+        self.bboxWithRealCoords_publisher = self.create_publisher(BoundingBoxesWithRealCooridnates, '/bboxes_realCoords', 10)
 
         self.bbox_queue = queue.SimpleQueue()
-        self.image_queue = queue.SimpleQueue()
         self.classes = ['blue', 'orange', 'yellow']
 
-        self.timer = self.create_timer(1 / 20, self.annotation)
+        self.timer = self.create_timer(1 / 20, self.matchClusterToBoundingBoxes)
         self.currentLidarClusters = []
 
         print("Node started!")
 
-    def video_callback(self, msg):
-        if frame:
-            current_frame = self.bridge.compressed_imgmsg_to_cv2(frame)
-            self.image_queue.put(current_frame)
 
     def bbox_callback(self, msg):
         bboxes = []
@@ -87,23 +83,32 @@ class SensorFusionNode(Node):
             results.append((round((end+start)/2), mean))
         print("Objects found my Lidar: ", results)
         self.currentLidarClusters = results
-    def annotation(self):
-        if self.bbox_queue.qsize() >= 1 and self.image_queue.qsize() >= 1:
-            image = self.image_queue.get()
-            bboxes = self.bbox_queue.get()
 
+    def polarToCartesian(self, angle, distance):
+        x = np.cos(angle) * distance
+        y = np.sin(angle) * distance
+        return [x,y]
 
-            # annotating image with detected bounding boxes
-            annotator = Annotator(image)
-            for *xyxy, conf, cls in bboxes:
-                if conf > 0.7:
-                    annotator.box_label(xyxy[0], f'{self.classes[int(cls)]} {conf:.2f}')
+    def matchClusterToBoundingBoxes(self):
+        if self.bbox_queue.empty():
+            return
+        if self.currentLidarClusters == []:
+            return
 
-            annotated_image = annotator.result()
+        bboxes = self.bbox_queue.get()
 
+        matchedBBoxes = []
 
-            annotated_image = cv2.resize(annotated_image, (640, 480))
-            self.annotatedImage_publisher.publish(annotated_image)
+        for clusterAngle, clusterDistance in self.currentLidarClusters:
+            clusterPixelApprox = (clusterAngle/64.0)*640
+            for bbox in bboxes:
+                if clusterPixelApprox > bbox[0] and clusterPixelApprox < bbox[2]:
+                    bboxPos = self.polarToCartesian(clusterAngle, clusterDistance)
+                    matchedBBoxes += [*bbox, bboxPos]
+                    break
+
+        self.bboxWithRealCoords_publisher.publish(matchedBBoxes)
+
 
 
 def main(args=None):
