@@ -1,0 +1,20 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from avai_messages/msg/BoundingBoxWithRealCoordinates.msg
+// generated code does not contain a copyright notice
+
+
+module avai_messages {
+  module msg {
+    typedef float float__4[4];
+    typedef float float__2[2];
+    struct BoundingBoxWithRealCoordinates {
+      float__4 image_coords;
+
+      float__2 real_coords;
+
+      float conf;
+
+      float cls;
+    };
+  };
+};
