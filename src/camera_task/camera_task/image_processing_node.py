@@ -22,7 +22,7 @@ class ImageProcessingNode(Node):
         print("Starting image processing node!")
         self.bridge = CvBridge()
         # subscriber for raw img data
-        self.raw_image_subscriber = self.create_subscription(Image, '/raw_image', self.callback, 10)
+        self.raw_image_subscriber = self.create_subscription(Image, '/camera/image_raw', self.callback, 10)
         # publisher for compressed img data
         self.compressed_image_publisher = self.create_publisher(CompressedImage, '/proc_img', 10)
         # publisher for bounding box data
