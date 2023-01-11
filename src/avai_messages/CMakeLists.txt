@@ -25,8 +25,8 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/BoundingBox.msg"
   "msg/BoundingBoxes.msg"
-  "msg/BoundingBoxWithRealCoordinates"
-  "msg/BoundingBoxesWithRealCoordinates"
+  "msg/BoundingBoxWithRealCoordinates.msg"
+  "msg/BoundingBoxesWithRealCoordinates.msg"
  )
 
 ament_export_dependencies(rosidl_default_runtime)
