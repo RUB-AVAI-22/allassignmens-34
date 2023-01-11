@@ -77,6 +77,24 @@ class ImageProcessingNode(Node):
         denormalizedBoxes[:, 3] = boxes[:, 3] * 5
         return denormalizedBoxes
 
+    #Necessary step for working with edge tpu data which returns values between 0 and 127
+    def normalizeBoxes(self, boxes):
+        normalizedBoxes = np.zeros((len(boxes), 4))
+        normalizedBoxes[:, 0] = boxes[:, 0] / 128.0
+        normalizedBoxes[:, 2] = boxes[:, 2] / 128.0
+        normalizedBoxes[:, 1] = boxes[:, 1] / 128.0
+        normalizedBoxes[:, 3] = boxes[:, 3] / 128.0
+        return normalizedBoxes
+
+    def clipBoxes(self, boxes):
+        clippedBoxes = np.zeros((len(boxes), 4))
+        clippedBoxes[:, 0] = np.clip(boxes[:, 0], 0, 1)
+        clippedBoxes[:, 2] = np.clip(boxes[:, 2], 0, 1)
+        clippedBoxes[:, 1] = np.clip(boxes[:, 1], 0, 1)
+        clippedBoxes[:, 3] = np.clip(boxes[:, 3], 0, 1)
+        return clippedBoxes
+
+
     def callback(self, msg):
         self.get_logger().info(f"Received new raw image!")
 
@@ -110,6 +128,7 @@ class ImageProcessingNode(Node):
         bbox_msg.bboxes = msg_data
         return bbox_msg
 
+
     def prepare_image_for_model(self, original_image):
         prepared_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
         prepared_image = np.expand_dims(prepared_image, axis=0)
@@ -122,6 +141,8 @@ class ImageProcessingNode(Node):
 
         return prepared_image
 
+    # In this section the image is pushed through the yolov5 network.
+    # The resulting bounding boxes are reformatted and non-max-suppression is applied to filter out unimportant boxes.
     def image_to_prediction(self, original_image):
         if self.cone_detection:
             # preparing image for yolov5 network
@@ -139,17 +160,21 @@ class ImageProcessingNode(Node):
             scores = prediction[:, 4]
             cls = [np.argmax(score) for score in prediction[:, 5:]]
 
+            if self.edge_tpu:
+                boxes = self.normalizeBoxes(boxes)
+
+            boxes = self.clipBoxes(boxes)
+
             boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
 
             selected_indices = tf.image.non_max_suppression(boxes, scores/200, max_output_size=10, iou_threshold=0.25, score_threshold=0.35)
+
             selected_boxes = np.array(tf.gather(boxes, selected_indices))
             selected_cls = np.array(tf.gather(cls, selected_indices))
             selected_scores = np.array(tf.gather(scores, selected_indices))
+
             bboxes = list(zip(selected_boxes, selected_scores, selected_cls))
 
-
-
-            print(f"bounding boxes of frame : {bboxes}")
             return bboxes
 
     def get_last_received_image(self):
