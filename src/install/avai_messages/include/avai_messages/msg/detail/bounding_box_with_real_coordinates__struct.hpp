@@ -38,9 +38,9 @@ struct BoundingBoxWithRealCoordinates_
       rosidl_runtime_cpp::MessageInitialization::ZERO == _init)
     {
       std::fill<typename std::array<float, 4>::iterator, float>(this->image_coords.begin(), this->image_coords.end(), 0.0f);
-      std::fill<typename std::array<float, 2>::iterator, float>(this->real_coords.begin(), this->real_coords.end(), 0.0f);
       this->conf = 0.0f;
       this->cls = 0.0f;
+      std::fill<typename std::array<float, 2>::iterator, float>(this->real_coords.begin(), this->real_coords.end(), 0.0f);
     }
   }
 
@@ -52,9 +52,9 @@ struct BoundingBoxWithRealCoordinates_
       rosidl_runtime_cpp::MessageInitialization::ZERO == _init)
     {
       std::fill<typename std::array<float, 4>::iterator, float>(this->image_coords.begin(), this->image_coords.end(), 0.0f);
-      std::fill<typename std::array<float, 2>::iterator, float>(this->real_coords.begin(), this->real_coords.end(), 0.0f);
       this->conf = 0.0f;
       this->cls = 0.0f;
+      std::fill<typename std::array<float, 2>::iterator, float>(this->real_coords.begin(), this->real_coords.end(), 0.0f);
     }
   }
 
@@ -62,27 +62,21 @@ struct BoundingBoxWithRealCoordinates_
   using _image_coords_type =
     std::array<float, 4>;
   _image_coords_type image_coords;
-  using _real_coords_type =
-    std::array<float, 2>;
-  _real_coords_type real_coords;
   using _conf_type =
     float;
   _conf_type conf;
   using _cls_type =
     float;
   _cls_type cls;
+  using _real_coords_type =
+    std::array<float, 2>;
+  _real_coords_type real_coords;
 
   // setters for named parameter idiom
   Type & set__image_coords(
     const std::array<float, 4> & _arg)
   {
     this->image_coords = _arg;
-    return *this;
-  }
-  Type & set__real_coords(
-    const std::array<float, 2> & _arg)
-  {
-    this->real_coords = _arg;
     return *this;
   }
   Type & set__conf(
@@ -95,6 +89,12 @@ struct BoundingBoxWithRealCoordinates_
     const float & _arg)
   {
     this->cls = _arg;
+    return *this;
+  }
+  Type & set__real_coords(
+    const std::array<float, 2> & _arg)
+  {
+    this->real_coords = _arg;
     return *this;
   }
 
@@ -143,13 +143,13 @@ struct BoundingBoxWithRealCoordinates_
     if (this->image_coords != other.image_coords) {
       return false;
     }
-    if (this->real_coords != other.real_coords) {
-      return false;
-    }
     if (this->conf != other.conf) {
       return false;
     }
     if (this->cls != other.cls) {
+      return false;
+    }
+    if (this->real_coords != other.real_coords) {
       return false;
     }
     return true;

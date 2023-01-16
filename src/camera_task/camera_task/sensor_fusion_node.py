@@ -88,9 +88,21 @@ class SensorFusionNode(Node):
             return
 
         closestBboxes = []
-
-        for boxes in self.bboxes.bboxes:
-
+        selectedBboxesMsg = None
+        for receivedBboxes in np.flip(self.receivedBboxMsgs):
+            closestOdometryMsg = None
+            closestDistance = 0.1
+            for receivedOdometry in np.flip(self.receivedOdometryMsgs):
+                msgDistance = self.message_distance(receivedBboxes.header.stamp, receivedOdometry.header.stamp)
+                if msgDistance < closestDistance:
+                    closestOdometryMsg = receivedOdometry
+                    selectedBboxesMsg = receivedBboxes
+                    break
+            if closestOdometryMsg:
+                self.update_map(selectedBboxesMsg.bboxes, closestOdometryMsg.pose, closestOdometryMsg.twist)
+                np.delete(self.receivedOdometryMsgs, closestOdometryMsg)
+                np.delete(self.receivedBboxMsgs, selectedBboxesMsg)
+                break
 
 
         matchedBBoxes = []

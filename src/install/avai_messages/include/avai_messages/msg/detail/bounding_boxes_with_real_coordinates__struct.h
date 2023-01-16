@@ -18,12 +18,15 @@ extern "C"
 // Constants defined in the message
 
 // Include directives for member types
+// Member 'header'
+#include "std_msgs/msg/detail/header__struct.h"
 // Member 'bboxes'
 #include "avai_messages/msg/detail/bounding_box_with_real_coordinates__struct.h"
 
 // Struct defined in msg/BoundingBoxesWithRealCoordinates in the package avai_messages.
 typedef struct avai_messages__msg__BoundingBoxesWithRealCoordinates
 {
+  std_msgs__msg__Header header;
   avai_messages__msg__BoundingBoxWithRealCoordinates__Sequence bboxes;
 } avai_messages__msg__BoundingBoxesWithRealCoordinates;
 

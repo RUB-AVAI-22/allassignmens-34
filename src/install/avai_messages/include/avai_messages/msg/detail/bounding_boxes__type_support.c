@@ -13,6 +13,10 @@
 
 
 // Include directives for member types
+// Member `header`
+#include "std_msgs/msg/header.h"
+// Member `header`
+#include "std_msgs/msg/detail/header__rosidl_typesupport_introspection_c.h"
 // Member `bboxes`
 #include "avai_messages/msg/bounding_box.h"
 // Member `bboxes`
@@ -70,7 +74,22 @@ bool BoundingBoxes__rosidl_typesupport_introspection_c__resize_function__Boundin
   return avai_messages__msg__BoundingBox__Sequence__init(member, size);
 }
 
-static rosidl_typesupport_introspection_c__MessageMember BoundingBoxes__rosidl_typesupport_introspection_c__BoundingBoxes_message_member_array[1] = {
+static rosidl_typesupport_introspection_c__MessageMember BoundingBoxes__rosidl_typesupport_introspection_c__BoundingBoxes_message_member_array[2] = {
+  {
+    "header",  // name
+    rosidl_typesupport_introspection_c__ROS_TYPE_MESSAGE,  // type
+    0,  // upper bound of string
+    NULL,  // members of sub message (initialized later)
+    false,  // is array
+    0,  // array size
+    false,  // is upper bound
+    offsetof(avai_messages__msg__BoundingBoxes, header),  // bytes offset in struct
+    NULL,  // default value
+    NULL,  // size() function pointer
+    NULL,  // get_const(index) function pointer
+    NULL,  // get(index) function pointer
+    NULL  // resize(index) function pointer
+  },
   {
     "bboxes",  // name
     rosidl_typesupport_introspection_c__ROS_TYPE_MESSAGE,  // type
@@ -91,7 +110,7 @@ static rosidl_typesupport_introspection_c__MessageMember BoundingBoxes__rosidl_t
 static const rosidl_typesupport_introspection_c__MessageMembers BoundingBoxes__rosidl_typesupport_introspection_c__BoundingBoxes_message_members = {
   "avai_messages__msg",  // message namespace
   "BoundingBoxes",  // message name
-  1,  // number of fields
+  2,  // number of fields
   sizeof(avai_messages__msg__BoundingBoxes),
   BoundingBoxes__rosidl_typesupport_introspection_c__BoundingBoxes_message_member_array,  // message members
   BoundingBoxes__rosidl_typesupport_introspection_c__BoundingBoxes_init_function,  // function to initialize message memory (memory has to be allocated)
@@ -110,6 +129,8 @@ ROSIDL_TYPESUPPORT_INTROSPECTION_C_EXPORT_avai_messages
 const rosidl_message_type_support_t *
 ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_introspection_c, avai_messages, msg, BoundingBoxes)() {
   BoundingBoxes__rosidl_typesupport_introspection_c__BoundingBoxes_message_member_array[0].members_ =
+    ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_introspection_c, std_msgs, msg, Header)();
+  BoundingBoxes__rosidl_typesupport_introspection_c__BoundingBoxes_message_member_array[1].members_ =
     ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_introspection_c, avai_messages, msg, BoundingBox)();
   if (!BoundingBoxes__rosidl_typesupport_introspection_c__BoundingBoxes_message_type_support_handle.typesupport_identifier) {
     BoundingBoxes__rosidl_typesupport_introspection_c__BoundingBoxes_message_type_support_handle.typesupport_identifier =

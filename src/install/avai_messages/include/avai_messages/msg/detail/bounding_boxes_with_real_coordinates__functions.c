@@ -12,6 +12,8 @@
 
 
 // Include directives for member types
+// Member `header`
+#include "std_msgs/msg/detail/header__functions.h"
 // Member `bboxes`
 #include "avai_messages/msg/detail/bounding_box_with_real_coordinates__functions.h"
 
@@ -19,6 +21,11 @@ bool
 avai_messages__msg__BoundingBoxesWithRealCoordinates__init(avai_messages__msg__BoundingBoxesWithRealCoordinates * msg)
 {
   if (!msg) {
+    return false;
+  }
+  // header
+  if (!std_msgs__msg__Header__init(&msg->header)) {
+    avai_messages__msg__BoundingBoxesWithRealCoordinates__fini(msg);
     return false;
   }
   // bboxes
@@ -35,6 +42,8 @@ avai_messages__msg__BoundingBoxesWithRealCoordinates__fini(avai_messages__msg__B
   if (!msg) {
     return;
   }
+  // header
+  std_msgs__msg__Header__fini(&msg->header);
   // bboxes
   avai_messages__msg__BoundingBoxWithRealCoordinates__Sequence__fini(&msg->bboxes);
 }
@@ -43,6 +52,12 @@ bool
 avai_messages__msg__BoundingBoxesWithRealCoordinates__are_equal(const avai_messages__msg__BoundingBoxesWithRealCoordinates * lhs, const avai_messages__msg__BoundingBoxesWithRealCoordinates * rhs)
 {
   if (!lhs || !rhs) {
+    return false;
+  }
+  // header
+  if (!std_msgs__msg__Header__are_equal(
+      &(lhs->header), &(rhs->header)))
+  {
     return false;
   }
   // bboxes
@@ -60,6 +75,12 @@ avai_messages__msg__BoundingBoxesWithRealCoordinates__copy(
   avai_messages__msg__BoundingBoxesWithRealCoordinates * output)
 {
   if (!input || !output) {
+    return false;
+  }
+  // header
+  if (!std_msgs__msg__Header__copy(
+      &(input->header), &(output->header)))
+  {
     return false;
   }
   // bboxes

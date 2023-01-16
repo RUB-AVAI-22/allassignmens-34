@@ -21,9 +21,9 @@ extern "C"
 typedef struct avai_messages__msg__BoundingBoxWithRealCoordinates
 {
   float image_coords[4];
-  float real_coords[2];
   float conf;
   float cls;
+  float real_coords[2];
 } avai_messages__msg__BoundingBoxWithRealCoordinates;
 
 // Struct for a sequence of avai_messages__msg__BoundingBoxWithRealCoordinates.

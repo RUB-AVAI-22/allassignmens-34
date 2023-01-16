@@ -94,21 +94,6 @@ static const ::rosidl_typesupport_introspection_cpp::MessageMember BoundingBoxWi
     nullptr  // resize(index) function pointer
   },
   {
-    "real_coords",  // name
-    ::rosidl_typesupport_introspection_cpp::ROS_TYPE_FLOAT,  // type
-    0,  // upper bound of string
-    nullptr,  // members of sub message
-    true,  // is array
-    2,  // array size
-    false,  // is upper bound
-    offsetof(avai_messages::msg::BoundingBoxWithRealCoordinates, real_coords),  // bytes offset in struct
-    nullptr,  // default value
-    size_function__BoundingBoxWithRealCoordinates__real_coords,  // size() function pointer
-    get_const_function__BoundingBoxWithRealCoordinates__real_coords,  // get_const(index) function pointer
-    get_function__BoundingBoxWithRealCoordinates__real_coords,  // get(index) function pointer
-    nullptr  // resize(index) function pointer
-  },
-  {
     "conf",  // name
     ::rosidl_typesupport_introspection_cpp::ROS_TYPE_FLOAT,  // type
     0,  // upper bound of string
@@ -136,6 +121,21 @@ static const ::rosidl_typesupport_introspection_cpp::MessageMember BoundingBoxWi
     nullptr,  // size() function pointer
     nullptr,  // get_const(index) function pointer
     nullptr,  // get(index) function pointer
+    nullptr  // resize(index) function pointer
+  },
+  {
+    "real_coords",  // name
+    ::rosidl_typesupport_introspection_cpp::ROS_TYPE_FLOAT,  // type
+    0,  // upper bound of string
+    nullptr,  // members of sub message
+    true,  // is array
+    2,  // array size
+    false,  // is upper bound
+    offsetof(avai_messages::msg::BoundingBoxWithRealCoordinates, real_coords),  // bytes offset in struct
+    nullptr,  // default value
+    size_function__BoundingBoxWithRealCoordinates__real_coords,  // size() function pointer
+    get_const_function__BoundingBoxWithRealCoordinates__real_coords,  // get_const(index) function pointer
+    get_function__BoundingBoxWithRealCoordinates__real_coords,  // get(index) function pointer
     nullptr  // resize(index) function pointer
   }
 };

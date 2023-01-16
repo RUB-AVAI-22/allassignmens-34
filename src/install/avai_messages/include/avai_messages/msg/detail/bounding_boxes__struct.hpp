@@ -15,6 +15,8 @@
 
 
 // Include directives for member types
+// Member 'header'
+#include "std_msgs/msg/detail/header__struct.hpp"
 // Member 'bboxes'
 #include "avai_messages/msg/detail/bounding_box__struct.hpp"
 
@@ -37,22 +39,32 @@ struct BoundingBoxes_
   using Type = BoundingBoxes_<ContainerAllocator>;
 
   explicit BoundingBoxes_(rosidl_runtime_cpp::MessageInitialization _init = rosidl_runtime_cpp::MessageInitialization::ALL)
+  : header(_init)
   {
     (void)_init;
   }
 
   explicit BoundingBoxes_(const ContainerAllocator & _alloc, rosidl_runtime_cpp::MessageInitialization _init = rosidl_runtime_cpp::MessageInitialization::ALL)
+  : header(_alloc, _init)
   {
     (void)_init;
-    (void)_alloc;
   }
 
   // field types and members
+  using _header_type =
+    std_msgs::msg::Header_<ContainerAllocator>;
+  _header_type header;
   using _bboxes_type =
     std::vector<avai_messages::msg::BoundingBox_<ContainerAllocator>, typename ContainerAllocator::template rebind<avai_messages::msg::BoundingBox_<ContainerAllocator>>::other>;
   _bboxes_type bboxes;
 
   // setters for named parameter idiom
+  Type & set__header(
+    const std_msgs::msg::Header_<ContainerAllocator> & _arg)
+  {
+    this->header = _arg;
+    return *this;
+  }
   Type & set__bboxes(
     const std::vector<avai_messages::msg::BoundingBox_<ContainerAllocator>, typename ContainerAllocator::template rebind<avai_messages::msg::BoundingBox_<ContainerAllocator>>::other> & _arg)
   {
@@ -102,6 +114,9 @@ struct BoundingBoxes_
   // comparison operators
   bool operator==(const BoundingBoxes_ & other) const
   {
+    if (this->header != other.header) {
+      return false;
+    }
     if (this->bboxes != other.bboxes) {
       return false;
     }

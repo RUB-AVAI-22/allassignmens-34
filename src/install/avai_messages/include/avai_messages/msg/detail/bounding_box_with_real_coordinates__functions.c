@@ -18,9 +18,9 @@ avai_messages__msg__BoundingBoxWithRealCoordinates__init(avai_messages__msg__Bou
     return false;
   }
   // image_coords
-  // real_coords
   // conf
   // cls
+  // real_coords
   return true;
 }
 
@@ -31,9 +31,9 @@ avai_messages__msg__BoundingBoxWithRealCoordinates__fini(avai_messages__msg__Bou
     return;
   }
   // image_coords
-  // real_coords
   // conf
   // cls
+  // real_coords
 }
 
 bool
@@ -48,12 +48,6 @@ avai_messages__msg__BoundingBoxWithRealCoordinates__are_equal(const avai_message
       return false;
     }
   }
-  // real_coords
-  for (size_t i = 0; i < 2; ++i) {
-    if (lhs->real_coords[i] != rhs->real_coords[i]) {
-      return false;
-    }
-  }
   // conf
   if (lhs->conf != rhs->conf) {
     return false;
@@ -61,6 +55,12 @@ avai_messages__msg__BoundingBoxWithRealCoordinates__are_equal(const avai_message
   // cls
   if (lhs->cls != rhs->cls) {
     return false;
+  }
+  // real_coords
+  for (size_t i = 0; i < 2; ++i) {
+    if (lhs->real_coords[i] != rhs->real_coords[i]) {
+      return false;
+    }
   }
   return true;
 }
@@ -77,14 +77,14 @@ avai_messages__msg__BoundingBoxWithRealCoordinates__copy(
   for (size_t i = 0; i < 4; ++i) {
     output->image_coords[i] = input->image_coords[i];
   }
-  // real_coords
-  for (size_t i = 0; i < 2; ++i) {
-    output->real_coords[i] = input->real_coords[i];
-  }
   // conf
   output->conf = input->conf;
   // cls
   output->cls = input->cls;
+  // real_coords
+  for (size_t i = 0; i < 2; ++i) {
+    output->real_coords[i] = input->real_coords[i];
+  }
   return true;
 }
 
