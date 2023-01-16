@@ -3,12 +3,12 @@ from rclpy.node import Node
 
 import cv2
 from cv_bridge import CvBridge
+from std_msgs.msg import Header
 from sensor_msgs.msg import Image, CompressedImage
 from avai_messages.msg import BoundingBox
 from avai_messages.msg import BoundingBoxes
 
 import numpy as np
-
 
 import tensorflow as tf
 import tflite_runtime.interpreter as tflite
@@ -52,16 +52,6 @@ class ImageProcessingNode(Node):
                 print("Successfully loaded model!")
 
     def xywh2xyxy(self, boxes):
-        """if boxes is None:
-            return None
-        if not len(boxes.shape) == 2:
-            return np.empty(0)
-        if boxes.shape[0] == 0:
-            return np.empty(0)
-        if not boxes.shape[1] == 4:
-            return np.empty(0)"""
-
-
         xyxy = np.zeros((len(boxes), 4))
         xyxy[:, 0] = boxes[:, 0] - (boxes[:, 2] / 2)
         xyxy[:, 1] = boxes[:, 1] - (boxes[:, 3] / 2)
@@ -71,10 +61,10 @@ class ImageProcessingNode(Node):
 
     def normalizedBoxesToImageSize(self, boxes, width, height):
         denormalizedBoxes = np.zeros((len(boxes), 4))
-        denormalizedBoxes[:, 0] = boxes[:, 0] * 5
-        denormalizedBoxes[:, 2] = boxes[:, 2] * 5
-        denormalizedBoxes[:, 1] = boxes[:, 1] * 5
-        denormalizedBoxes[:, 3] = boxes[:, 3] * 5
+        denormalizedBoxes[:, 0] = boxes[:, 0] * width
+        denormalizedBoxes[:, 2] = boxes[:, 2] * height
+        denormalizedBoxes[:, 1] = boxes[:, 1] * width
+        denormalizedBoxes[:, 3] = boxes[:, 3] * height
         return denormalizedBoxes
 
     #Necessary step for working with edge tpu data which returns values between 0 and 127
@@ -125,6 +115,8 @@ class ImageProcessingNode(Node):
             bbox.conf = float(conf)
             bbox.cls = float(cls)
             msg_data.append(bbox)
+        bbox_msg.header = Header()
+        bbox_msg.header.stamp = self.get_clock().now().to_msg()
         bbox_msg.bboxes = msg_data
         return bbox_msg
 

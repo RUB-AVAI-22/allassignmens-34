@@ -5,6 +5,7 @@ import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import LaserScan
+from std_msgs.msg import Header
 from avai_messages.msg import BoundingBox
 from avai_messages.msg import BoundingBoxes
 from avai_messages.msg import BoundingBoxWithRealCoordinates
@@ -34,7 +35,7 @@ class SensorFusionNode(Node):
 
         self.bboxWithRealCoords_publisher = self.create_publisher(BoundingBoxesWithRealCoordinates, '/bboxes_realCoords', 10)
 
-        self.bbox_queue = queue.SimpleQueue()
+        self.bboxes = []
         self.classes = ['blue', 'orange', 'yellow']
 
         self.timer = self.create_timer(1 / 20, self.matchClusterToBoundingBoxes)
@@ -44,16 +45,7 @@ class SensorFusionNode(Node):
 
 
     def bbox_callback(self, msg):
-        bboxes = []
-        for bbox in msg.bboxes:
-            extractedBbox = []
-            extractedBbox.append(bbox.coordinates)
-            extractedBbox.append(bbox.conf)
-            extractedBbox.append(bbox.cls)
-            bboxes.append(extractedBbox)
-
-
-        self.bbox_queue.put(bboxes)
+        self.bboxes.append(msg)
 
     def lidar_callback(self, laser_scan):
         #self.get_logger().info('Receiving lidar frame')
@@ -90,23 +82,37 @@ class SensorFusionNode(Node):
         return [x,y]
 
     def matchClusterToBoundingBoxes(self):
-        if self.bbox_queue.empty():
+        if self.bboxes == []:
             return
         if self.currentLidarClusters == []:
             return
 
-        bboxes = self.bbox_queue.get()
+        closestBboxes = []
+
+        for boxes in self.bboxes.bboxes:
+
+
 
         matchedBBoxes = []
 
         for clusterAngle, clusterDistance in self.currentLidarClusters:
             clusterPixelApprox = (clusterAngle/64.0)*640
-            for bbox in bboxes:
-                if clusterPixelApprox > bbox[0] and clusterPixelApprox < bbox[2]:
+            for bbox in closestBboxes:
+                if clusterPixelApprox > bbox[0][0] and clusterPixelApprox < bbox[0][2]:
                     bboxPos = self.polarToCartesian(clusterAngle, clusterDistance)
-                    matchedBBoxes += [*bbox, bboxPos]
+                    bboxMsg = BoundingBoxWithRealCoordinates()
+                    bboxMsg.image_coords = bbox.coordinates
+                    bboxMsg.conf = bbox.conf
+                    bboxMsg.cls = bbox.cls
+                    bboxMsg.real_coords = bboxPos
+
+                    matchedBBoxes.append(bboxMsg)
                     break
 
+        BBoxesMsg = BoundingBoxesWithRealCoordinates()
+        BBoxesMsg.header = Header()
+        BBoxesMsg.header.stamp = stamp = self.get_clock().now().to_msg()
+        BBoxesMsg.bboxes = matchedBBoxes
         self.bboxWithRealCoords_publisher.publish(matchedBBoxes)
 
 
