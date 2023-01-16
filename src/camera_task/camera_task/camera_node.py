@@ -14,7 +14,7 @@ class CameraNode(Node):
     def __init__(self, use_webcam):
         super().__init__('camera_node')
         # publisher for raw img data
-        self.publisher_ = self.create_publisher(Image, '/raw_image', 10)
+        self.publisher_ = self.create_publisher(Image, '/camera/image_raw', 10)
 
         # camera stream
         if use_webcam:
