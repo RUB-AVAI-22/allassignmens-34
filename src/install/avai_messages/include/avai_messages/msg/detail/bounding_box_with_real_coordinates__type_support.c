@@ -48,21 +48,6 @@ static rosidl_typesupport_introspection_c__MessageMember BoundingBoxWithRealCoor
     NULL  // resize(index) function pointer
   },
   {
-    "real_coords",  // name
-    rosidl_typesupport_introspection_c__ROS_TYPE_FLOAT,  // type
-    0,  // upper bound of string
-    NULL,  // members of sub message
-    true,  // is array
-    2,  // array size
-    false,  // is upper bound
-    offsetof(avai_messages__msg__BoundingBoxWithRealCoordinates, real_coords),  // bytes offset in struct
-    NULL,  // default value
-    NULL,  // size() function pointer
-    NULL,  // get_const(index) function pointer
-    NULL,  // get(index) function pointer
-    NULL  // resize(index) function pointer
-  },
-  {
     "conf",  // name
     rosidl_typesupport_introspection_c__ROS_TYPE_FLOAT,  // type
     0,  // upper bound of string
@@ -86,6 +71,21 @@ static rosidl_typesupport_introspection_c__MessageMember BoundingBoxWithRealCoor
     0,  // array size
     false,  // is upper bound
     offsetof(avai_messages__msg__BoundingBoxWithRealCoordinates, cls),  // bytes offset in struct
+    NULL,  // default value
+    NULL,  // size() function pointer
+    NULL,  // get_const(index) function pointer
+    NULL,  // get(index) function pointer
+    NULL  // resize(index) function pointer
+  },
+  {
+    "real_coords",  // name
+    rosidl_typesupport_introspection_c__ROS_TYPE_FLOAT,  // type
+    0,  // upper bound of string
+    NULL,  // members of sub message
+    true,  // is array
+    2,  // array size
+    false,  // is upper bound
+    offsetof(avai_messages__msg__BoundingBoxWithRealCoordinates, real_coords),  // bytes offset in struct
     NULL,  // default value
     NULL,  // size() function pointer
     NULL,  // get_const(index) function pointer

@@ -23,13 +23,29 @@ namespace builder
 class Init_BoundingBoxesWithRealCoordinates_bboxes
 {
 public:
-  Init_BoundingBoxesWithRealCoordinates_bboxes()
-  : msg_(::rosidl_runtime_cpp::MessageInitialization::SKIP)
+  explicit Init_BoundingBoxesWithRealCoordinates_bboxes(::avai_messages::msg::BoundingBoxesWithRealCoordinates & msg)
+  : msg_(msg)
   {}
   ::avai_messages::msg::BoundingBoxesWithRealCoordinates bboxes(::avai_messages::msg::BoundingBoxesWithRealCoordinates::_bboxes_type arg)
   {
     msg_.bboxes = std::move(arg);
     return std::move(msg_);
+  }
+
+private:
+  ::avai_messages::msg::BoundingBoxesWithRealCoordinates msg_;
+};
+
+class Init_BoundingBoxesWithRealCoordinates_header
+{
+public:
+  Init_BoundingBoxesWithRealCoordinates_header()
+  : msg_(::rosidl_runtime_cpp::MessageInitialization::SKIP)
+  {}
+  Init_BoundingBoxesWithRealCoordinates_bboxes header(::avai_messages::msg::BoundingBoxesWithRealCoordinates::_header_type arg)
+  {
+    msg_.header = std::move(arg);
+    return Init_BoundingBoxesWithRealCoordinates_bboxes(msg_);
   }
 
 private:
@@ -47,7 +63,7 @@ template<>
 inline
 auto build<::avai_messages::msg::BoundingBoxesWithRealCoordinates>()
 {
-  return avai_messages::msg::builder::Init_BoundingBoxesWithRealCoordinates_bboxes();
+  return avai_messages::msg::builder::Init_BoundingBoxesWithRealCoordinates_header();
 }
 
 }  // namespace avai_messages

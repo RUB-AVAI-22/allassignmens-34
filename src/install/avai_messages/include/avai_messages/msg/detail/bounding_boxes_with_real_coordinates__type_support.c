@@ -13,6 +13,10 @@
 
 
 // Include directives for member types
+// Member `header`
+#include "std_msgs/msg/header.h"
+// Member `header`
+#include "std_msgs/msg/detail/header__rosidl_typesupport_introspection_c.h"
 // Member `bboxes`
 #include "avai_messages/msg/bounding_box_with_real_coordinates.h"
 // Member `bboxes`
@@ -70,7 +74,22 @@ bool BoundingBoxesWithRealCoordinates__rosidl_typesupport_introspection_c__resiz
   return avai_messages__msg__BoundingBoxWithRealCoordinates__Sequence__init(member, size);
 }
 
-static rosidl_typesupport_introspection_c__MessageMember BoundingBoxesWithRealCoordinates__rosidl_typesupport_introspection_c__BoundingBoxesWithRealCoordinates_message_member_array[1] = {
+static rosidl_typesupport_introspection_c__MessageMember BoundingBoxesWithRealCoordinates__rosidl_typesupport_introspection_c__BoundingBoxesWithRealCoordinates_message_member_array[2] = {
+  {
+    "header",  // name
+    rosidl_typesupport_introspection_c__ROS_TYPE_MESSAGE,  // type
+    0,  // upper bound of string
+    NULL,  // members of sub message (initialized later)
+    false,  // is array
+    0,  // array size
+    false,  // is upper bound
+    offsetof(avai_messages__msg__BoundingBoxesWithRealCoordinates, header),  // bytes offset in struct
+    NULL,  // default value
+    NULL,  // size() function pointer
+    NULL,  // get_const(index) function pointer
+    NULL,  // get(index) function pointer
+    NULL  // resize(index) function pointer
+  },
   {
     "bboxes",  // name
     rosidl_typesupport_introspection_c__ROS_TYPE_MESSAGE,  // type
@@ -91,7 +110,7 @@ static rosidl_typesupport_introspection_c__MessageMember BoundingBoxesWithRealCo
 static const rosidl_typesupport_introspection_c__MessageMembers BoundingBoxesWithRealCoordinates__rosidl_typesupport_introspection_c__BoundingBoxesWithRealCoordinates_message_members = {
   "avai_messages__msg",  // message namespace
   "BoundingBoxesWithRealCoordinates",  // message name
-  1,  // number of fields
+  2,  // number of fields
   sizeof(avai_messages__msg__BoundingBoxesWithRealCoordinates),
   BoundingBoxesWithRealCoordinates__rosidl_typesupport_introspection_c__BoundingBoxesWithRealCoordinates_message_member_array,  // message members
   BoundingBoxesWithRealCoordinates__rosidl_typesupport_introspection_c__BoundingBoxesWithRealCoordinates_init_function,  // function to initialize message memory (memory has to be allocated)
@@ -110,6 +129,8 @@ ROSIDL_TYPESUPPORT_INTROSPECTION_C_EXPORT_avai_messages
 const rosidl_message_type_support_t *
 ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_introspection_c, avai_messages, msg, BoundingBoxesWithRealCoordinates)() {
   BoundingBoxesWithRealCoordinates__rosidl_typesupport_introspection_c__BoundingBoxesWithRealCoordinates_message_member_array[0].members_ =
+    ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_introspection_c, std_msgs, msg, Header)();
+  BoundingBoxesWithRealCoordinates__rosidl_typesupport_introspection_c__BoundingBoxesWithRealCoordinates_message_member_array[1].members_ =
     ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_introspection_c, avai_messages, msg, BoundingBoxWithRealCoordinates)();
   if (!BoundingBoxesWithRealCoordinates__rosidl_typesupport_introspection_c__BoundingBoxesWithRealCoordinates_message_type_support_handle.typesupport_identifier) {
     BoundingBoxesWithRealCoordinates__rosidl_typesupport_introspection_c__BoundingBoxesWithRealCoordinates_message_type_support_handle.typesupport_identifier =

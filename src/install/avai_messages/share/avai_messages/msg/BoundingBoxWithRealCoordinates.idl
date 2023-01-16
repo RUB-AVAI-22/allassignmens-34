@@ -10,11 +10,11 @@ module avai_messages {
     struct BoundingBoxWithRealCoordinates {
       float__4 image_coords;
 
-      float__2 real_coords;
-
       float conf;
 
       float cls;
+
+      float__2 real_coords;
     };
   };
 };

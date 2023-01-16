@@ -64,7 +64,22 @@ void resize_function__BoundingBoxesWithRealCoordinates__bboxes(void * untyped_me
   member->resize(size);
 }
 
-static const ::rosidl_typesupport_introspection_cpp::MessageMember BoundingBoxesWithRealCoordinates_message_member_array[1] = {
+static const ::rosidl_typesupport_introspection_cpp::MessageMember BoundingBoxesWithRealCoordinates_message_member_array[2] = {
+  {
+    "header",  // name
+    ::rosidl_typesupport_introspection_cpp::ROS_TYPE_MESSAGE,  // type
+    0,  // upper bound of string
+    ::rosidl_typesupport_introspection_cpp::get_message_type_support_handle<std_msgs::msg::Header>(),  // members of sub message
+    false,  // is array
+    0,  // array size
+    false,  // is upper bound
+    offsetof(avai_messages::msg::BoundingBoxesWithRealCoordinates, header),  // bytes offset in struct
+    nullptr,  // default value
+    nullptr,  // size() function pointer
+    nullptr,  // get_const(index) function pointer
+    nullptr,  // get(index) function pointer
+    nullptr  // resize(index) function pointer
+  },
   {
     "bboxes",  // name
     ::rosidl_typesupport_introspection_cpp::ROS_TYPE_MESSAGE,  // type
@@ -85,7 +100,7 @@ static const ::rosidl_typesupport_introspection_cpp::MessageMember BoundingBoxes
 static const ::rosidl_typesupport_introspection_cpp::MessageMembers BoundingBoxesWithRealCoordinates_message_members = {
   "avai_messages::msg",  // message namespace
   "BoundingBoxesWithRealCoordinates",  // message name
-  1,  // number of fields
+  2,  // number of fields
   sizeof(avai_messages::msg::BoundingBoxesWithRealCoordinates),
   BoundingBoxesWithRealCoordinates_message_member_array,  // message members
   BoundingBoxesWithRealCoordinates_init_function,  // function to initialize message memory (memory has to be allocated)

@@ -20,16 +20,32 @@ namespace msg
 namespace builder
 {
 
+class Init_BoundingBoxWithRealCoordinates_real_coords
+{
+public:
+  explicit Init_BoundingBoxWithRealCoordinates_real_coords(::avai_messages::msg::BoundingBoxWithRealCoordinates & msg)
+  : msg_(msg)
+  {}
+  ::avai_messages::msg::BoundingBoxWithRealCoordinates real_coords(::avai_messages::msg::BoundingBoxWithRealCoordinates::_real_coords_type arg)
+  {
+    msg_.real_coords = std::move(arg);
+    return std::move(msg_);
+  }
+
+private:
+  ::avai_messages::msg::BoundingBoxWithRealCoordinates msg_;
+};
+
 class Init_BoundingBoxWithRealCoordinates_cls
 {
 public:
   explicit Init_BoundingBoxWithRealCoordinates_cls(::avai_messages::msg::BoundingBoxWithRealCoordinates & msg)
   : msg_(msg)
   {}
-  ::avai_messages::msg::BoundingBoxWithRealCoordinates cls(::avai_messages::msg::BoundingBoxWithRealCoordinates::_cls_type arg)
+  Init_BoundingBoxWithRealCoordinates_real_coords cls(::avai_messages::msg::BoundingBoxWithRealCoordinates::_cls_type arg)
   {
     msg_.cls = std::move(arg);
-    return std::move(msg_);
+    return Init_BoundingBoxWithRealCoordinates_real_coords(msg_);
   }
 
 private:
@@ -52,32 +68,16 @@ private:
   ::avai_messages::msg::BoundingBoxWithRealCoordinates msg_;
 };
 
-class Init_BoundingBoxWithRealCoordinates_real_coords
-{
-public:
-  explicit Init_BoundingBoxWithRealCoordinates_real_coords(::avai_messages::msg::BoundingBoxWithRealCoordinates & msg)
-  : msg_(msg)
-  {}
-  Init_BoundingBoxWithRealCoordinates_conf real_coords(::avai_messages::msg::BoundingBoxWithRealCoordinates::_real_coords_type arg)
-  {
-    msg_.real_coords = std::move(arg);
-    return Init_BoundingBoxWithRealCoordinates_conf(msg_);
-  }
-
-private:
-  ::avai_messages::msg::BoundingBoxWithRealCoordinates msg_;
-};
-
 class Init_BoundingBoxWithRealCoordinates_image_coords
 {
 public:
   Init_BoundingBoxWithRealCoordinates_image_coords()
   : msg_(::rosidl_runtime_cpp::MessageInitialization::SKIP)
   {}
-  Init_BoundingBoxWithRealCoordinates_real_coords image_coords(::avai_messages::msg::BoundingBoxWithRealCoordinates::_image_coords_type arg)
+  Init_BoundingBoxWithRealCoordinates_conf image_coords(::avai_messages::msg::BoundingBoxWithRealCoordinates::_image_coords_type arg)
   {
     msg_.image_coords = std::move(arg);
-    return Init_BoundingBoxWithRealCoordinates_real_coords(msg_);
+    return Init_BoundingBoxWithRealCoordinates_conf(msg_);
   }
 
 private:
