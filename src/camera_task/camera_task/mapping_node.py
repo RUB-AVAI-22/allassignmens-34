@@ -1,34 +1,27 @@
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import qos_profile_sensor_data
-import cv2
-from cv_bridge import CvBridge
+
 from nav_msgs.msg import _odometry
 from avai_messages.msg import BoundingBoxWithRealCoordinates
 from avai_messages.msg import BoundingBoxesWithRealCoordinates
 from geometry_msgs.msg import _pose_with_covariance
 from geometry_msgs.msg import _twist_with_covariance
 
-from rcl_interfaces.msg import SetParametersResult
-
-from yolov5.utils.plots import Annotator
 import numpy as np
 
-import datetime
-import os
-
-import queue
 
 class MappingNode(Node):
     def __init__(self):
         self.classes = ['blue', 'orange', 'yellow']
-        self.currentMap = np.empty() #entries denote objects in our map, each object consists of xy coordinates and a corresponding class
+        self.currentMap = []  # entries denote objects in our map, each object consists of xy coordinates and a corresponding class
 
-        self.bboxesWithRealCoordinates_subscriber = self.create_subscription(BoundingBoxesWithRealCoordinates, '/bboxes_realCoords', self.bbox_callback, 10)
+        self.bboxesWithRealCoordinates_subscriber = self.create_subscription(BoundingBoxesWithRealCoordinates,
+                                                                             '/bboxes_realCoords', self.bbox_callback,
+                                                                             10)
         self.odometry_subscriber = self.create_subscription(_odometry, '/odom', self.odometry_callback, 10)
 
-        self.receivedBboxMsgs = np.empty()
-        self.receivedOdometryMsgs = np.empty()
+        self.receivedBboxMsgs = []
+        self.receivedOdometryMsgs = []
 
         self.msgCleanupClock = self.create_timer(1, self.remove_old_messages)
         self.mapUpdateClock = self.create_timer(0.1, self.attempt_map_update)
@@ -41,8 +34,10 @@ class MappingNode(Node):
 
     def remove_old_messages(self):
         currentStamp = self.get_clock().now().to_msg()
-        self.receivedBboxMsgs[:] = np.array([bboxMsg for bboxMsg in self.receivedBboxMsgs if self.message_distance(bboxMsg.header.stamp, currentStamp) < 1])
-        self.receivedOdometryMsgs[:] = np.array([odomMsg for odomMsg in self.receivedOdometryMsgs if self.message_distance(odomMsg.header.stamp, currentStamp) < 1])
+        self.receivedBboxMsgs[:] = np.array([bboxMsg for bboxMsg in self.receivedBboxMsgs if
+                                             self.message_distance(bboxMsg.header.stamp, currentStamp) < 1])
+        self.receivedOdometryMsgs[:] = np.array([odomMsg for odomMsg in self.receivedOdometryMsgs if
+                                                 self.message_distance(odomMsg.header.stamp, currentStamp) < 1])
 
     def message_distance(self, timestampA, timestampB):
         totalTimeA = timestampA.sec + timestampA.nanosec * 10e-9
@@ -67,7 +62,6 @@ class MappingNode(Node):
                 np.delete(self.receivedBboxMsgs, selectedBboxesMsg)
                 break
 
-
     def update_map(self, bboxes, pose, twist):
         newMap = self.extract_xy_and_cls(bboxes)
         mergedMap = self.empty((len(newMap), 3))
@@ -84,12 +78,13 @@ class MappingNode(Node):
             else:
                 mergedMap[i] = newObject
         self.currentMap = mergedMap
+
     def merge_objects(self, objectA, objectB):
         if not objectA[2] == objectB[2]:
             return
         mergedObject = [0, 0, 0]
-        mergedObject[0] = (objectA[0] + objectB[0])/2
-        mergedObject[1] = (objectA[1] + objectB[1])/2
+        mergedObject[0] = (objectA[0] + objectB[0]) / 2
+        mergedObject[1] = (objectA[1] + objectB[1]) / 2
         mergedObject[2] = objectA[2]
         return mergedObject
 
@@ -102,7 +97,8 @@ class MappingNode(Node):
     def mapDistance(self, objectA, objectB):
         coordsA = objectA[:2]
         coordsB = objectB[:2]
-        return np.sqrt((coordsB[0] - coordsA[0])**2 + (coordsB[1] - coordsA[1])**2)
+        return np.sqrt((coordsB[0] - coordsA[0]) ** 2 + (coordsB[1] - coordsA[1]) ** 2)
+
 
 def main(args=None):
     rclpy.init(args=args)

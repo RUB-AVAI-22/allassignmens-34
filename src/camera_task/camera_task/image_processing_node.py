@@ -43,13 +43,10 @@ class ImageProcessingNode(Node):
                 self.interpreter = tflite.Interpreter('models/best-int8_edgetpu.tflite',
                                                        experimental_delegates=[
                                                            tflite.load_delegate('libedgetpu.so.1')])
-                self.interpreter.allocate_tensors()
-                print("Successfully loaded model!")
             else:
                 print("Loading normal model!")
                 self.interpreter = tflite.Interpreter('models/best-fp16.tflite')
-                self.interpreter.allocate_tensors()
-                print("Successfully loaded model!")
+            self.interpreter.allocate_tensors()
 
     def xywh2xyxy(self, boxes):
         xyxy = np.zeros((len(boxes), 4))
@@ -175,7 +172,7 @@ class ImageProcessingNode(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = ImageProcessingNode(True, True)
+    node = ImageProcessingNode(True, False)
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
