@@ -13,6 +13,7 @@ import numpy as np
 import tensorflow as tf
 import tflite_runtime.interpreter as tflite
 
+import argparse
 
 
 class ImageProcessingNode(Node):
@@ -40,12 +41,12 @@ class ImageProcessingNode(Node):
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
                 print("Loading edge tpu model!")
-                self.interpreter = tflite.Interpreter('models/best-int8_edgetpu.tflite',
+                self.interpreter = tflite.Interpreter('src/camera_task/models/best-int8_edgetpu.tflite',
                                                        experimental_delegates=[
                                                            tflite.load_delegate('libedgetpu.so.1')])
             else:
                 print("Loading normal model!")
-                self.interpreter = tflite.Interpreter('models/best-fp16.tflite')
+                self.interpreter = tflite.Interpreter('src/camera_task/models/best-fp16.tflite')
             self.interpreter.allocate_tensors()
 
     def xywh2xyxy(self, boxes):
@@ -170,9 +171,27 @@ class ImageProcessingNode(Node):
         return self.last_received_image
 
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 def main(args=None):
     rclpy.init(args=args)
-    node = ImageProcessingNode(True, False)
+
+    parser = argparse.ArgumentParser(description='Image Processing Node')
+    parser.add_argument('-c', '--cone_detection', type=str2bool, help='Enable cone detection')
+    parser.add_argument('-e', '--edge_tpu', type=str2bool, help='Enable Edge TPU')
+    args = parser.parse_args()
+
+    print(f'Cone detection {"enabled" if args.cone_detection else "disabled"}')
+    print(f'Edge TPU {"enabled" if args.edge_tpu else "disabled"}')
+    node = ImageProcessingNode(args.cone_detection, args.edge_tpu)
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
