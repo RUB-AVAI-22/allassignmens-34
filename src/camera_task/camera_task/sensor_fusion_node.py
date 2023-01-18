@@ -58,9 +58,9 @@ class SensorFusionNode(Node):
     def remove_old_messages(self):
         currentStamp = self.get_clock().now().to_msg()
         self.bboxes = np.array([bboxMsg for bboxMsg in self.bboxes if
-                                             self.message_distance(bboxMsg.header.stamp, currentStamp) < 1])
+                                             self.message_distance(bboxMsg.header.stamp, currentStamp) < 10])
         self.lidar = np.array([lidarMsg for lidarMsg in self.lidar if
-                                                 self.message_distance(lidarMsg.header.stamp, currentStamp) < 1])
+                                                 self.message_distance(lidarMsg.header.stamp, currentStamp) < 10])
 
     def attempt_sensor_fusion(self):
         selectedBboxesMsg = None
