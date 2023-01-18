@@ -132,7 +132,7 @@ class SensorFusionNode(Node):
             results.append((round((end + start) / 2), mean))
         return results
     def polarToCartesian(self, angle, distance):
-        angle = angle/180*np.pi
+        angle = (angle/180.0)*np.pi
         x = np.cos(angle) * distance
         y = np.sin(angle) * distance
         return [x,y]
