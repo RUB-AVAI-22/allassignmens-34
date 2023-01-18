@@ -49,6 +49,8 @@ class ImageProcessingNode(Node):
                 self.interpreter = tflite.Interpreter('src/camera_task/models/best-fp16.tflite')
             self.interpreter.allocate_tensors()
 
+        print("Node started!")
+
     def xywh2xyxy(self, boxes):
         xyxy = np.zeros((len(boxes), 4))
         xyxy[:, 0] = boxes[:, 0] - (boxes[:, 2] / 2)
@@ -94,6 +96,8 @@ class ImageProcessingNode(Node):
             prediction = self.image_to_prediction(original_image)
 
             bbox_msg = self.prediction_to_bounding_box_msg(prediction)
+            bbox_msg.header = Header()
+            bbox_msg.header.stamp = msg.header.stamp
             self.bounding_box_publisher.publish(bbox_msg)
 
         # convert image to compressed image

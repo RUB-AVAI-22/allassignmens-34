@@ -32,6 +32,8 @@ class CameraNode(Node):
         # timer
         self.timer = self.create_timer(1 / self.param_fps, self.video_callback)
 
+        print("Node started!")
+
     def video_callback(self):
         ret, frame = self.cap.read()
 

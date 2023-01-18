@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 
-from nav_msgs.msg import _odometry
+from nav_msgs.msg import Odometry
 from avai_messages.msg import BoundingBoxWithRealCoordinates
 from avai_messages.msg import BoundingBoxesWithRealCoordinates
 from geometry_msgs.msg import _pose_with_covariance
@@ -12,25 +12,27 @@ import numpy as np
 
 class MappingNode(Node):
     def __init__(self):
+        super().__init__('mapping_node')
         self.classes = ['blue', 'orange', 'yellow']
         self.currentMap = []  # entries denote objects in our map, each object consists of xy coordinates and a corresponding class
 
         self.bboxesWithRealCoordinates_subscriber = self.create_subscription(BoundingBoxesWithRealCoordinates,
                                                                              '/bboxes_realCoords', self.bbox_callback,
                                                                              10)
-        self.odometry_subscriber = self.create_subscription(_odometry, '/odom', self.odometry_callback, 10)
+        self.odometry_subscriber = self.create_subscription(Odometry, '/odom', self.odometry_callback, 10)
 
         self.receivedBboxMsgs = []
         self.receivedOdometryMsgs = []
 
-        self.msgCleanupClock = self.create_timer(1, self.remove_old_messages)
+        self.msgCleanupClock = self.create_timer(0.1, self.remove_old_messages)
         self.mapUpdateClock = self.create_timer(0.1, self.attempt_map_update)
+        print("Node started!")
 
     def bbox_callback(self, msg):
-        np.append(self.receivedBboxes, msg)
+        self.receivedBboxMsgs = np.append(self.receivedBboxes, msg)
 
     def odometry_callback(self, msg):
-        np.append(self.receivedOdometryMsgs, msg)
+        self.receivedOdometryMsgs = np.append(self.receivedOdometryMsgs, msg)
 
     def remove_old_messages(self):
         currentStamp = self.get_clock().now().to_msg()
