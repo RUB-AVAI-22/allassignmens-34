@@ -104,6 +104,8 @@ class SensorFusionNode(Node):
         BBoxesMsg.bboxes = matchedBBoxes
         self.bboxWithRealCoords_publisher.publish(matchedBBoxes)
 
+        self.get_logger().info('Publishing bounding boxes with real coordinates')
+
     def clusterLidarPoints(self, lidar):
         # reads the lidar data and clusters the points in the camera fov
         # returns an array of points as (middle_point in degree, distance)
