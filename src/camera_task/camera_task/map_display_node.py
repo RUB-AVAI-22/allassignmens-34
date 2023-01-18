@@ -24,7 +24,7 @@ class MapDisplayNode(Node):
     def __init__(self):
         super().__init__('map_display_node')
         print("test")
-        self.detectedCones_subscriber = self.create_subscription(String, '/BoundingBoxesWithRealCoordinates', self.callback_detectedConesForMap, 10)
+        self.detectedCones_subscriber = self.create_subscription(String, '/bboxes_realCoords', self.callback_detectedConesForMap, 10)
         #self.timer = self.create_timer(1 / 2, self.callback_test)
         self.fig, self.ax = plt.subplots()
         self.ln, = plt.plot([], [], 'ro')
