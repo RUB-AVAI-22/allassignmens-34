@@ -58,15 +58,15 @@ class SensorFusionNode(Node):
     def remove_old_messages(self):
         currentStamp = self.get_clock().now().to_msg()
         self.bboxes = np.array([bboxMsg for bboxMsg in self.bboxes if
-                                             self.message_distance(bboxMsg.header.stamp, currentStamp) < 1])
+                                             self.message_distance(bboxMsg.header.stamp, currentStamp) < 10])
         self.lidar = np.array([lidarMsg for lidarMsg in self.lidar if
-                                                 self.message_distance(lidarMsg.header.stamp, currentStamp) < 1])
+                                                 self.message_distance(lidarMsg.header.stamp, currentStamp) < 10])
 
     def attempt_sensor_fusion(self):
         selectedBboxesMsg = None
         for receivedBboxes in np.flip(self.bboxes):
             closestLidarMsg = None
-            closestDistance = 0.5
+            closestDistance = np.inf
             for receivedLidar in np.flip(self.lidar):
                 msgDistance = self.message_distance(receivedBboxes.header.stamp, receivedLidar.header.stamp)
                 if msgDistance < closestDistance:
@@ -75,8 +75,8 @@ class SensorFusionNode(Node):
                     break
             if closestLidarMsg:
                 self.sensor_fusion(selectedBboxesMsg.bboxes, closestLidarMsg)
-                np.delete(self.lidar, closestLidarMsg)
-                np.delete(self.bboxes, selectedBboxesMsg)
+                np.delete(self.lidar, np.where(self.lidar == closestLidarMsg))
+                np.delete(self.bboxes, np.where(self.lidar == selectedBboxesMsg))
                 break
 
 
@@ -87,7 +87,7 @@ class SensorFusionNode(Node):
         for clusterAngle, clusterDistance in clustered_lidar:
             clusterPixelApprox = (clusterAngle / 64.0) * 640
             for bbox in bboxes:
-                if clusterPixelApprox > bbox[0][0] and clusterPixelApprox < bbox[0][2]:
+                if clusterPixelApprox > bbox.coordinates[0] and clusterPixelApprox < bbox.coordinates[2]:
                     bboxPos = self.polarToCartesian(clusterAngle, clusterDistance)
                     bboxMsg = BoundingBoxWithRealCoordinates()
                     bboxMsg.image_coords = bbox.coordinates
@@ -102,7 +102,7 @@ class SensorFusionNode(Node):
         BBoxesMsg.header = Header()
         BBoxesMsg.header.stamp = self.get_clock().now().to_msg()
         BBoxesMsg.bboxes = matchedBBoxes
-        self.bboxWithRealCoords_publisher.publish(matchedBBoxes)
+        self.bboxWithRealCoords_publisher.publish(BBoxesMsg)
 
         self.get_logger().info('Publishing bounding boxes with real coordinates')
 
@@ -110,7 +110,7 @@ class SensorFusionNode(Node):
         # reads the lidar data and clusters the points in the camera fov
         # returns an array of points as (middle_point in degree, distance)
         # (31, 1.5) means right in the center of the camera there is a object 1,5m away
-        scan_fov = lidar.range[149:212]
+        scan_fov = lidar.ranges[149:212]
         index = -1
         TOLERANCE = 0.05
         last_value = 0
@@ -130,7 +130,6 @@ class SensorFusionNode(Node):
             start, end, mean = cluster
             # results.append((round(end - start), mean))
             results.append((round((end + start) / 2), mean))
-        print("Objects found my Lidar: ", results)
         return results
     def polarToCartesian(self, angle, distance):
         x = np.cos(angle) * distance
