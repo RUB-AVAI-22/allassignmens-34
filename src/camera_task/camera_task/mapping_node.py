@@ -4,6 +4,8 @@ from rclpy.node import Node
 from nav_msgs.msg import Odometry
 from avai_messages.msg import BoundingBoxWithRealCoordinates
 from avai_messages.msg import BoundingBoxesWithRealCoordinates
+from avai_messages.msg import Map
+from avai_messages.msg import MapEntry
 from geometry_msgs.msg import _pose_with_covariance
 from geometry_msgs.msg import _twist_with_covariance
 
@@ -21,10 +23,12 @@ class MappingNode(Node):
                                                                              10)
         self.odometry_subscriber = self.create_subscription(Odometry, '/odom', self.odometry_callback, 10)
 
+        self.map_publisher = self.create_publisher(Map, '/map', 10)
+
         self.receivedBboxMsgs = []
         self.receivedOdometryMsgs = []
 
-        self.msgCleanupClock = self.create_timer(0.1, self.remove_old_messages)
+        self.msgCleanupClock = self.create_timer(1, self.remove_old_messages)
         self.mapUpdateClock = self.create_timer(0.1, self.attempt_map_update)
         print("Node started!")
 
@@ -80,6 +84,20 @@ class MappingNode(Node):
             else:
                 mergedMap[i] = newObject
         self.currentMap = mergedMap
+
+        self.publishMap(self.currentMap)
+
+
+    def publishMap(self, currentMap):
+        mapMsg = Map()
+        mapObjects = []
+        for object in currentMap:
+            mapObject = MapEntry()
+            mapObject.coordinates = object[:2]
+            mapObject.cls = int(object[2])
+            mapObjects.append(mapObject)
+        mapMsg.map_objects = mapObjects
+        self.map_publisher.publish(mapMsg)
 
     def merge_objects(self, objectA, objectB):
         if not objectA[2] == objectB[2]:

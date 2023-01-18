@@ -36,7 +36,7 @@ class SensorFusionNode(Node):
         self.classes = ['blue', 'orange', 'yellow']
 
         self.sensorFusionClock = self.create_timer(0.1, self.attempt_sensor_fusion)
-        self.msgCleanupClock = self.create_timer(0.1, self.remove_old_messages)
+        self.msgCleanupClock = self.create_timer(1, self.remove_old_messages)
 
         print("Node started!")
 
