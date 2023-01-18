@@ -25,7 +25,7 @@ class MapDisplayNode(Node):
         super().__init__('map_display_node')
         print("test")
         self.detectedCones_subscriber = self.create_subscription(String, '/BoundingBoxesWithRealCoordinates', self.callback_detectedConesForMap, 10)
-        self.timer = self.create_timer(1 / 2, self.callback_test)
+        #self.timer = self.create_timer(1 / 2, self.callback_test)
         self.fig, self.ax = plt.subplots()
         self.ln, = plt.plot([], [], 'ro')
         self.x_data, self.y_data = [], []
@@ -38,9 +38,9 @@ class MapDisplayNode(Node):
             map_values.append(bbox.real_coords)
         self.main_window.update_plot(map_values)
 
-    def callback_test(self, msg):
+    def callback_test(self):
         values = []
-        values.append([random.randint(0,3), random.randint(0,3)])
+        values.append([random.randint(-3000,3000)/1000, random.randint(-3000,3000)/1000])
         self.main_window.update_plot(values)
 
 class GUI(QWidget):
@@ -50,9 +50,6 @@ class GUI(QWidget):
         super(GUI, self).__init__()
 
         self.VBL = QVBoxLayout()
-
-        # self.imageLabel = QLabel()
-        # self.VBL.addWidget(self.imageLabel)
         self.figure = plt.figure()
         self.canvas = FigureCanvasQTAgg(self.figure)
         self.VBL.addWidget(self.canvas)
@@ -66,11 +63,12 @@ class GUI(QWidget):
             df = pd.DataFrame(data)
             dfX = df.iloc[:, 0]
             dfY = df.iloc[:, 1]
-
+            circle = plt.Circle((0,0), 0.1, color='g')
+            ax.add_patch(circle)
             ax.scatter(dfX.to_numpy(), dfY.to_numpy())
             ax.grid()
-            ax.set_xlim([0,3])
-            ax.set_ylim([0,3])
+            ax.set_xlim([-3,3])
+            ax.set_ylim([-3,3])
             self.canvas.draw()
 
 
@@ -87,7 +85,7 @@ def main(args=None):
     executor.add_node(node)
 
     main_window.show()
-    thread = Thread(target=executor.spin())
+    thread = Thread(target=executor.spin)
     thread.start()
     try:
         sys.exit(app.exec())
