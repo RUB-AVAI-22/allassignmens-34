@@ -33,9 +33,11 @@ class MappingNode(Node):
         print("Node started!")
 
     def bbox_callback(self, msg):
+        self.get_logger().info('Receiving bbox')
         self.receivedBboxMsgs = np.append(self.receivedBboxes, msg)
 
     def odometry_callback(self, msg):
+        self.get_logger().info('Receiving odometry')
         self.receivedOdometryMsgs = np.append(self.receivedOdometryMsgs, msg)
 
     def remove_old_messages(self):
@@ -84,8 +86,10 @@ class MappingNode(Node):
             else:
                 mergedMap[i] = newObject
         self.currentMap = mergedMap
+        self.get_logger().info('New Map calculated')
 
         self.publishMap(self.currentMap)
+
 
 
     def publishMap(self, currentMap):
