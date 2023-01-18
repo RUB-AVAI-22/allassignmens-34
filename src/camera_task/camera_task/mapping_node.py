@@ -40,9 +40,9 @@ class MappingNode(Node):
 
     def remove_old_messages(self):
         currentStamp = self.get_clock().now().to_msg()
-        self.receivedBboxMsgs[:] = np.array([bboxMsg for bboxMsg in self.receivedBboxMsgs if
+        self.receivedBboxMsgs = np.array([bboxMsg for bboxMsg in self.receivedBboxMsgs if
                                              self.message_distance(bboxMsg.header.stamp, currentStamp) < 1])
-        self.receivedOdometryMsgs[:] = np.array([odomMsg for odomMsg in self.receivedOdometryMsgs if
+        self.receivedOdometryMsgs = np.array([odomMsg for odomMsg in self.receivedOdometryMsgs if
                                                  self.message_distance(odomMsg.header.stamp, currentStamp) < 1])
 
     def message_distance(self, timestampA, timestampB):
