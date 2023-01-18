@@ -87,7 +87,7 @@ class SensorFusionNode(Node):
         for clusterAngle, clusterDistance in clustered_lidar:
             clusterPixelApprox = (clusterAngle / 64.0) * 640
             for bbox in bboxes:
-                if clusterPixelApprox > bbox[0][0] and clusterPixelApprox < bbox[0][2]:
+                if clusterPixelApprox > bbox.coordinates[0] and clusterPixelApprox < bbox.coordinates[2]:
                     bboxPos = self.polarToCartesian(clusterAngle, clusterDistance)
                     bboxMsg = BoundingBoxWithRealCoordinates()
                     bboxMsg.image_coords = bbox.coordinates
