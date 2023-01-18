@@ -66,7 +66,7 @@ class SensorFusionNode(Node):
         selectedBboxesMsg = None
         for receivedBboxes in np.flip(self.bboxes):
             closestLidarMsg = None
-            closestDistance = 0.1
+            closestDistance = np.inf
             for receivedLidar in np.flip(self.lidar):
                 msgDistance = self.message_distance(receivedBboxes.header.stamp, receivedLidar.header.stamp)
                 if msgDistance < closestDistance:
