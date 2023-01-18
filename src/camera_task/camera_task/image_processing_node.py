@@ -69,11 +69,12 @@ class ImageProcessingNode(Node):
 
     #Necessary step for working with edge tpu data which returns values between 0 and 127
     def normalizeBoxes(self, boxes):
+        edge_tpu_max_value = 196.0
         normalizedBoxes = np.zeros((len(boxes), 4))
-        normalizedBoxes[:, 0] = boxes[:, 0] / 128.0
-        normalizedBoxes[:, 2] = boxes[:, 2] / 128.0
-        normalizedBoxes[:, 1] = boxes[:, 1] / 128.0
-        normalizedBoxes[:, 3] = boxes[:, 3] / 128.0
+        normalizedBoxes[:, 0] = boxes[:, 0] / edge_tpu_max_value
+        normalizedBoxes[:, 2] = boxes[:, 2] / edge_tpu_max_value
+        normalizedBoxes[:, 1] = boxes[:, 1] / edge_tpu_max_value
+        normalizedBoxes[:, 3] = boxes[:, 3] / edge_tpu_max_value
         return normalizedBoxes
 
     def clipBoxes(self, boxes):
