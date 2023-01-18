@@ -43,7 +43,7 @@ class SensorFusionNode(Node):
 
     def bbox_callback(self, msg):
         self.get_logger().info('Receiving bbox')
-        self.bboxes.append(msg)
+        self.bboxes = np.append(self.bboxes, msg)
 
     def lidar_callback(self, laser_scan):
         self.get_logger().info('Receiving lidar frame')
