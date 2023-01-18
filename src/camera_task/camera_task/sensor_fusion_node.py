@@ -101,8 +101,8 @@ class SensorFusionNode(Node):
         BBoxesMsg = BoundingBoxesWithRealCoordinates()
         BBoxesMsg.header = Header()
         BBoxesMsg.header.stamp = self.get_clock().now().to_msg()
-        BBoxesMsg.bboxes = []
-        self.bboxWithRealCoords_publisher.publish(matchedBBoxes)
+        BBoxesMsg.bboxes = matchedBBoxes
+        self.bboxWithRealCoords_publisher.publish(BBoxesMsg)
 
         self.get_logger().info('Publishing bounding boxes with real coordinates')
 
