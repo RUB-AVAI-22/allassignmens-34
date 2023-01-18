@@ -1,0 +1,16 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from avai_messages/msg/BoundingBoxesWithRealCoordinates.msg
+// generated code does not contain a copyright notice
+
+#include "avai_messages/msg/BoundingBoxWithRealCoordinates.idl"
+#include "std_msgs/msg/Header.idl"
+
+module avai_messages {
+  module msg {
+    struct BoundingBoxesWithRealCoordinates {
+      std_msgs::msg::Header header;
+
+      sequence<avai_messages::msg::BoundingBoxWithRealCoordinates> bboxes;
+    };
+  };
+};
