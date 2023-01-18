@@ -88,7 +88,7 @@ class SensorFusionNode(Node):
             clusterPixelApprox = (clusterAngle / 64.0) * 640
             for bbox in bboxes:
                 if clusterPixelApprox > bbox.coordinates[0] and clusterPixelApprox < bbox.coordinates[2]:
-                    bboxPos = self.polarToCartesian(clusterAngle, clusterDistance)
+                    bboxPos = self.polarToCartesian(clusterAngle+149, clusterDistance)
                     bboxMsg = BoundingBoxWithRealCoordinates()
                     bboxMsg.image_coords = bbox.coordinates
                     bboxMsg.conf = bbox.conf
@@ -132,6 +132,7 @@ class SensorFusionNode(Node):
             results.append((round((end + start) / 2), mean))
         return results
     def polarToCartesian(self, angle, distance):
+        angle = angle/180*np.pi
         x = np.cos(angle) * distance
         y = np.sin(angle) * distance
         return [x,y]
