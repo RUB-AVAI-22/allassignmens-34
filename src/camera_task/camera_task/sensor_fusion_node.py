@@ -130,7 +130,6 @@ class SensorFusionNode(Node):
             start, end, mean = cluster
             # results.append((round(end - start), mean))
             results.append((round((end + start) / 2), mean))
-        print("Objects found my Lidar: ", results)
         return results
     def polarToCartesian(self, angle, distance):
         x = np.cos(angle) * distance
