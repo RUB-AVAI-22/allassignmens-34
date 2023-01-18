@@ -1,0 +1,8 @@
+msg/BoundingBox.idl
+msg/BoundingBox.msg
+msg/BoundingBoxWithRealCoordinates.idl
+msg/BoundingBoxWithRealCoordinates.msg
+msg/BoundingBoxes.idl
+msg/BoundingBoxes.msg
+msg/BoundingBoxesWithRealCoordinates.idl
+msg/BoundingBoxesWithRealCoordinates.msg
