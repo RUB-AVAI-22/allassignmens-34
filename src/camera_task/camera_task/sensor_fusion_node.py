@@ -110,7 +110,7 @@ class SensorFusionNode(Node):
         # reads the lidar data and clusters the points in the camera fov
         # returns an array of points as (middle_point in degree, distance)
         # (31, 1.5) means right in the center of the camera there is a object 1,5m away
-        scan_fov = lidar.range[149:212]
+        scan_fov = lidar.ranges[149:212]
         index = -1
         TOLERANCE = 0.05
         last_value = 0
