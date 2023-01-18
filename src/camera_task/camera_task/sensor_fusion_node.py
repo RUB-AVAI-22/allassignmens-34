@@ -95,6 +95,8 @@ class SensorFusionNode(Node):
                     bboxMsg.cls = bbox.cls
                     bboxMsg.real_coords = bboxPos
 
+                    bboxes = np.delete(bboxes, np.where(bboxes == bbox))
+
                     matchedBBoxes.append(bboxMsg)
                     break
 
