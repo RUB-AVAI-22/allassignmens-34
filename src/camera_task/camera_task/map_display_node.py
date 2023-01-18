@@ -33,7 +33,7 @@ class MapDisplayNode(Node):
     def callback_detectedConesForMap(self, msg):
 
         map_values = []
-
+        print("Bounding box received")
         for bbox in msg.bboxes:
             map_values.append(bbox.real_coords)
         self.main_window.update_plot(map_values)
