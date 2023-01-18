@@ -1,0 +1,15 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from avai_messages/msg/MapEntry.msg
+// generated code does not contain a copyright notice
+
+
+module avai_messages {
+  module msg {
+    typedef float float__2[2];
+    struct MapEntry {
+      float__2 coordinates;
+
+      int8 cls;
+    };
+  };
+};

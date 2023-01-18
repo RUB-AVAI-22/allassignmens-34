@@ -1,0 +1,13 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from avai_messages/msg/Map.msg
+// generated code does not contain a copyright notice
+
+#include "avai_messages/msg/MapEntry.idl"
+
+module avai_messages {
+  module msg {
+    struct Map {
+      sequence<avai_messages::msg::MapEntry> map_objects;
+    };
+  };
+};
