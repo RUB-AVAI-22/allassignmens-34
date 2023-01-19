@@ -191,8 +191,8 @@ def main(args=None):
     rclpy.init(args=args)
 
     parser = argparse.ArgumentParser(description='Image Processing Node')
-    parser.add_argument('-c', '--cone_detection', type=str2bool, help='Enable cone detection')
-    parser.add_argument('-e', '--edge_tpu', type=str2bool, help='Enable Edge TPU')
+    parser.add_argument('-c', '--cone_detection', type=str2bool, default=True, help='Enable cone detection')
+    parser.add_argument('-e', '--edge_tpu', type=str2bool, default=True, help='Enable Edge TPU')
     args = parser.parse_args()
 
     print(f'Cone detection {"enabled" if args.cone_detection else "disabled"}')
