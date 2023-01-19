@@ -8,6 +8,7 @@ from rcl_interfaces.msg import SetParametersResult
 
 import numpy as np
 
+import argparse
 
 class CameraNode(Node):
 
@@ -57,11 +58,26 @@ class CameraNode(Node):
                 tmp.cancel()
                 return SetParametersResult(successful=True)
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def main(args=None):
     rclpy.init(args=args)
 
-    node = CameraNode(True)
+    parser = argparse.ArgumentParser(description='Camera Node')
+    parser.add_argument('-w', '--use_webcam', type=str2bool, default=True, help='Enable webcam')
+    args = parser.parse_args()
+
+    print(f'Camera {"enabled" if args.use_webcam else "disabled"}')
+
+    node = CameraNode(args.use_webcam)
     rclpy.spin(node)
 
     node.destroy_node()
