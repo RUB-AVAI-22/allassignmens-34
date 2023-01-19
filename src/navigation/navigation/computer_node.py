@@ -173,11 +173,11 @@ class Computer_Node(Node):
                 if 0.5 < axis_x1 < 0.9 and 0.5 < axis_y1 < 0.9 and -0.9 < axis_x2 < -0.5 and 0.5 < axis_y2 < 0.9:
                     if self.unlockCounter > 0:
                         self.unlockCounter -= 1
-                        print(f'keep press {self.unlockCounterg}s')
+                        print(f'keep press {self.unlockCounter}s')
                         time.sleep(1)
                         break
-                    else:
-                        print('\ngamepad is unlocked!')
+                    elif self.Unlock == False:
+                        print('ggamepad is unlocked!')
                         joystick.rumble(0, 0.5, 1000)
                         self.Unlock = True
                 
@@ -191,13 +191,15 @@ class Computer_Node(Node):
                         
                         self.Unlock = False
                         self.Unlockchecker = False
+                        self.unlockCounter = 3
                         print('\ngamepad is locked')
                         joystick.rumble(0, 1, 500)
 
 
                 if joystick.get_button(3) == 1:
                     self.useGamePad = False
-                    print('\ncontrol switch to keyboard')
+                    self.unlgockCounter = 3
+                    print('gcontrol switch to keyboard')
 
                 if self.Unlock:
                     if abs(axis_x1) < 0.05:
