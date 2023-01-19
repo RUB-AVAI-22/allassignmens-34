@@ -56,7 +56,7 @@ class Computer_Node(Node):
     def on_press(self, key):
         speedChange = False
 
-        if key != keyboard.Key.up and key != keyboard.Key.down and key != keyboard.Key.left and key != keyboard.Key.right and key != keyboard.Key.shift and key != keyboard.Key.ctrl and key != keyboard.Key.space:
+        if hasattr(key, 'char'):#if key != keyboard.Key.up and key != keyboard.Key.down and key != keyboard.Key.left and key != keyboard.Key.right and key != keyboard.Key.shift and key != keyboard.Key.ctrl and key != keyboard.Key.space:
             if key.char == 'g':
                 self.useGamePad = True
                 print('control switch to gamepad')
@@ -177,7 +177,7 @@ class Computer_Node(Node):
                     
                     if 0.5 < axis_x1 < 0.9 and 0.5 < axis_y1 < 0.9 and -0.9 < axis_x2 < -0.5 and 0.5 < axis_y2 < 0.9:
                         print('gamepad is unlocked!')
-                        joystick.rumble(0, 0.2, 10)
+                        joystick.rumble(0, 0.5, 500)
                         self.Unlock = True
                 
                 #else:
