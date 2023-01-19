@@ -3,6 +3,7 @@ from rclpy.node import Node
 
 import cv2
 import time
+from decimal import *
 
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
@@ -22,10 +23,11 @@ class Computer_Node(Node):
 
         self.maxTransVelocity = 0.26 #in m/s
         self.maxRotVelocity = 1.82 #in rad/s
-        self.speed = 0.5
+        self.speed = 0.8
 
         self.joysticks = {}
         self.Unlock = False
+        self.unlockCounter = 3
         self.Unlockchecker = False
         self.useGamePad = False
 
@@ -59,7 +61,7 @@ class Computer_Node(Node):
         if hasattr(key, 'char'):#if key != keyboard.Key.up and key != keyboard.Key.down and key != keyboard.Key.left and key != keyboard.Key.right and key != keyboard.Key.shift and key != keyboard.Key.ctrl and key != keyboard.Key.space:
             if key.char == 'g':
                 self.useGamePad = True
-                print('control switch to gamepad')
+                print('\ncontrol switch to gamepad')
 
         if not self.useGamePad:
             if key == keyboard.Key.up or keyboard.Key.down or keyboard.Key.left or keyboard.Key.right or keyboard.Key.shift or keyboard.Key.ctrl or keyboard.Key.space:
@@ -71,19 +73,19 @@ class Computer_Node(Node):
                     self.desiredMovement.x = -self.speed*self.maxTransVelocity
 
                 elif key == keyboard.Key.left:
-                    self.desiredMovement.z = self.speed*self.maxRotVelocity * (2*(self.desiredMovement.x > 0)-1)
+                    self.desiredMovement.z = self.speed*self.maxRotVelocity# * (2*(self.desiredMovement.x > 0)-1)
 
                 elif key == keyboard.Key.right:
-                    self.desiredMovement.z = -self.speed*self.maxRotVelocity * (2*(self.desiredMovement.x > 0)-1)
+                    self.desiredMovement.z = -self.speed*self.maxRotVelocity# * (2*(self.desiredMovement.x > 0)-1)
 
                 elif key == keyboard.Key.shift:
                     if self.speed < 1:
-                        self.speed += 0.1
+                        self.speed =  round(self.speed + 0.1,1)
                         speedChange = True
 
                 elif key == keyboard.Key.ctrl:
                     if self.speed > 0:
-                        self.speed -= 0.1
+                        self.speed =  round(self.speed - 0.1,1)
                         speedChange = True
 
                 elif key == keyboard.Key.space:
@@ -92,7 +94,7 @@ class Computer_Node(Node):
                         speedChange = True
 
                 if speedChange:
-                    print(f"New speed: {self.speed}")
+                    print(f"\nspeed multiplier : {self.speed}")
             
 
     def on_release(self, key):
@@ -128,12 +130,13 @@ class Computer_Node(Node):
         else:
             self.currentMovement.z += distanceToDesiredVelocity.z
 
-        action.linear.x = self.currentMovement.x
-        action.angular.z = self.currentMovement.z
+        action.linear.x = round(self.currentMovement.x,2)
+        action.angular.z = round(self.currentMovement.z,2)
         self.pub_action.publish(action)
-
-        #print(f"Current velocity: {self.currentMovement.x} m/s, {self.currentMovement.z} rad/s")
-        #print(f"Desired velocity: {self.desiredMovement.x} m/s, {self.desiredMovement.z} rad/s\n")
+        if not self.useGamePad:
+            print("\r                                                                     ",end='')
+            print("\r\rCurrent velocity: {:.3} m/s, {:.3} rad/s  (Keyboard)\r".format(action.linear.x,action.angular.z),end='')
+        #print(f"\rDesired velocity: {self.desiredMovement.x} m/s, {self.desiredMovement.z} rad/s",end='')
 
     def updateGamePad(self):
 
@@ -168,16 +171,14 @@ class Computer_Node(Node):
                 axis_x2 = joystick.get_axis(3)
                 axis_y2 = joystick.get_axis(4)
                 if 0.5 < axis_x1 < 0.9 and 0.5 < axis_y1 < 0.9 and -0.9 < axis_x2 < -0.5 and 0.5 < axis_y2 < 0.9:
-                    print('keep press 2s')
-                    time.sleep(1)
-                    print('keep press 1s')
-                    time.sleep(1)
-                    print('keep press 0s')
-                    time.sleep(1)
-                    
-                    if 0.5 < axis_x1 < 0.9 and 0.5 < axis_y1 < 0.9 and -0.9 < axis_x2 < -0.5 and 0.5 < axis_y2 < 0.9:
-                        print('gamepad is unlocked!')
-                        joystick.rumble(0, 0.5, 500)
+                    if self.unlockCounter > 0:
+                        self.unlockCounter -= 1
+                        print(f'keep press {self.unlockCounterg}s')
+                        time.sleep(1)
+                        break
+                    else:
+                        print('\ngamepad is unlocked!')
+                        joystick.rumble(0, 0.5, 1000)
                         self.Unlock = True
                 
                 #else:
@@ -190,24 +191,24 @@ class Computer_Node(Node):
                         
                         self.Unlock = False
                         self.Unlockchecker = False
-                        print('gamepad is locked')
+                        print('\ngamepad is locked')
                         joystick.rumble(0, 1, 500)
 
 
                 if joystick.get_button(3) == 1:
                     self.useGamePad = False
-                    print('control switch to keyboard')
+                    print('\ncontrol switch to keyboard')
 
                 if self.Unlock:
                     if abs(axis_x1) < 0.05:
                         axis_x1 = 0
                     if abs(axis_y1) < 0.05:
                         axis_y1 = 0
-                    action.linear.x = self.maxTransVelocity * -axis_y1
-                    action.angular.z = self.maxRotVelocity * -(axis_x1*axis_x1*axis_x1)
+                    action.linear.x = round(self.maxTransVelocity * -axis_y1,2)
+                    action.angular.z = round(self.maxRotVelocity * -(axis_x1*axis_x1*axis_x1),2)
                     self.pub_action.publish(action)
-
-                    print(f"\rCurrent velocity: {action.linear.x:>6.3f} m/s, {action.angular.z:>6.3} rad/s", end='')
+                    print("\r                                                                     ",end='')
+                    print(f"\rCurrent velocity: {action.linear.x} m/s, {action.angular.z} rad/s  (Gamepad)\r", end='')
 
 def main(args=None):
     rclpy.init(args=args)
