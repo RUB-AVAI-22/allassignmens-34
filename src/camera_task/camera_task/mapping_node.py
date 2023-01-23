@@ -10,6 +10,8 @@ from geometry_msgs.msg import _pose_with_covariance
 from geometry_msgs.msg import _twist_with_covariance
 from geometry_msgs.msg import Vector3
 
+from sklearn.cluster import DBSCAN
+
 import numpy as np
 import tf2_ros
 
@@ -97,9 +99,25 @@ class MappingNode(Node):
                 map_merged[i] = self.merge_objects(newObject, closest_object)
             else:
                 map_merged[i] = newObject
+
+        clusterer = DBSCAN(eps=1, min_samples=5)
+        map_clustered = np.zeros((map_merged.shape[0], 3))
+        for cls in range(len(self.classes)):
+            indices_cls_subset = np.where(map_merged[:, 2] == cls)[0]
+            map_cls_subset = map_merged[indices_cls_subset][:, :2]
+
+            cluster_labels = clusterer.fit_predict(map_cls_subset)
+
+            for i in range(max(cluster_labels)):
+                indices = np.where(cluster_labels == i)[0]
+
+                cluster_center = np.mean(map_cls_subset[indices])
+
+                map_clustered[indices_cls_subset] = [*cluster_center, cls]
+        map_clustered = np.unique(map_clustered, axis=0)
+
         self.map_current = map_merged
         self.get_logger().info('Map updated!')
-
         self.publish_map(self.map_current)
 
 
