@@ -49,6 +49,8 @@ class MappingNode(Node):
         self.get_logger().info('Receiving odometry')
         self.msgs_odometry = np.append(self.msgs_odometry, msg)
 
+    # Since we store all messages received we need to clean the array up to prevent infinite growth of memory usage
+    # Every message older than 1 second is discarded
     def remove_old_messages(self):
         stamp_current = self.get_clock().now().to_msg()
         self.msgs_bboxes = np.array([msg_bbox for msg_bbox in self.msgs_bboxes if
@@ -56,12 +58,18 @@ class MappingNode(Node):
         self.msgs_odometry = np.array([msg_odom for msg_odom in self.msgs_odometry if
                                        self.message_distance(msg_odom.header.stamp, stamp_current) < 1])
 
+    # Each messages has a header with a timestamp
+    # Each timestamp contains seconds and nanoseconds information
+    # This function computes the distance between the two timestamps in seconds
     def message_distance(self, timestampA, timestampB):
         totalTimeA = timestampA.sec + timestampA.nanosec * 10e-9
         totalTimeB = timestampB.sec + timestampB.nanosec * 10e-9
         totalDistance = totalTimeB - totalTimeA
         return totalDistance
 
+    # Since messages are transmitted over network, there can be delays and also lost packages
+    # For the newest bounding box information we look for the closest odometry data.
+    # If no match is found the map is not updated.
     def attempt_map_update(self):
         msg_selected_bboxes = None
         for msg_bboxes in np.flip(self.msgs_bboxes):
@@ -86,6 +94,9 @@ class MappingNode(Node):
 
         map_odometry_integration = self.integrate_odometry(map_new, msg_odometry)
 
+        # Maps are merged every iteration
+        # Points are grouped depending on a minimum distance
+        # Their positions are averaged and the result is added to the new map
         map_merged = self.empty((len(map_odometry_integration), 3))
         for i, newObject in enumerate(map_odometry_integration):
             closest_object = None
@@ -100,20 +111,34 @@ class MappingNode(Node):
             else:
                 map_merged[i] = newObject
 
+        # Cluster map using density clustering
+        # The algorithm starts at a random point.
+        # If there are at least min_samples points in a radius of eps around the point they are grouped into a cluster.
+        # Each point in the cluster then searches around itself for more points to add into the cluster.
+        # This again requires min_samples points in a radius of eps.
         clusterer = DBSCAN(eps=1, min_samples=5)
         map_clustered = np.zeros((map_merged.shape[0], 3))
+        # Cluster only points in map belonging to certain class, since clusters only make sense with same class points
         for cls in range(len(self.classes)):
             indices_cls_subset = np.where(map_merged[:, 2] == cls)[0]
+
             map_cls_subset = map_merged[indices_cls_subset][:, :2]
 
             cluster_labels = clusterer.fit_predict(map_cls_subset)
 
+            # Compute mean position of all points in a cluster and place as new point in map
             for i in range(max(cluster_labels)):
                 indices = np.where(cluster_labels == i)[0]
 
                 cluster_center = np.mean(map_cls_subset[indices])
 
-                map_clustered[indices_cls_subset] = [*cluster_center, cls]
+                map_clustered[indices_cls_subset[indices]] = [*cluster_center, cls]
+
+            # Take over the remaining points not belonging to any cluster
+            indices = np.where(cluster_labels == -1)[0]
+            for index in indices:
+                map_clustered[indices_cls_subset[index]] = map_cls_subset[index]
+
         map_clustered = np.unique(map_clustered, axis=0)
 
         self.map_current = map_merged
@@ -122,6 +147,7 @@ class MappingNode(Node):
 
 
 
+    # Map array is converted to message objects and published
     def publish_map(self, map_current):
         msg_map = Map()
         map_objects = []
@@ -133,6 +159,8 @@ class MappingNode(Node):
         msg_map.map_objects = map_objects
         self.publisher_map.publish(msg_map)
 
+    # Merging of two map objects requires averaging their position
+    # Their class has to be the same for this to make sense
     def merge_objects(self, object_a, object_b):
         if not object_a[2] == object_b[2]:
             return
@@ -142,12 +170,17 @@ class MappingNode(Node):
         object_merged[2] = object_a[2]
         return object_merged
 
+    # The received bounding box messages contain information that is not relevant to us
+    # Here we extract the relevant real world position and class information and compile it into the map format
     def extract_xy_and_cls(self, bboxes):
         mapObjects = np.empty((len(bboxes), 3))
         mapObjects[:, :2] = bboxes[:, 6:]
         mapObjects[:, 2] = bboxes[:, 5]
         return mapObjects
 
+    # When the robot moves the map is supposed to change accordingly
+    # For this we need to integrate our knowledge about the robots position into the extracted map
+    # The odometry message type contains an integrated position vector which can be used for this
     def integrate_odometry(self, map_without_odometry, msg_odometry):
         """if self.last_used_odometry and self.last_used_bboxes:
             orientation_euler_previous = tf2_ros.transformations.euler_from_quaternion(self.last_used_odometry.pose.orientation)
