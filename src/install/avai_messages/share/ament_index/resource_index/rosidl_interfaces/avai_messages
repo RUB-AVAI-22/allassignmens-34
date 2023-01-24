@@ -1,0 +1,12 @@
+msg/BoundingBox.idl
+msg/BoundingBox.msg
+msg/BoundingBoxWithRealCoordinates.idl
+msg/BoundingBoxWithRealCoordinates.msg
+msg/BoundingBoxes.idl
+msg/BoundingBoxes.msg
+msg/BoundingBoxesWithRealCoordinates.idl
+msg/BoundingBoxesWithRealCoordinates.msg
+msg/Map.idl
+msg/Map.msg
+msg/MapEntry.idl
+msg/MapEntry.msg

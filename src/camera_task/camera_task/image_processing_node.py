@@ -13,6 +13,7 @@ import numpy as np
 import tensorflow as tf
 import tflite_runtime.interpreter as tflite
 
+import argparse
 
 
 class ImageProcessingNode(Node):
@@ -40,13 +41,15 @@ class ImageProcessingNode(Node):
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
                 print("Loading edge tpu model!")
-                self.interpreter = tflite.Interpreter('models/best-int8_edgetpu.tflite',
+                self.interpreter = tflite.Interpreter('src/camera_task/models/best-int8_edgetpu.tflite',
                                                        experimental_delegates=[
                                                            tflite.load_delegate('libedgetpu.so.1')])
             else:
                 print("Loading normal model!")
-                self.interpreter = tflite.Interpreter('models/best-fp16.tflite')
+                self.interpreter = tflite.Interpreter('src/camera_task/models/best-fp16.tflite')
             self.interpreter.allocate_tensors()
+
+        print("Node started!")
 
     def xywh2xyxy(self, boxes):
         xyxy = np.zeros((len(boxes), 4))
@@ -66,11 +69,12 @@ class ImageProcessingNode(Node):
 
     #Necessary step for working with edge tpu data which returns values between 0 and 127
     def normalizeBoxes(self, boxes):
+        edge_tpu_max_value = 196.0
         normalizedBoxes = np.zeros((len(boxes), 4))
-        normalizedBoxes[:, 0] = boxes[:, 0] / 128.0
-        normalizedBoxes[:, 2] = boxes[:, 2] / 128.0
-        normalizedBoxes[:, 1] = boxes[:, 1] / 128.0
-        normalizedBoxes[:, 3] = boxes[:, 3] / 128.0
+        normalizedBoxes[:, 0] = boxes[:, 0] / edge_tpu_max_value
+        normalizedBoxes[:, 2] = boxes[:, 2] / edge_tpu_max_value
+        normalizedBoxes[:, 1] = boxes[:, 1] / edge_tpu_max_value
+        normalizedBoxes[:, 3] = boxes[:, 3] / edge_tpu_max_value
         return normalizedBoxes
 
     def clipBoxes(self, boxes):
@@ -93,7 +97,10 @@ class ImageProcessingNode(Node):
             prediction = self.image_to_prediction(original_image)
 
             bbox_msg = self.prediction_to_bounding_box_msg(prediction)
+            bbox_msg.header = Header()
+            bbox_msg.header.stamp = msg.header.stamp
             self.bounding_box_publisher.publish(bbox_msg)
+            self.get_logger().info('Publishing bounding boxes')
 
         # convert image to compressed image
         compressed_image = self.bridge.cv2_to_compressed_imgmsg(original_image)
@@ -170,9 +177,27 @@ class ImageProcessingNode(Node):
         return self.last_received_image
 
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 def main(args=None):
     rclpy.init(args=args)
-    node = ImageProcessingNode(True, False)
+
+    parser = argparse.ArgumentParser(description='Image Processing Node')
+    parser.add_argument('-c', '--cone_detection', type=str2bool, default=True, help='Enable cone detection')
+    parser.add_argument('-e', '--edge_tpu', type=str2bool, default=True, help='Enable Edge TPU')
+    args = parser.parse_args()
+
+    print(f'Cone detection {"enabled" if args.cone_detection else "disabled"}')
+    print(f'Edge TPU {"enabled" if args.edge_tpu else "disabled"}')
+    node = ImageProcessingNode(args.cone_detection, args.edge_tpu)
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()

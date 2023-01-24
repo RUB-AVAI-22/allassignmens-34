@@ -29,6 +29,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/BoundingBoxes.msg"
   "msg/BoundingBoxWithRealCoordinates.msg"
   "msg/BoundingBoxesWithRealCoordinates.msg"
+  "msg/MapEntry.msg"
+  "msg/Map.msg"
   DEPENDENCIES std_msgs
  )
 
