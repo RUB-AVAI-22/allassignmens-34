@@ -175,8 +175,8 @@ class MappingNode(Node):
     def extract_xy_and_cls(self, msg_bboxes):
         bboxes = np.array(msg_bboxes.bboxes)
         mapObjects = np.empty((len(bboxes), 3))
-        mapObjects[:, :2] = [[bbox.real_coords[0], bbox.real_coords[1]]for bbox in bboxes]
-        mapObjects[:, 2] = [bbox.cls for bbox in bboxes]
+        mapObjects[:, :2] = np.array([[bbox.real_coords[0], bbox.real_coords[1]]for bbox in bboxes])
+        mapObjects[:, 2] = np.array([bbox.cls for bbox in bboxes])
         return mapObjects
 
     # When the robot moves the map is supposed to change accordingly
