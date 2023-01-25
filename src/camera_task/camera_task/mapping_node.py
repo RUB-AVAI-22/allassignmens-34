@@ -238,8 +238,8 @@ class MappingNode(Node):
         print(position_current.shape)
 
 
-        map_integrated[:][0] += position_current[0]
-        map_integrated[:][1] += position_current[1]
+        map_integrated[:, 0] += position_current[0]
+        map_integrated[:, 1] += position_current[1]
 
         return map_integrated
 
