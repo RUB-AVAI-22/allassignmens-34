@@ -229,8 +229,9 @@ class MappingNode(Node):
 
 
         map_integrated = map_without_odometry.copy()
-        print(position_current.shape)
-        print(map_integrated.shape)
+
+        if len(map_integrated) == 0
+            return map_integrated
 
         map_integrated[:][0] += position_current[0]
         map_integrated[:][1] += position_current[1]
