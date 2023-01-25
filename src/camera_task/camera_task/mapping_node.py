@@ -43,7 +43,7 @@ class MappingNode(Node):
 
     def callback_bbox(self, msg):
         self.get_logger().info('Receiving bboxes')
-        self.msgs_bboxes = np.append(self.receivedBboxes, msg)
+        self.msgs_bboxes = np.append(self.msgs_bboxes, msg)
 
     def callback_odometry(self, msg):
         self.get_logger().info('Receiving odometry')
