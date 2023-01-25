@@ -97,7 +97,7 @@ class MappingNode(Node):
         # Maps are merged every iteration
         # Points are grouped depending on a minimum distance
         # Their positions are averaged and the result is added to the new map
-        map_merged = self.empty((len(map_odometry_integration), 3))
+        map_merged = np.empty((len(map_odometry_integration), 3))
         for i, newObject in enumerate(map_odometry_integration):
             closest_object = None
             closest_object_distance = 0.1
@@ -173,13 +173,13 @@ class MappingNode(Node):
     # The received bounding box messages contain information that is not relevant to us
     # Here we extract the relevant real world position and class information and compile it into the map format
     def extract_xy_and_cls(self, msg_bboxes):
-        map_objects =  np.empty((len(msg_bboxes.bboxes), 3))
+        map_objects = np.empty((len(msg_bboxes.bboxes), 3))
         for i, bbox_msg in enumerate(msg_bboxes.bboxes):
             map_object = np.empty(3)
             map_object[0] = bbox_msg.real_coords[0]
             map_object[1] = bbox_msg.real_coords[1]
             map_object[2] = bbox_msg.cls
-            bboxes[i] = map_object
+            map_objects[i] = map_object
         return map_objects
 
     # When the robot moves the map is supposed to change accordingly
