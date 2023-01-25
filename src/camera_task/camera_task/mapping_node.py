@@ -173,11 +173,14 @@ class MappingNode(Node):
     # The received bounding box messages contain information that is not relevant to us
     # Here we extract the relevant real world position and class information and compile it into the map format
     def extract_xy_and_cls(self, msg_bboxes):
-        bboxes = np.array(msg_bboxes.bboxes)
-        mapObjects = np.empty((len(bboxes), 3))
-        mapObjects[:, :2] = np.array([[bbox.real_coords[0], bbox.real_coords[1]]for bbox in bboxes])
-        mapObjects[:, 2] = np.array([bbox.cls for bbox in bboxes])
-        return mapObjects
+        map_objects =  np.empty((len(msg_bboxes.bboxes), 3))
+        for i, bbox_msg in enumerate(msg_bboxes.bboxes):
+            map_object = np.empty(3)
+            map_object[0] = bbox_msg.real_coords[0]
+            map_object[1] = bbox_msg.real_coords[1]
+            map_object[2] = bbox_msg.cls
+            bboxes[i] = map_object
+        return map_objects
 
     # When the robot moves the map is supposed to change accordingly
     # For this we need to integrate our knowledge about the robots position into the extracted map
