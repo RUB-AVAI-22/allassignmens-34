@@ -122,7 +122,7 @@ class MappingNode(Node):
         for cls in range(len(self.classes)):
             indices_cls_subset = np.where(map_merged[:, 2] == cls)[0]
 
-            map_cls_subset = map_merged[indices_cls_subset][:, :2]
+            map_cls_subset = map_merged[indices_cls_subset][:]
 
             if len(map_cls_subset) == 0:
                 break
@@ -133,7 +133,7 @@ class MappingNode(Node):
             for i in range(max(cluster_labels)):
                 indices = np.where(cluster_labels == i)[0]
 
-                cluster_center = np.mean(map_cls_subset[indices])
+                cluster_center = np.mean(map_cls_subset[indices][:2])
 
                 map_clustered[indices_cls_subset[indices]] = [*cluster_center, cls]
 
