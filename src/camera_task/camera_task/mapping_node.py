@@ -229,7 +229,8 @@ class MappingNode(Node):
 
         map_integrated = map_without_odometry.copy()
 
-        map_integrated[:][:2] = map_integrated[:][:2]+position_current
+        map_integrated[:][0] += position_current[0]
+        map_integrated[:][1] += position_current[1]
 
         return map_integrated
 
