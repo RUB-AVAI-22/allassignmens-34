@@ -85,8 +85,8 @@ class MappingNode(Node):
                 self.update_map(msg_selected_bboxes, closest_odometry_msg)
                 self.last_used_bboxes = msg_selected_bboxes
                 self.last_used_odometry = closest_odometry_msg
-                np.delete(self.msgs_odometry, closest_odometry_msg)
-                np.delete(self.msgs_bboxes, msg_selected_bboxes)
+                np.delete(self.msgs_odometry, np.where(self.msgs_odomotery == closest_odometry_msg))
+                np.delete(self.msgs_bboxes, np.where(self.msgs_bboxes == msg_selected_bboxes))
                 break
 
     def update_map(self, msg_bboxes, msg_odometry):
