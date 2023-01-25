@@ -124,6 +124,9 @@ class MappingNode(Node):
 
             map_cls_subset = map_merged[indices_cls_subset][:, :2]
 
+            if len(map_cls_subset) == 0:
+                break
+
             cluster_labels = clusterer.fit_predict(map_cls_subset)
 
             # Compute mean position of all points in a cluster and place as new point in map
