@@ -156,7 +156,7 @@ class MappingNode(Node):
         map_objects = []
         for object in map_current:
             msg_map_object = MapEntry()
-            msg_map_object.coordinates = object[:2]
+            msg_map_object.coordinates = object[:2].astype(np.float32)
             msg_map_object.cls = int(object[2])
             map_objects.append(msg_map_object)
         msg_map.map_objects = map_objects
