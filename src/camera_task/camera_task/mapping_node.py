@@ -106,7 +106,7 @@ class MappingNode(Node):
                 if newObject[2] == currentObject[2] and dist_tmp < closest_object_distance:
                     closest_object = currentObject
                     closest_object_distance = dist_tmp
-            if closest_object:
+            if not closest_object == None:
                 map_merged[i] = self.merge_objects(newObject, closest_object)
             else:
                 map_merged[i] = newObject
