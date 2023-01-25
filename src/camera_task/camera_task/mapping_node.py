@@ -220,7 +220,7 @@ class MappingNode(Node):
         else:
             return map_without_odometry"""
 
-        position_point = msg_odometry.pose.position
+        position_point = msg_odometry.pose.pose.position
 
         position_current = np.array([position_point.x, position_point.y])
 
