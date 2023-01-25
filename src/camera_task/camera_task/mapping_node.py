@@ -161,6 +161,7 @@ class MappingNode(Node):
             map_objects.append(msg_map_object)
         msg_map.map_objects = map_objects
         self.publisher_map.publish(msg_map)
+        self.get_logger().info("Published new Map!")
 
     # Merging of two map objects requires averaging their position
     # Their class has to be the same for this to make sense
