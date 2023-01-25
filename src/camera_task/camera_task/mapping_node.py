@@ -39,7 +39,7 @@ class MappingNode(Node):
 
         self.timer_message_cleanup = self.create_timer(1, self.remove_old_messages)
         self.timer_map_update_attempt = self.create_timer(0.1, self.attempt_map_update)
-        print("Node started!")
+        print("Mapping Node started!")
 
     def callback_bbox(self, msg):
         self.get_logger().info('Receiving bboxes')

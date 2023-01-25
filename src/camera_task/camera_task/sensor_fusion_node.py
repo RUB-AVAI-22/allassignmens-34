@@ -38,7 +38,7 @@ class SensorFusionNode(Node):
         self.sensorFusionClock = self.create_timer(0.1, self.attempt_sensor_fusion)
         self.msgCleanupClock = self.create_timer(1, self.remove_old_messages)
 
-        print("Node started!")
+        print("Sensor Fusion Node started!")
 
 
     def bbox_callback(self, msg):
