@@ -140,8 +140,6 @@ class MappingNode(Node):
             # Take over the remaining points not belonging to any cluster
             indices = np.where(cluster_labels == -1)[0]
             for index in indices:
-                print(map_cls_subset.shape)
-                print(map_clustered[indices_cls_subset].shape)
                 map_clustered[indices_cls_subset[index]] = map_cls_subset[index]
 
         map_clustered = np.unique(map_clustered, axis=0)
@@ -236,8 +234,8 @@ class MappingNode(Node):
         if len(map_integrated) == 0:
             return map_integrated
 
-        #print(map_integrated.shape)
-        #print(position_current.shape)
+        print(map_integrated.shape)
+        print(position_current.shape)
 
 
         map_integrated[:][0] += position_current[0]
