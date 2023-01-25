@@ -54,6 +54,7 @@ class GUI(QWidget):
 
     def update_plot(self, data):
         if len(data) != 0 :
+            print("Updating Map Display!")
             self.figure.clear()
             ax = self.figure.add_subplot()
 

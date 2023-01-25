@@ -234,6 +234,9 @@ class MappingNode(Node):
         if len(map_integrated) == 0:
             return map_integrated
 
+        print(map_integrated.shape)
+
+
         map_integrated[:][0] += position_current[0]
         map_integrated[:][1] += position_current[1]
 
