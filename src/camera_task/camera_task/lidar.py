@@ -6,7 +6,7 @@ from rclpy.qos import qos_profile_sensor_data
 import pickle
 import math
 from sensor_msgs.msg._laser_scan import LaserScan
-
+from nav_msgs.msg import Odometry
 class LidarSensorNode(Node):
 
     def __init__(self):
@@ -23,11 +23,23 @@ class LidarSensorNode(Node):
         #reads the lidar data and clusters the points in the camera fov
         #returns an array of points as (middle_point in degree, distance)
         #(31, 1.5) means right in the center of the camera there is a object 1,5m away
-        print(f"\r{laser_scan}\n\n\n", end='')
-        degree = laser_scan.angle_increment*(180/math.pi)
-        print(degree)
+        left = []
+        right = []
+        
+        laser_scan_list = laser_scan.ranges.tolist()
+        #print(f"\r{laser_scan_list}\n\n\n", end='')
+        left = laser_scan_list[0:180]
+        right = laser_scan_list[181:359]
+        right.reverse()
+        res_left = [i for i in range(len(left)) if  left[i] != float("inf")]
+        res_right = [i for i in range(len(right)) if  right[i] != float("inf")]
+        #print("left",left)
+        #print(len(left))
+        print(res_right)
+        #print(len(left))
+        #degree = laser_scan.angle_increment*(180/math.pi)
+        #print(degree)
         #print(len(laser_scan.ranges))
-
 
 
 

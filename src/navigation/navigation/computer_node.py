@@ -3,6 +3,7 @@ from rclpy.node import Node
 
 import cv2
 import time
+import math
 from decimal import *
 
 from cv_bridge import CvBridge
@@ -10,7 +11,7 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 from rcl_interfaces.msg import SetParametersResult
-
+from nav_msgs.msg import Odometry
 
 import numpy as np
 from pynput import keyboard
@@ -24,7 +25,8 @@ class Computer_Node(Node):
         self.maxTransVelocity = 0.26 #in m/s
         self.maxRotVelocity = 1.82 #in rad/s
         self.speed = 0.8
-
+        self.counter = 0
+        self.twisted = 0
         self.joysticks = {}
         self.Unlock = False
         self.unlockCounter = 3
@@ -37,7 +39,7 @@ class Computer_Node(Node):
         self.pub_action = self.create_publisher(Twist, 'cmd_vel', 10)
 
         self.sub_img = self.create_subscription(Image, '/camera/image_raw', self.cb_image, 10)
-
+        self.lidar_sensor_subscriber = self.create_subscription(Odometry, '/odom', self.odom, 10)
         self.bridge = CvBridge()
 
         self.updateFrequency = 5
@@ -48,6 +50,15 @@ class Computer_Node(Node):
 
         self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.listener.start()
+
+    def odom(self, odommsg):
+        #self.twisted = odommsg.pose.pose
+        if odommsg.pose.pose.orientation.x > 0:
+            print(f"\r{round(math.acos(odommsg.pose.pose.orientation.w)*180/math.pi*2,1)}\n\n\n", end='')
+        elif odommsg.pose.pose.orientation.x < 0:
+            print(f"\r{round(-math.acos(odommsg.pose.pose.orientation.w)*180/math.pi*2,1)}\n\n\n", end='')
+
+
 
     def cb_image(self, imgmsg):
         image = self.bridge.imgmsg_to_cv2(imgmsg, 'bgr8')
@@ -74,9 +85,11 @@ class Computer_Node(Node):
 
                 elif key == keyboard.Key.left:
                     self.desiredMovement.z = self.speed*self.maxRotVelocity# * (2*(self.desiredMovement.x > 0)-1)
+                    
 
-                elif key == keyboard.Key.right:
+                elif key == keyboard.Key.right:              
                     self.desiredMovement.z = -self.speed*self.maxRotVelocity# * (2*(self.desiredMovement.x > 0)-1)
+
 
                 elif key == keyboard.Key.shift:
                     if self.speed < 1:
@@ -107,10 +120,10 @@ class Computer_Node(Node):
 
         elif key == keyboard.Key.left:
             self.desiredMovement.z = 0.0
-
+            
         elif key == keyboard.Key.right:
             self.desiredMovement.z = 0.0
-
+            self.counter = 0
 
     def updateVelocity(self):
         action = Twist()
@@ -130,9 +143,13 @@ class Computer_Node(Node):
         else:
             self.currentMovement.z += distanceToDesiredVelocity.z
 
-        action.linear.x = round(self.currentMovement.x,2)
-        action.angular.z = round(self.currentMovement.z,2)
+        action.linear.x = round(self.desiredMovement.x,2)
+        action.angular.z = round(self.desiredMovement.z,2)
+        
         self.pub_action.publish(action)
+        
+        #time.sleep(abs(round(-90 * (math.pi / 180),2))/1.82)
+               
         if not self.useGamePad:
             print("\r                                                                     ",end='')
             print("\r\rCurrent velocity: {:.3} m/s, {:.3} rad/s  (Keyboard)\r".format(action.linear.x,action.angular.z),end='')
