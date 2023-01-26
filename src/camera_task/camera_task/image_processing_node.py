@@ -49,7 +49,7 @@ class ImageProcessingNode(Node):
                 self.interpreter = tflite.Interpreter('src/camera_task/models/best-fp16.tflite')
             self.interpreter.allocate_tensors()
 
-        print("Node started!")
+        print("Image Processing Node started!")
 
     def xywh2xyxy(self, boxes):
         xyxy = np.zeros((len(boxes), 4))

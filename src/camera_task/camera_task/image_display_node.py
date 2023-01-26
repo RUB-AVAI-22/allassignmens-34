@@ -49,7 +49,7 @@ class ImgDisplayNode(Node):
 
         cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
 
-        print("Node started!")
+        print("Image Display Node started!")
 
     def message_distance(self, timestampA, timestampB):
         totalTimeA = timestampA.sec + timestampA.nanosec * 10e-9

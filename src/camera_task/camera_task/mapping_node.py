@@ -39,11 +39,11 @@ class MappingNode(Node):
 
         self.timer_message_cleanup = self.create_timer(1, self.remove_old_messages)
         self.timer_map_update_attempt = self.create_timer(0.1, self.attempt_map_update)
-        print("Node started!")
+        print("Mapping Node started!")
 
     def callback_bbox(self, msg):
         self.get_logger().info('Receiving bboxes')
-        self.msgs_bboxes = np.append(self.receivedBboxes, msg)
+        self.msgs_bboxes = np.append(self.msgs_bboxes, msg)
 
     def callback_odometry(self, msg):
         self.get_logger().info('Receiving odometry')
@@ -85,19 +85,19 @@ class MappingNode(Node):
                 self.update_map(msg_selected_bboxes, closest_odometry_msg)
                 self.last_used_bboxes = msg_selected_bboxes
                 self.last_used_odometry = closest_odometry_msg
-                np.delete(self.msgs_odometry, closest_odometry_msg)
-                np.delete(self.msgs_bboxes, msg_selected_bboxes)
+                np.delete(self.msgs_odometry, np.where(self.msgs_odometry == closest_odometry_msg))
+                np.delete(self.msgs_bboxes, np.where(self.msgs_bboxes == msg_selected_bboxes))
                 break
 
     def update_map(self, msg_bboxes, msg_odometry):
-        map_new = self.extract_xy_and_cls(msg_bboxes.bboxes)
+        map_new = self.extract_xy_and_cls(msg_bboxes)
 
         map_odometry_integration = self.integrate_odometry(map_new, msg_odometry)
 
         # Maps are merged every iteration
         # Points are grouped depending on a minimum distance
         # Their positions are averaged and the result is added to the new map
-        map_merged = self.empty((len(map_odometry_integration), 3))
+        map_merged = np.empty((len(map_odometry_integration), 3))
         for i, newObject in enumerate(map_odometry_integration):
             closest_object = None
             closest_object_distance = 0.1
@@ -106,7 +106,7 @@ class MappingNode(Node):
                 if newObject[2] == currentObject[2] and dist_tmp < closest_object_distance:
                     closest_object = currentObject
                     closest_object_distance = dist_tmp
-            if closest_object:
+            if not closest_object is None:
                 map_merged[i] = self.merge_objects(newObject, closest_object)
             else:
                 map_merged[i] = newObject
@@ -122,7 +122,10 @@ class MappingNode(Node):
         for cls in range(len(self.classes)):
             indices_cls_subset = np.where(map_merged[:, 2] == cls)[0]
 
-            map_cls_subset = map_merged[indices_cls_subset][:, :2]
+            map_cls_subset = map_merged[indices_cls_subset][:]
+
+            if len(map_cls_subset) == 0:
+                break
 
             cluster_labels = clusterer.fit_predict(map_cls_subset)
 
@@ -130,7 +133,7 @@ class MappingNode(Node):
             for i in range(max(cluster_labels)):
                 indices = np.where(cluster_labels == i)[0]
 
-                cluster_center = np.mean(map_cls_subset[indices])
+                cluster_center = np.mean(map_cls_subset[indices][:2])
 
                 map_clustered[indices_cls_subset[indices]] = [*cluster_center, cls]
 
@@ -153,11 +156,12 @@ class MappingNode(Node):
         map_objects = []
         for object in map_current:
             msg_map_object = MapEntry()
-            msg_map_object.coordinates = object[:2]
+            msg_map_object.coordinates = object[:2].astype(np.float32)
             msg_map_object.cls = int(object[2])
             map_objects.append(msg_map_object)
         msg_map.map_objects = map_objects
         self.publisher_map.publish(msg_map)
+        self.get_logger().info("Published new Map!")
 
     # Merging of two map objects requires averaging their position
     # Their class has to be the same for this to make sense
@@ -172,11 +176,15 @@ class MappingNode(Node):
 
     # The received bounding box messages contain information that is not relevant to us
     # Here we extract the relevant real world position and class information and compile it into the map format
-    def extract_xy_and_cls(self, bboxes):
-        mapObjects = np.empty((len(bboxes), 3))
-        mapObjects[:, :2] = bboxes[:, 6:]
-        mapObjects[:, 2] = bboxes[:, 5]
-        return mapObjects
+    def extract_xy_and_cls(self, msg_bboxes):
+        map_objects = np.empty((len(msg_bboxes.bboxes), 3))
+        for i, bbox_msg in enumerate(msg_bboxes.bboxes):
+            map_object = np.empty(3)
+            map_object[0] = bbox_msg.real_coords[0]
+            map_object[1] = bbox_msg.real_coords[1]
+            map_object[2] = bbox_msg.cls
+            map_objects[i] = map_object
+        return map_objects
 
     # When the robot moves the map is supposed to change accordingly
     # For this we need to integrate our knowledge about the robots position into the extracted map
@@ -216,11 +224,22 @@ class MappingNode(Node):
         else:
             return map_without_odometry"""
 
-        position_point = msg_odometry.pose.position
+        position_point = msg_odometry.pose.pose.position
 
         position_current = np.array([position_point.x, position_point.y])
 
-        map_integrated = np.array([entry + position_current for entry in map_without_odometry])
+
+        map_integrated = map_without_odometry.copy()
+
+        if len(map_integrated) == 0:
+            return map_integrated
+
+        print(map_integrated.shape)
+        print(position_current.shape)
+
+
+        map_integrated[:, 0] += position_current[0]
+        map_integrated[:, 1] += position_current[1]
 
         return map_integrated
 
