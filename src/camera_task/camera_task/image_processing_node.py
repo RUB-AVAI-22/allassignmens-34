@@ -35,6 +35,7 @@ class ImageProcessingNode(Node):
         self.last_received_image = None
         self.cone_detection = cone_detection
         self.edge_tpu = edge_tpu
+        
         # Initializing the yolov5 model
         if cone_detection:
             self.classes = ['blue', 'orange', 'yellow']
@@ -101,7 +102,10 @@ class ImageProcessingNode(Node):
             bbox_msg.header.stamp = msg.header.stamp
             self.bounding_box_publisher.publish(bbox_msg)
             self.get_logger().info('Publishing bounding boxes')
-
+        else:
+            bbox_msg = BoundingBoxes()
+            self.bounding_box_publisher.publish(bbox_msg)
+            self.get_logger().info('no bounding boxes')
         # convert image to compressed image
         compressed_image = self.bridge.cv2_to_compressed_imgmsg(original_image)
         # publish compressed image
