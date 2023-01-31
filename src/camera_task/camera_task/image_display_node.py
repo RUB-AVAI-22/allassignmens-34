@@ -71,7 +71,7 @@ class ImgDisplayNode(Node):
     def video_callback(self, frame):
         self.images = np.append(self.images, frame)
 
-        current_frame = self.bridge.compressed_imgmsg_to_cv2(frame)
+        current_frame = self.bridge.compressed_imgmsg_to_cv2(frame,'bgr8')
         if self.param_store_imgs:
             if not os.path.exists(self.param_imgs_path.value):
                 os.makedirs(self.param_imgs_path.value)
@@ -95,7 +95,7 @@ class ImgDisplayNode(Node):
                     selectedBboxesMsg = receivedBboxes
                     break
             if closestImageMsg:
-                self.image_display(selectedBboxesMsg.bboxes, self.bridge.compressed_imgmsg_to_cv2(closestImageMsg))
+                self.image_display(selectedBboxesMsg.bboxes, self.bridge.compressed_imgmsg_to_cv2(closestImageMsg,'bgr8'))
                 np.delete(self.images, np.where(self.images == closestImageMsg))
                 np.delete(self.bboxes, np.where(self.bboxes == selectedBboxesMsg))
                 break

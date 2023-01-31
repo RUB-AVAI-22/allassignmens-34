@@ -90,7 +90,7 @@ class ImageProcessingNode(Node):
     def callback(self, msg):
         self.get_logger().info(f"Received new raw image!")
 
-        original_image = self.bridge.imgmsg_to_cv2(msg)
+        original_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
         original_image = cv2.resize(original_image, (self.targetWidth, self.targetHeight))
         self.last_received_image = original_image
 
