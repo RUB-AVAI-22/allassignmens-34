@@ -96,7 +96,7 @@ class ImageProcessingNode(Node):
 
         if self.cone_detection:
             prediction = self.image_to_prediction(original_image)
-
+            
             bbox_msg = self.prediction_to_bounding_box_msg(prediction)
             bbox_msg.header = Header()
             bbox_msg.header.stamp = msg.header.stamp
@@ -126,6 +126,7 @@ class ImageProcessingNode(Node):
         bbox_msg.header = Header()
         bbox_msg.header.stamp = self.get_clock().now().to_msg()
         bbox_msg.bboxes = msg_data
+
         return bbox_msg
 
 
@@ -154,7 +155,7 @@ class ImageProcessingNode(Node):
             self.interpreter.invoke()
             prediction = self.interpreter.get_tensor(output_details['index'])
             prediction = prediction[0]
-
+            
             boxes = prediction[:, :4]
             boxes = self.xywh2xyxy(boxes)
             scores = prediction[:, 4]
@@ -167,14 +168,13 @@ class ImageProcessingNode(Node):
 
             boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
 
-            selected_indices = tf.image.non_max_suppression(boxes, scores/200, max_output_size=10, iou_threshold=0.25, score_threshold=0.35)
+            selected_indices = tf.image.non_max_suppression(boxes, scores, max_output_size=10, iou_threshold=0.5, score_threshold=0.5)
 
             selected_boxes = np.array(tf.gather(boxes, selected_indices))
             selected_cls = np.array(tf.gather(cls, selected_indices))
             selected_scores = np.array(tf.gather(scores, selected_indices))
 
             bboxes = list(zip(selected_boxes, selected_scores, selected_cls))
-
             return bboxes
 
     def get_last_received_image(self):
