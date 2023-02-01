@@ -144,7 +144,7 @@ class MappingNode(Node):
 
         map_clustered = np.unique(map_clustered, axis=0)
 
-        self.map_current = map_merged
+        self.map_current = map_clustered
         self.get_logger().info('Map updated!')
         self.publish_map(self.map_current)
 
