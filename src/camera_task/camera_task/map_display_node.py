@@ -3,6 +3,7 @@ import sys
 
 import matplotlib
 import rclpy
+from matplotlib import colors
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from qt_gui.main_window import MainWindow
 from rclpy.node import Node
@@ -20,15 +21,19 @@ from avai_messages.msg import Map
 from avai_messages.msg import MapEntry
 
 class MapDisplayNode(Node):
+    current_pos = (0, 0)
     main_window = None
     def __init__(self):
         super().__init__('map_display_node')
         self.map_subscriber = self.create_subscription(Map, '/map', self.callback_map, 10)
+        self.current_pos = (0,0)
         self.fig, self.ax = plt.subplots()
         self.ln, = plt.plot([], [], 'ro')
         self.x_data, self.y_data = [], []
         self.map = np.zeros((1,3))
         self.get_logger().info("Map Display Node started!")
+        #testing purpose
+        self.timer = self.create_timer(1 , self.debug)
 
     def callback_map(self, msg):
         self.get_logger().info("Map Data received!")
@@ -39,6 +44,15 @@ class MapDisplayNode(Node):
             map_object_extracted[2] = map_object.cls
             map[i] = map_object_extracted
         self.main_window.update_plot(map)
+
+    def debug(self):
+        pub = self.create_publisher(Map, '/map', 10)
+        test_entry = MapEntry()
+        test_entry.coordinates = [float(random.randint(-3,3)), float(random.randint(-3,3))]
+        test_entry.cls = random.randint(0,2)
+        data = Map()
+        data.map_objects = [test_entry]
+        pub.publish(data)
 
 class GUI(QWidget):
     node: MapDisplayNode = None
@@ -51,21 +65,26 @@ class GUI(QWidget):
         self.canvas = FigureCanvasQTAgg(self.figure)
         self.VBL.addWidget(self.canvas)
         self.setLayout(self.VBL)
+        self.graph_lim = 3
+        self.colors = ['#0000FF', '#FF7800', '#FFFF00']
 
     def update_plot(self, data):
         if len(data) != 0 :
             print("Updating Map Display!")
             self.figure.clear()
             ax = self.figure.add_subplot()
-
             dataX = data[:, 0]
             dataY = data[:, 1]
-            circle = plt.Circle((0,0), 0.1, color='g')
+            dataCls = data[:, 2]
+            colors_points = []
+            for cls in dataCls:
+                colors_points = self.colors[int(cls)]
+            circle = plt.Circle((0,0), 0.1, color='purple')
             ax.add_patch(circle)
-            ax.scatter(dataX, dataY)
+            ax.scatter(dataX, dataY, c=colors_points)
             ax.grid()
-            ax.set_xlim([-3,3])
-            ax.set_ylim([-3,3])
+            ax.set_xlim([-self.graph_lim + MapDisplayNode.current_pos[0], self.graph_lim + MapDisplayNode.current_pos[0]])
+            ax.set_ylim([-self.graph_lim + MapDisplayNode.current_pos[0], self.graph_lim + MapDisplayNode.current_pos[0]])
             self.canvas.draw()
 
 
