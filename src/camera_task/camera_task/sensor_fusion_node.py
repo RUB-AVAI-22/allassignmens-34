@@ -88,7 +88,7 @@ class SensorFusionNode(Node):
             clusterPixelApprox = (clusterAngle / 64.0) * 640
             for bbox in bboxes:
                 if clusterPixelApprox > bbox.coordinates[0] and clusterPixelApprox < bbox.coordinates[2]:
-                    bboxPos = self.polarToCartesian(clusterAngle+239, clusterDistance)
+                    bboxPos = self.polarToCartesian(clusterAngle+59, clusterDistance)
                     bboxMsg = BoundingBoxWithRealCoordinates()
                     bboxMsg.image_coords = bbox.coordinates
                     bboxMsg.conf = bbox.conf
