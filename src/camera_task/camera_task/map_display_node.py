@@ -78,7 +78,7 @@ class GUI(QWidget):
             dataCls = data[:, 2]
             colors_points = []
             for cls in dataCls:
-                colors_points = self.colors[int(cls)]
+                colors_points.append(self.colors[int(cls)])
             circle = plt.Circle((0,0), 0.1, color='purple')
             ax.add_patch(circle)
             ax.scatter(dataX, dataY, c=colors_points)
