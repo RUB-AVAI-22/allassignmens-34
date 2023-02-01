@@ -33,7 +33,7 @@ class MapDisplayNode(Node):
         self.map = np.zeros((1,3))
         self.get_logger().info("Map Display Node started!")
         #testing purpose
-        self.timer = self.create_timer(1 , self.debug)
+        #self.timer = self.create_timer(1 , self.debug)
 
     def callback_map(self, msg):
         self.get_logger().info("Map Data received!")
