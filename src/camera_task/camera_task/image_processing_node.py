@@ -70,7 +70,7 @@ class ImageProcessingNode(Node):
 
     #Necessary step for working with edge tpu data which returns values between 0 and 127
     def normalizeBoxes(self, boxes):
-        edge_tpu_max_value = 162.0
+        edge_tpu_max_value = 145.0
         normalizedBoxes = np.zeros((len(boxes), 4))
         normalizedBoxes[:, 0] = boxes[:, 0] / edge_tpu_max_value
         normalizedBoxes[:, 2] = boxes[:, 2] / edge_tpu_max_value
