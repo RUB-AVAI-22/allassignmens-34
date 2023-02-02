@@ -18,6 +18,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import numpy as np
 from pynput import keyboard
+
+from sklearn.cluster import DBSCAN
 import pygame
 pygame.init()
 class Computer_Node(Node):
@@ -67,6 +69,9 @@ class Computer_Node(Node):
         self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.listener.start()
 
+        plt.ion()
+        plt.show()
+
     def odom(self, odommsg):
         #self.twisted = odommsg.pose.pose
         if odommsg.pose.pose.orientation.x > 0:
@@ -93,10 +98,10 @@ class Computer_Node(Node):
         laser_scan_list.reverse()
 
         
-        xy_resolution = 0.002 
+        
         angles = []
         distances = []
-        plt.ion()
+        
         for current_degree, distance in enumerate(laser_scan_list):
             if distance != float("inf"):
                 angles.append((current_degree + self.theta_turtle) * math.pi / 180)
@@ -108,14 +113,20 @@ class Computer_Node(Node):
         if abs(self.lidar_stp_sec - self.pos_stp_sec) == 0 and abs(self.lidar_stp_nanosec - self.pos_stp_nanosec) < 13000000:
             self.ox.extend(ox.tolist())
             self.oy.extend(oy.tolist())
-        plt.scatter(self.ox, self.oy, s= 2)
-        plt.xlim(xmin = -10)
-        plt.xlim(xmax = 10)
-        plt.ylim(ymin = -10)
-        plt.ylim(ymax = 10)
-        plt.pause(0.001)
-        plt.ioff()
-        plt.clf()     
+            X  = np.array((self.ox,self.oy)).T
+            #np.array([np.array(self.ox), np.array(self.oy)])
+
+
+            y_pred = DBSCAN(eps = 0.05, min_samples=2).fit_predict(X)
+            plt.scatter(X[:, 0], X[:, 1], c=y_pred, s= 2)
+            #plt.scatter(X[:, 0], X[:, 1],  s= 2)
+            plt.xlim(xmin = -5)
+            plt.xlim(xmax = 5)
+            plt.ylim(ymin = -5)
+            plt.ylim(ymax = 5)
+            plt.pause(0.001)
+            plt.ioff()
+            plt.clf()     
 
     def cb_image(self, imgmsg):
         image = self.bridge.imgmsg_to_cv2(imgmsg, 'bgr8')
@@ -291,7 +302,7 @@ def main(args=None):
 
     node = Computer_Node()
     rclpy.spin(node)
-    plt.show()
+    
     node.destroy_node()
     rclpy.shutdown()
 
