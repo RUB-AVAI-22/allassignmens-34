@@ -70,7 +70,7 @@ class ImageProcessingNode(Node):
 
     #Necessary step for working with edge tpu data which returns values between 0 and 127
     def normalizeBoxes(self, boxes):
-        edge_tpu_max_value = 196.0
+        edge_tpu_max_value = 145.0
         normalizedBoxes = np.zeros((len(boxes), 4))
         normalizedBoxes[:, 0] = boxes[:, 0] / edge_tpu_max_value
         normalizedBoxes[:, 2] = boxes[:, 2] / edge_tpu_max_value
@@ -90,7 +90,7 @@ class ImageProcessingNode(Node):
     def callback(self, msg):
         self.get_logger().info(f"Received new raw image!")
 
-        original_image = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+        original_image = self.bridge.imgmsg_to_cv2(msg)
         original_image = cv2.resize(original_image, (self.targetWidth, self.targetHeight))
         self.last_received_image = original_image
 
@@ -168,7 +168,7 @@ class ImageProcessingNode(Node):
 
             boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
 
-            selected_indices = tf.image.non_max_suppression(boxes, scores, max_output_size=10, iou_threshold=0.5, score_threshold=0.5)
+            selected_indices = tf.image.non_max_suppression(boxes, scores/200, max_output_size=10, iou_threshold=0.15, score_threshold=0.35)
 
             selected_boxes = np.array(tf.gather(boxes, selected_indices))
             selected_cls = np.array(tf.gather(cls, selected_indices))
