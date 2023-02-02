@@ -12,7 +12,10 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 from rcl_interfaces.msg import SetParametersResult
 from nav_msgs.msg import Odometry
-
+from rclpy.qos import qos_profile_sensor_data
+from sensor_msgs.msg._laser_scan import LaserScan
+import numpy as np
+import matplotlib.pyplot as plt
 import numpy as np
 from pynput import keyboard
 import pygame
@@ -21,6 +24,18 @@ class Computer_Node(Node):
 
     def __init__(self):
         super().__init__('computer_node')
+
+        self.ox = []
+        self.oy = []
+        self.x_turtle = 0.0
+        self.y_turtle = 0.0
+        self.theta_turtle = 0.0
+
+        self.pos_stp_sec = 0
+        self.pos_stp_nanosec = 0
+
+        self.lidar_stp_sec = 0
+        self.lidar_stp_nanosec = 0
 
         self.maxTransVelocity = 0.26 #in m/s
         self.maxRotVelocity = 1.82 #in rad/s
@@ -37,7 +52,8 @@ class Computer_Node(Node):
         self.desiredMovement = Vector3() #x = translational, z = rotational
         
         self.pub_action = self.create_publisher(Twist, 'cmd_vel', 10)
-
+        self.lidar_sensor_subscriber = self.create_subscription(LaserScan, '/scan', self.cluster_points_in_fov,
+                                                                qos_profile_sensor_data)
         self.sub_img = self.create_subscription(Image, '/camera/image_raw', self.cb_image, 10)
         self.lidar_sensor_subscriber = self.create_subscription(Odometry, '/odom', self.odom, 10)
         self.bridge = CvBridge()
@@ -54,11 +70,52 @@ class Computer_Node(Node):
     def odom(self, odommsg):
         #self.twisted = odommsg.pose.pose
         if odommsg.pose.pose.orientation.x > 0:
-            print(f"\r{round(math.acos(odommsg.pose.pose.orientation.w)*180/math.pi*2,1)}\n\n\n", end='')
+           self.theta_turtle = round(math.acos(odommsg.pose.pose.orientation.w)*180/math.pi*2,1)
         elif odommsg.pose.pose.orientation.x < 0:
-            print(f"\r{round(-math.acos(odommsg.pose.pose.orientation.w)*180/math.pi*2,1)}\n\n\n", end='')
+            self.theta_turtle = round(-math.acos(odommsg.pose.pose.orientation.w)*180/math.pi*2,1)
+        self.x_turtle = odommsg.pose.pose.position.x
+        self.y_turtle = odommsg.pose.pose.position.y
 
+        self.pos_stp_sec = odommsg.header.stamp.sec
+        self.pos_stp_nanosec = odommsg.header.stamp.nanosec
 
+    def cluster_points_in_fov(self, lidar):
+        #reads the lidar data and clusters the points in the camera fov
+        #returns an array of points as (middle_point in degree, distance)
+        #(31, 1.5) means right in the center of the camera there is a object 1,5m away
+
+        
+        laser_scan_list = lidar.ranges
+
+        self.lidar_stp_sec = lidar.header.stamp.sec
+        self.lidar_stp_nanosec = lidar.header.stamp.nanosec
+
+        laser_scan_list.reverse()
+
+        
+        xy_resolution = 0.002 
+        angles = []
+        distances = []
+        plt.ion()
+        for current_degree, distance in enumerate(laser_scan_list):
+            if distance != float("inf"):
+                angles.append((current_degree + self.theta_turtle) * math.pi / 180)
+                distances.append(float(distance))
+          
+        ox = np.sin(angles) * distances - np.ones(len(distances)) * self.y_turtle
+        oy = np.cos(angles) * distances + np.ones(len(angles)) * self.x_turtle
+
+        if abs(self.lidar_stp_sec - self.pos_stp_sec) == 0 and abs(self.lidar_stp_nanosec - self.pos_stp_nanosec) < 13000000:
+            self.ox.extend(ox.tolist())
+            self.oy.extend(oy.tolist())
+        plt.scatter(self.ox, self.oy, s= 2)
+        plt.xlim(xmin = -10)
+        plt.xlim(xmax = 10)
+        plt.ylim(ymin = -10)
+        plt.ylim(ymax = 10)
+        plt.pause(0.001)
+        plt.ioff()
+        plt.clf()     
 
     def cb_image(self, imgmsg):
         image = self.bridge.imgmsg_to_cv2(imgmsg, 'bgr8')
@@ -234,7 +291,7 @@ def main(args=None):
 
     node = Computer_Node()
     rclpy.spin(node)
-
+    plt.show()
     node.destroy_node()
     rclpy.shutdown()
 
