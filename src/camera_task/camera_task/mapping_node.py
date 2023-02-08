@@ -97,7 +97,7 @@ class MappingNode(Node):
         # Maps are merged every iteration
         # Points are grouped depending on a minimum distance
         # Their positions are averaged and the result is added to the new map
-        map_merged = np.empty((len(map_odometry_integration), 3))
+        """map_merged = np.empty((len(map_odometry_integration), 3))
         for i, newObject in enumerate(map_odometry_integration):
             closest_object = None
             closest_object_distance = 0.1
@@ -109,17 +109,18 @@ class MappingNode(Node):
             if not closest_object is None:
                 map_merged[i] = self.merge_objects(newObject, closest_object)
             else:
-                map_merged[i] = newObject
+                map_merged[i] = newObject"""
+        map_merged = np.concatenate((map_odometry_integration, self.map_current))
 
         # Cluster map using density clustering
         # The algorithm starts at a random point.
         # If there are at least min_samples points in a radius of eps around the point they are grouped into a cluster.
         # Each point in the cluster then searches around itself for more points to add into the cluster.
         # This again requires min_samples points in a radius of eps.
-        clusterer = DBSCAN(eps=1, min_samples=5)
         map_clustered = np.zeros((map_merged.shape[0], 3))
         # Cluster only points in map belonging to certain class, since clusters only make sense with same class points
         for cls in range(len(self.classes)):
+            clusterer = DBSCAN(eps=1, min_samples=5)
             indices_cls_subset = np.where(map_merged[:, 2] == cls)[0]
 
             map_cls_subset = map_merged[indices_cls_subset][:]
