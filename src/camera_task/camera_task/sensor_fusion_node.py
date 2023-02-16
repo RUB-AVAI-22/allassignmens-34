@@ -99,7 +99,6 @@ class SensorFusionNode(Node):
                     bboxMsg.cls = bbox.cls
                     bboxMsg.real_coords = bboxPos
 
-                    clustered_lidar = np.delete(clustered_lidar, np.where(clustered_lidar == bestMatch))
 
             matchedBBoxes.append(bboxMsg)
 
