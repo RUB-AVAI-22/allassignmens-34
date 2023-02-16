@@ -115,7 +115,7 @@ class SensorFusionNode(Node):
         # (31, 1.5) means right in the center of the camera there is a object 1,5m away
         scan_fov = lidar.ranges[149:212]
         index = -1
-        TOLERANCE = 0.02
+        TOLERANCE = 0.01
         last_value = 0
         clusters = []
         results = []
