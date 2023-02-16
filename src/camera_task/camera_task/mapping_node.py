@@ -128,7 +128,7 @@ class MappingNode(Node):
             indices_cls_subset = np.where(map_merged[:, 2] == cls)[0]
 
             map_cls_subset = map_merged[indices_cls_subset][:]
-
+            print(f"map_cls_subset {map_cls_subset}")
             if len(map_cls_subset) == 0:
                 break
 
@@ -138,6 +138,7 @@ class MappingNode(Node):
             for i in range(max(cluster_labels)):
                 indices = np.where(cluster_labels == i)[0]
 
+                print(f"indices {indices}")
                 cluster_center_x = np.mean(map_cls_subset[indices, 0])
                 cluster_center_y = np.mean(map_cls_subset[indices, 1])
 
