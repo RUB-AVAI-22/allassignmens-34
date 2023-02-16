@@ -152,6 +152,7 @@ class MappingNode(Node):
                 #map_clustered[indices_cls_subset[index]] = map_cls_subset[index]
 
         #map_clustered = np.unique(map_clustered, axis=0)
+        print(map_current)
         print(map_clustered)
 
         self.map_clustered = map_clustered
