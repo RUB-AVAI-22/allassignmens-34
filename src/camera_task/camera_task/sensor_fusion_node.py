@@ -92,15 +92,18 @@ class SensorFusionNode(Node):
                 if bestMatch is None:
                     bestMatch = (clusterAngle, clusterDistance)
                 elif self.distanceToBoxCenter(bbox, clusterAngle) < self.distanceToBoxCenter(bbox, bestMatch[0]):
-                    bboxPos = self.polarToCartesianMirrored(clusterAngle + 59, clusterDistance)
-                    bboxMsg = BoundingBoxWithRealCoordinates()
-                    bboxMsg.image_coords = bbox.coordinates
-                    bboxMsg.conf = bbox.conf
-                    bboxMsg.cls = bbox.cls
-                    bboxMsg.real_coords = bboxPos
+                    bestMatch = (clusterAngle, clusterDistance)
+
+            if not bestMatch is None:
+                bboxPos = self.polarToCartesianMirrored(clusterAngle + 59, clusterDistance)
+                bboxMsg = BoundingBoxWithRealCoordinates()
+                bboxMsg.image_coords = bbox.coordinates
+                bboxMsg.conf = bbox.conf
+                bboxMsg.cls = bbox.cls
+                bboxMsg.real_coords = bboxPos
 
 
-            matchedBBoxes.append(bboxMsg)
+                matchedBBoxes.append(bboxMsg)
 
         BBoxesMsg = BoundingBoxesWithRealCoordinates()
         BBoxesMsg.header = Header()
