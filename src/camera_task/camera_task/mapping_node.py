@@ -121,7 +121,7 @@ class MappingNode(Node):
         # If there are at least min_samples points in a radius of eps around the point they are grouped into a cluster.
         # Each point in the cluster then searches around itself for more points to add into the cluster.
         # This again requires min_samples points in a radius of eps.
-        map_clustered = np.zeros((map_merged.shape[0], 3))
+        map_clustered = np.array([])
         # Cluster only points in map belonging to certain class, since clusters only make sense with same class points
         for cls in range(len(self.classes)):
             clusterer = DBSCAN(eps=0.5, min_samples=3)
@@ -141,13 +141,14 @@ class MappingNode(Node):
                 cluster_center_x = np.mean(map_cls_subset[indices][0])
                 cluster_center_y = np.mean(map_cls_subset[indices][1])
 
-                map_clustered[indices_cls_subset[indices]] = [cluster_center_x, cluster_center_y, cls]
+                map_clustered = np.append(map_clustered, [[cluster_center_x, cluster_center_y, cls]])
 
             print(map_clustered)
             # Take over the remaining points not belonging to any cluster
-            indices = np.where(cluster_labels == -1)[0]
-            map_clustered = np.delete(map_clustered, indices)
-            print(map_clustered)
+            #indices = np.where(cluster_labels == -1)[0]
+            #print(indices)
+            #map_clustered = np.delete(map_clustered, indices)
+            #print(map_clustered)
             #for index in indices:
                 #map_clustered[indices_cls_subset[index]] = map_cls_subset[index]
 
