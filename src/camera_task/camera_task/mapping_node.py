@@ -138,8 +138,8 @@ class MappingNode(Node):
             for i in range(max(cluster_labels)):
                 indices = np.where(cluster_labels == i)[0]
 
-                cluster_center_x = np.mean(map_cls_subset[indices][0])
-                cluster_center_y = np.mean(map_cls_subset[indices][1])
+                cluster_center_x = np.mean(map_cls_subset[indices, 0])
+                cluster_center_y = np.mean(map_cls_subset[indices, 1])
 
                 map_clustered = np.append(map_clustered, [[cluster_center_x, cluster_center_y, cls]])
 
