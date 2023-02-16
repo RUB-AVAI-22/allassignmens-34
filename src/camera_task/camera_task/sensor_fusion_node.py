@@ -88,13 +88,13 @@ class SensorFusionNode(Node):
         for bbox in bboxes:
             bestMatch = None
             for clusterAngle, clusterDistance in clustered_lidar:
-                clusterPixelApprox = self.angleToPixel(clusterAngle)
                 if bestMatch is None:
                     bestMatch = (clusterAngle, clusterDistance)
                 elif self.distanceToBoxCenter(bbox, clusterAngle) < self.distanceToBoxCenter(bbox, bestMatch[0]):
                     bestMatch = (clusterAngle, clusterDistance)
 
             if not bestMatch is None:
+                print(bestMatch)
                 bboxPos = self.polarToCartesianMirrored(clusterAngle + 59, clusterDistance)
                 bboxMsg = BoundingBoxWithRealCoordinates()
                 bboxMsg.image_coords = bbox.coordinates
