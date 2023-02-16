@@ -142,7 +142,10 @@ class MappingNode(Node):
                 cluster_center_x = np.mean(map_cls_subset[indices, 0])
                 cluster_center_y = np.mean(map_cls_subset[indices, 1])
 
-                map_clustered = np.append(map_clustered, [[cluster_center_x, cluster_center_y, cls]])
+                if len(map_clustered) == 0:
+                    map_clustered = [[cluster_center_x, cluster_center_y, cls]]
+                else:
+                    map_clustered = np.concatenate((map_clustered, [[cluster_center_x, cluster_center_y, cls]]))
 
             # Take over the remaining points not belonging to any cluster
             #indices = np.where(cluster_labels == -1)[0]
