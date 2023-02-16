@@ -83,6 +83,8 @@ class SensorFusionNode(Node):
     def sensor_fusion(self, bboxes, lidar):
         clustered_lidar = self.clusterLidarPoints(lidar)
 
+        print(clustered_lidar)
+
         matchedBBoxes = []
         for clusterAngle, clusterDistance in clustered_lidar:
             clusterPixelApprox = (clusterAngle / 64.0) * 640
