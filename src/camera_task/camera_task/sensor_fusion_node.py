@@ -86,7 +86,7 @@ class SensorFusionNode(Node):
 
         matchedBBoxes = []
         for clusterAngle, clusterDistance in clustered_lidar:
-            clusterPixelApprox = (clusterAngle / 64.0) * 640
+            clusterPixelApprox = (clusterAngle / 62.0) * 640
             for bbox in bboxes:
                 if clusterPixelApprox > bbox.coordinates[0] and clusterPixelApprox < bbox.coordinates[2]:
                     bboxPos = self.polarToCartesianMirrored(clusterAngle + 59, clusterDistance)
@@ -115,7 +115,7 @@ class SensorFusionNode(Node):
         # (31, 1.5) means right in the center of the camera there is a object 1,5m away
         scan_fov = lidar.ranges[149:212]
         index = -1
-        TOLERANCE = 0.05
+        TOLERANCE = 0.02
         last_value = 0
         clusters = []
         results = []
