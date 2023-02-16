@@ -143,7 +143,6 @@ class MappingNode(Node):
 
                 map_clustered = np.append(map_clustered, [[cluster_center_x, cluster_center_y, cls]])
 
-            print(map_clustered)
             # Take over the remaining points not belonging to any cluster
             #indices = np.where(cluster_labels == -1)[0]
             #print(indices)
@@ -152,7 +151,8 @@ class MappingNode(Node):
             #for index in indices:
                 #map_clustered[indices_cls_subset[index]] = map_cls_subset[index]
 
-        map_clustered = np.unique(map_clustered, axis=0)
+        #map_clustered = np.unique(map_clustered, axis=0)
+        print(map_clustered)
 
         self.map_clustered = map_clustered
         self.map_current = map_merged
