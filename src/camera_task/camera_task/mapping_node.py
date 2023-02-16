@@ -124,21 +124,21 @@ class MappingNode(Node):
         map_clustered = np.array([])
         # Cluster only points in map belonging to certain class, since clusters only make sense with same class points
         for cls in range(len(self.classes)):
-            clusterer = DBSCAN(eps=1, min_samples=5)
+            clusterer = DBSCAN(eps=0.1, min_samples=5)
             indices_cls_subset = np.where(map_merged[:, 2] == cls)[0]
 
             map_cls_subset = map_merged[indices_cls_subset][:]
-            print(f"map_cls_subset {map_cls_subset}")
+            #print(f"map_cls_subset {map_cls_subset}")
             if len(map_cls_subset) == 0:
                 continue
 
             cluster_labels = clusterer.fit_predict(map_cls_subset)
-            print(f"cluster_labels {cluster_labels}")
+            #print(f"cluster_labels {cluster_labels}")
             # Compute mean position of all points in a cluster and place as new point in map
             for i in range(max(cluster_labels)+1):
                 indices = np.where(cluster_labels == i)[0]
 
-                print(f"indices {indices}")
+                #print(f"indices {indices}")
                 cluster_center_x = np.mean(map_cls_subset[indices, 0])
                 cluster_center_y = np.mean(map_cls_subset[indices, 1])
 
@@ -159,8 +159,8 @@ class MappingNode(Node):
 
         self.map_clustered = map_clustered
         self.map_current = map_merged
-        print(self.map_current)
-        print(self.map_clustered)
+        #print(self.map_current)
+        #print(self.map_clustered)
         self.get_logger().info('Map updated!')
         self.publish_map(self.map_clustered)
 
