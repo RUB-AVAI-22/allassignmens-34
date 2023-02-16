@@ -82,7 +82,7 @@ class SensorFusionNode(Node):
 
     def sensor_fusion(self, bboxes, lidar):
         clustered_lidar = self.clusterLidarPoints(lidar)
-        #print("Clustered points: ", clustered_lidar)
+        print("Clustered points: ", clustered_lidar)
 
         matchedBBoxes = []
         for bbox in bboxes:
@@ -94,7 +94,7 @@ class SensorFusionNode(Node):
                     bestMatch = (clusterAngle, clusterDistance)
 
             if not bestMatch is None:
-                print(bestMatch)
+                print("bestMatch: ", bestMatch)
                 bboxPos = self.polarToCartesianMirrored(clusterAngle + 59, clusterDistance)
                 bboxMsg = BoundingBoxWithRealCoordinates()
                 bboxMsg.image_coords = bbox.coordinates
