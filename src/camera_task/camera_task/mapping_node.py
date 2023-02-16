@@ -130,10 +130,10 @@ class MappingNode(Node):
             map_cls_subset = map_merged[indices_cls_subset][:]
             print(f"map_cls_subset {map_cls_subset}")
             if len(map_cls_subset) == 0:
-                break
+                continue
 
             cluster_labels = clusterer.fit_predict(map_cls_subset)
-
+            print(f"cluster_labels {cluster_labels}")
             # Compute mean position of all points in a cluster and place as new point in map
             for i in range(max(cluster_labels)):
                 indices = np.where(cluster_labels == i)[0]
