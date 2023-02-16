@@ -21,6 +21,7 @@ class MappingNode(Node):
         super().__init__('mapping_node')
         self.classes = ['blue', 'orange', 'yellow']
         self.map_current = []  # entries denote objects in our map, each object consists of xy coordinates and a corresponding class
+        self.map_clustered = []
         self.position = [0.0, 0.0]
         self.heading_direction = 0.0 #from 0 to 2pi
 
@@ -148,7 +149,8 @@ class MappingNode(Node):
 
         map_clustered = np.unique(map_clustered, axis=0)
 
-        self.map_current = map_clustered
+        self.map_clustered = map_clustered
+        self.map_current = map_merged
         self.get_logger().info('Map updated!')
         self.publish_map(self.map_current)
 
