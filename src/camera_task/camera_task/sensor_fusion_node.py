@@ -74,6 +74,7 @@ class SensorFusionNode(Node):
                     selectedBboxesMsg = receivedBboxes
                     break
             if closestLidarMsg:
+                print(closestLidarMsg)
                 self.sensor_fusion(selectedBboxesMsg.bboxes, closestLidarMsg)
                 np.delete(self.lidar, np.where(self.lidar == closestLidarMsg))
                 np.delete(self.bboxes, np.where(self.lidar == selectedBboxesMsg))
@@ -82,7 +83,6 @@ class SensorFusionNode(Node):
 
     def sensor_fusion(self, bboxes, lidar):
         clustered_lidar = self.clusterLidarPoints(lidar)
-        print(lidar)
         #print(clustered_lidar)
 
         matchedBBoxes = []
