@@ -115,7 +115,7 @@ class SensorFusionNode(Node):
         self.get_logger().info('Publishing bounding boxes with real coordinates')
 
     def angleToPixel(self, angle):
-        return (angle / 62.0) * 640
+        return  640 - ((angle / 62.0) * 640)
     def distanceToBoxCenter(self, bbox, lidar_angle):
         return np.abs((bbox.coordinates[0] + bbox.coordinates[2])/2 - self.angleToPixel(lidar_angle))
 
