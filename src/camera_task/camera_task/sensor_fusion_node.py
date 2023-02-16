@@ -42,11 +42,11 @@ class SensorFusionNode(Node):
 
 
     def bbox_callback(self, msg):
-        self.get_logger().info('Receiving bbox')
+        #self.get_logger().info('Receiving bbox')
         self.bboxes = np.append(self.bboxes, msg)
 
     def lidar_callback(self, laser_scan):
-        self.get_logger().info('Receiving lidar frame')
+        #self.get_logger().info('Receiving lidar frame')
         self.lidar = np.append(self.lidar, laser_scan)
 
     def message_distance(self, timestampA, timestampB):
@@ -82,8 +82,8 @@ class SensorFusionNode(Node):
 
     def sensor_fusion(self, bboxes, lidar):
         clustered_lidar = self.clusterLidarPoints(lidar)
-
-        print(clustered_lidar)
+        print(lidar)
+        #print(clustered_lidar)
 
         matchedBBoxes = []
         for clusterAngle, clusterDistance in clustered_lidar:
