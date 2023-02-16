@@ -110,7 +110,10 @@ class MappingNode(Node):
                 map_merged[i] = self.merge_objects(newObject, closest_object)
             else:
                 map_merged[i] = newObject"""
-        map_merged = np.concatenate((map_odometry_integration, self.map_current))
+        if len(self.map_current) == 0:
+            map_merged = map_odometry_integration
+        else:
+            map_merged = np.concatenate((map_odometry_integration, self.map_current))
 
         # Cluster map using density clustering
         # The algorithm starts at a random point.
