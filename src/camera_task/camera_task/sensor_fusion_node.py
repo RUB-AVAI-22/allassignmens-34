@@ -95,6 +95,7 @@ class SensorFusionNode(Node):
 
             if not bestMatch is None:
                 print("bestMatch: ", bestMatch)
+                print("(boxleft, boxright, bestMatchPixel): ", bbox.coordinates[0], bbox.coordinates[2], self.angleToPixel(bestMatch[0]))
                 bboxPos = self.polarToCartesianMirrored(clusterAngle + 59, clusterDistance)
                 bboxMsg = BoundingBoxWithRealCoordinates()
                 bboxMsg.image_coords = bbox.coordinates
