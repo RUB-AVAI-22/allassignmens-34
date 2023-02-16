@@ -146,7 +146,7 @@ class SensorFusionNode(Node):
         return results
     def polarToCartesianMirrored(self, angle, distance):
         angle = (angle/180.0)*np.pi
-        x = np.cos(angle) * distance
+        x = -np.cos(angle) * distance
         y = np.sin(angle) * distance
         return [x,y]
 
