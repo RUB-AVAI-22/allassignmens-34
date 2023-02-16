@@ -138,13 +138,10 @@ class MappingNode(Node):
             for i in range(max(cluster_labels)):
                 indices = np.where(cluster_labels == i)[0]
 
-                cluster_center = np.mean(map_cls_subset[indices][:2])
+                cluster_center_x = np.mean(map_cls_subset[indices][0])
+                cluster_center_y = np.mean(map_cls_subset[indices][1])
 
-                print(f"indicies {indices}")
-                print(f"indicies_cls_subset {indices_cls_subset}")
-                print(f"cluster_center {cluster_center}")
-                print(f"cls {cls}")
-                map_clustered[indices_cls_subset[indices]] = [*cluster_center, cls]
+                map_clustered[indices_cls_subset[indices]] = [cluster_center_x, cluster_center_y, cls]
 
             # Take over the remaining points not belonging to any cluster
             indices = np.where(cluster_labels == -1)[0]
