@@ -42,11 +42,11 @@ class SensorFusionNode(Node):
 
 
     def bbox_callback(self, msg):
-        #self.get_logger().info('Receiving bbox')
+        self.get_logger().info('Receiving bbox')
         self.bboxes = np.append(self.bboxes, msg)
 
     def lidar_callback(self, laser_scan):
-        #self.get_logger().info('Receiving lidar frame')
+        self.get_logger().info('Receiving lidar frame')
         self.lidar = np.append(self.lidar, laser_scan)
 
     def message_distance(self, timestampA, timestampB):
@@ -111,7 +111,7 @@ class SensorFusionNode(Node):
         BBoxesMsg.bboxes = matchedBBoxes
         self.bboxWithRealCoords_publisher.publish(BBoxesMsg)
 
-        #self.get_logger().info('Publishing bounding boxes with real coordinates')
+        self.get_logger().info('Publishing bounding boxes with real coordinates')
 
     def angleToPixel(self, angle):
         return (angle / 62.0) * 640
