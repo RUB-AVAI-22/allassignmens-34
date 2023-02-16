@@ -135,7 +135,7 @@ class MappingNode(Node):
             cluster_labels = clusterer.fit_predict(map_cls_subset)
             print(f"cluster_labels {cluster_labels}")
             # Compute mean position of all points in a cluster and place as new point in map
-            for i in range(max(cluster_labels)):
+            for i in range(max(cluster_labels)+1):
                 indices = np.where(cluster_labels == i)[0]
 
                 print(f"indices {indices}")
