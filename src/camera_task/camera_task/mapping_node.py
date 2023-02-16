@@ -145,8 +145,9 @@ class MappingNode(Node):
 
             # Take over the remaining points not belonging to any cluster
             indices = np.where(cluster_labels == -1)[0]
-            for index in indices:
-                map_clustered[indices_cls_subset[index]] = map_cls_subset[index]
+            map_clustered = np.delete(map_clustered, indices)
+            #for index in indices:
+                #map_clustered[indices_cls_subset[index]] = map_cls_subset[index]
 
         map_clustered = np.unique(map_clustered, axis=0)
 
