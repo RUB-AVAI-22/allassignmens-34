@@ -140,6 +140,10 @@ class MappingNode(Node):
 
                 cluster_center = np.mean(map_cls_subset[indices][:2])
 
+                print(f"indicies {indices}")
+                print(f"indicies_cls_subset {indices_cls_subset}")
+                print(f"cluster_center {cluster_center}")
+                print(f"cls {cls}")
                 map_clustered[indices_cls_subset[indices]] = [*cluster_center, cls]
 
             # Take over the remaining points not belonging to any cluster
