@@ -162,7 +162,7 @@ class MappingNode(Node):
         #print(self.map_current)
         #print(self.map_clustered)
         self.get_logger().info('Map updated!')
-        self.publish_map(self.map_clustered)
+        self.publish_map(self.map_current)
 
 
 
