@@ -85,10 +85,13 @@ class SensorFusionNode(Node):
         print("Clustered points: ", clustered_lidar)
 
         matchedBBoxes = []
-        for clusterAngle, clusterDistance in clustered_lidar:
-            clusterPixelApprox = (clusterAngle / 62.0) * 640
-            for bbox in bboxes:
-                if clusterPixelApprox > bbox.coordinates[0] and clusterPixelApprox < bbox.coordinates[2]:
+        for bbox in bboxes:
+            bestMatch = None
+            for clusterAngle, clusterDistance in clustered_lidar:
+                clusterPixelApprox = self.angleToPixel(clusterAngle)
+                if bestMatch is None:
+                    bestMatch = (clusterAngle, clusterDistance)
+                elif self.distanceToBoxCenter(bbox, clusterAngle) < self.distanceToBoxCenter(bbox, bestMatch[0]):
                     bboxPos = self.polarToCartesianMirrored(clusterAngle + 59, clusterDistance)
                     bboxMsg = BoundingBoxWithRealCoordinates()
                     bboxMsg.image_coords = bbox.coordinates
@@ -96,10 +99,9 @@ class SensorFusionNode(Node):
                     bboxMsg.cls = bbox.cls
                     bboxMsg.real_coords = bboxPos
 
-                    bboxes = np.delete(bboxes, np.where(bboxes == bbox))
+                    clustered_lidar = np.delete(clustered_lidar, np.where(clustered_lidar == bestMatch))
 
-                    matchedBBoxes.append(bboxMsg)
-                    break
+            matchedBBoxes.append(bboxMsg)
 
         BBoxesMsg = BoundingBoxesWithRealCoordinates()
         BBoxesMsg.header = Header()
@@ -108,6 +110,11 @@ class SensorFusionNode(Node):
         self.bboxWithRealCoords_publisher.publish(BBoxesMsg)
 
         #self.get_logger().info('Publishing bounding boxes with real coordinates')
+
+    def angleToPixel(self, angle):
+        return (angle / 62.0) * 640
+    def distanceToBoxCenter(self, bbox, lidar_angle):
+        return np.abs((bbox.coordinates[0] + bbox.coordinates[2])/2 - self.angleToPixel(lidar_angle))
 
     def clusterLidarPoints(self, lidar):
         # reads the lidar data and clusters the points in the camera fov
