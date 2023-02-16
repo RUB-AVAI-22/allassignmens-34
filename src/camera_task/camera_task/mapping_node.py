@@ -124,7 +124,7 @@ class MappingNode(Node):
         map_clustered = np.array([])
         # Cluster only points in map belonging to certain class, since clusters only make sense with same class points
         for cls in range(len(self.classes)):
-            clusterer = DBSCAN(eps=0.1, min_samples=5)
+            clusterer = DBSCAN(eps=0.1, min_samples=15)
             indices_cls_subset = np.where(map_merged[:, 2] == cls)[0]
 
             map_cls_subset = map_merged[indices_cls_subset][:]
