@@ -10,7 +10,6 @@ from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
-from rcl_interfaces.msg import SetParametersResult
 from nav_msgs.msg import Odometry
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg._laser_scan import LaserScan
@@ -19,27 +18,97 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pynput import keyboard
 import scipy.signal as signal
-from sklearn.cluster import DBSCAN
 
-from sklearn.svm import SVC
+import math
+from enum import Enum
 
+import matplotlib.pyplot as plt
+import numpy as np
 
 EXTEND_AREA = 1.0
 
 import pygame
 pygame.init()
+
+show_animation = True
+
+
+
+
+
+class RobotType(Enum):
+    circle = 1
+    rectangle = 0
+    
+class Config:
+    """
+    simulation parameter class
+    """
+
+    def __init__(self):
+        # robot parameter
+        self.max_speed = 0.26  # [m/s]
+        self.min_speed = -0.26  # [m/s]
+        self.max_yaw_rate =  	1.82  # [rad/s]
+        self.max_accel = 0.2  # [m/ss]
+        self.max_delta_yaw_rate =  	1.82  # [rad/ss]
+        self.v_resolution = 0.01  # [m/s]
+        self.yaw_rate_resolution = 0.1 * math.pi / 180.0  # [rad/s]
+        self.dt = 0.1  # [s] Time tick for motion prediction
+        self.predict_time = 3  # [s]
+        self.to_goal_cost_gain = 0.15
+        self.speed_cost_gain = 1.0
+        self.obstacle_cost_gain = 1.0
+        self.robot_stuck_flag_cons = 0.001  # constant to prevent robot stucked
+        self.robot_type = RobotType.circle
+
+        # if robot_type == RobotType.circle
+        # Also used to check if goal is reached in both types
+        self.robot_radius = 1.0  # [m] for collision check
+
+        # if robot_type == RobotType.rectangle
+        self.robot_width = 0.5  # [m] for collision check
+        self.robot_length = 1.2  # [m] for collision check
+        # obstacles [x(m) y(m), ....]
+
+
+    @property
+    def robot_type(self):
+        return self._robot_type
+
+    @robot_type.setter
+    def robot_type(self, value):
+        if not isinstance(value, RobotType):
+            raise TypeError("robot_type must be an instance of RobotType")
+        self._robot_type = value
+
+
+config = Config()
+
 class Computer_Node(Node):
 
     def __init__(self):
         super().__init__('computer_node')
+
+        
+
 
         self.ox = []
         self.oy = []
         self.x_turtle = 0.0
         self.y_turtle = 0.0
 
+        # initial state [x(m), y(m), yaw(rad), v(m/s), omega(rad/s)]
+        self.x = np.array([self.x_turtle, self.y_turtle , math.pi / 2.0, 0.0, 0.0])
+        # goal position [x(m), y(m)]
+        self.goal = np.array([10.0, 10.0])
+
+        config.robot_type = RobotType.circle
+        self.trajectory = np.array(self.x)
+
         self.left_right = []
         self.theta_turtle = 0.0
+        self.yaw = 0
 
         self.pos_stp_sec = 0
         self.pos_stp_nanosec = 0
@@ -92,6 +161,7 @@ class Computer_Node(Node):
             self.theta_turtle = round(-math.acos(odommsg.pose.pose.orientation.w)*180/math.pi*2,1)
         self.x_turtle = odommsg.pose.pose.position.x
         self.y_turtle = odommsg.pose.pose.position.y
+        self.yaw = odommsg.pose.pose.orientation.w
 
         self.pos_stp_sec = odommsg.header.stamp.sec
         self.pos_stp_nanosec = odommsg.header.stamp.nanosec
@@ -143,6 +213,10 @@ class Computer_Node(Node):
             self.oy.extend(oy.tolist())
             self.left_right.extend(left_right)
             self.crone_position  = np.array((signal.medfilt(volume=self.ox, kernel_size=5),signal.medfilt(volume=self.oy, kernel_size=5))).T
+            
+            self.autopilot()
+           
+            
             #np.array([np.array(self.ox), np.array(self.oy)])
 
             #svm = SVC(kernel = 'rbf', random_state = 0, gamma = 0.2, C = 0.2)
@@ -161,32 +235,32 @@ class Computer_Node(Node):
             # plt.ylim(ymax = 5)
             # plt.grid(True)
             
-            xy_resolution = 0.02
-            self.ox.reverse()
-            #self.oy.reverse()
-            occupancy_map, min_x, max_x, min_y, max_y, xy_resolution = \
-            self.generate_ray_casting_grid_map(self.ox, self.oy, xy_resolution, True)
-            xy_res = np.array(occupancy_map).shape
-            plt.figure(1, figsize=(10, 4))
-            plt.subplot(122)
-            plt.imshow(occupancy_map, cmap="PiYG_r")
-            # cmap = "binary" "PiYG_r" "PiYG_r" "bone" "bone_r" "RdYlGn_r"
-            plt.clim(-0.4, 1.4)
-            plt.gca().set_xticks(np.arange(-.5, xy_res[1], 1), minor=True)
-            plt.gca().set_yticks(np.arange(-.5, xy_res[0], 1), minor=True)
-            plt.grid(True, which="minor", color="w", linewidth=0.6, alpha=0.5)
-            plt.colorbar()
-            plt.subplot(121)
-            plt.plot([oy, np.zeros(np.size(oy))], [ox, np.zeros(np.size(oy))], "ro-")
-            plt.axis("equal")
-            plt.plot(0.0, 0.0, "ob")
-            plt.gca().set_aspect("equal", "box")
-            bottom, top = plt.ylim()  # return the current y-lim
-            plt.ylim((top, bottom))  # rescale y axis, to match the grid orientation
-            plt.grid(True)
-            plt.pause(0.001)
-            plt.ioff()
-            plt.clf()   
+            # xy_resolution = 0.02
+            # self.ox.reverse()
+            # #self.oy.reverse()
+            # occupancy_map, min_x, max_x, min_y, max_y, xy_resolution = \
+            # self.generate_ray_casting_grid_map(self.ox, self.oy, xy_resolution, True)
+            # xy_res = np.array(occupancy_map).shape
+            # plt.figure(1, figsize=(10, 4))
+            # plt.subplot(122)
+            # plt.imshow(occupancy_map, cmap="PiYG_r")
+            # # cmap = "binary" "PiYG_r" "PiYG_r" "bone" "bone_r" "RdYlGn_r"
+            # plt.clim(-0.4, 1.4)
+            # plt.gca().set_xticks(np.arange(-.5, xy_res[1], 1), minor=True)
+            # plt.gca().set_yticks(np.arange(-.5, xy_res[0], 1), minor=True)
+            # plt.grid(True, which="minor", color="w", linewidth=0.6, alpha=0.5)
+            # plt.colorbar()
+            # plt.subplot(121)
+            # plt.plot([oy, np.zeros(np.size(oy))], [ox, np.zeros(np.size(oy))], "ro-")
+            # plt.axis("equal")
+            # plt.plot(0.0, 0.0, "ob")
+            # plt.gca().set_aspect("equal", "box")
+            # bottom, top = plt.ylim()  # return the current y-lim
+            # plt.ylim((top, bottom))  # rescale y axis, to match the grid orientation
+            # plt.grid(True)
+            # plt.pause(0.001)
+            # plt.ioff()
+            # plt.clf()   
 
     def bresenham(self, start, end):
         """
@@ -359,6 +433,234 @@ class Computer_Node(Node):
                 occupancy_map[ix][iy + 1] = 1.0  # extend the occupied area
                 occupancy_map[ix + 1][iy + 1] = 1.0  # extend the occupied area
         return occupancy_map, min_x, max_x, min_y, max_y, xy_resolution
+    
+    def autopilot(self):
+        ob = self.crone_position
+
+        u, predicted_trajectory = self.dwa_control(self.x, config, self.goal, ob)
+        self.x = self.motion(self.x, u, config.dt)  # simulate robot
+        self.trajectory = np.vstack((self.trajectory, self.x))  # store state history
+    
+
+        if show_animation:
+            plt.cla()
+            # for stopping simulation with the esc key.
+            plt.gcf().canvas.mpl_connect(
+                'key_release_event',
+                lambda event: [exit(0) if event.key == 'escape' else None])
+            plt.plot(predicted_trajectory[:, 0], predicted_trajectory[:, 1], "-g")
+            plt.plot(self.x[0], self.x[1], "xr")
+            plt.plot(self.goal[0], self.goal[1], "xb")
+            plt.plot(ob[:, 0], ob[:, 1], "ok")
+            self.plot_robot(self.x[0], self.x[1], self.x[2], config)
+            self.plot_arrow(self.x[0], self.x[1], self.x[2])
+            plt.axis("equal")
+            plt.grid(True)
+            plt.pause(0.0001)
+            plt.pause(0.001)
+            plt.ioff()
+            plt.clf()   
+
+        # check reaching goal
+        dist_to_goal = math.hypot(self.x[0] - self.goal[0], self.x[1] - self.goal[1])
+        if dist_to_goal <= config.robot_radius:
+            print("Goal!!")
+        
+    
+    def motion(self, x, u, dt):
+        """
+        motion model
+        """
+
+        
+        x[3] = u[0] #v(m/s)
+        x[4] = u[1] #omega(rad/s)
+
+        action = Twist()
+        
+        while True:
+
+            action.angular.z = u[1]
+            self.pub_action.publish(action)
+            print(self.theta_turtle)
+            if abs(self.theta_turtle * math.pi /180 - u[1] * dt) < 0.1:
+                break
+        #action.angular.x = u[0]
+        #self.pub_action.publish(action)
+        
+        x[2] = self.theta_turtle * math.pi /180 #+= u[1] * dt #yaw(rad)
+       
+        x[0] += u[0] * math.cos(x[2]) * dt #x(m)
+        x[1] += u[0] * math.sin(x[2]) * dt #y(m)
+        print("\r                                                                     ",end='')
+        print("\r\rCurrent velocity: {:.3} m/s, {:.3} rad/s  (Keyboard)\r".format(action.linear.x,action.angular.z),end='')
+
+
+        return x
+        
+        
+
+
+    def calc_dynamic_window(self, x, config):
+        """
+        calculation dynamic window based on current state x
+        """
+
+        # Dynamic window from robot specification
+        Vs = [config.min_speed, config.max_speed,
+            -config.max_yaw_rate, config.max_yaw_rate]
+
+        # Dynamic window from motion model
+        Vd = [x[3] - config.max_accel * config.dt,
+            x[3] + config.max_accel * config.dt,
+            x[4] - config.max_delta_yaw_rate * config.dt,
+            x[4] + config.max_delta_yaw_rate * config.dt]
+
+        #  [v_min, v_max, yaw_rate_min, yaw_rate_max]
+        dw = [max(Vs[0], Vd[0]), min(Vs[1], Vd[1]),
+            max(Vs[2], Vd[2]), min(Vs[3], Vd[3])]
+
+        return dw
+
+
+    def predict_trajectory(self, x_init, v, y, config):
+        """
+        predict trajectory with an input
+        """
+
+        x = np.array(x_init)
+        trajectory = np.array(x)
+        time = 0
+        while time <= config.predict_time:
+            x = self.motion(x, [v, y], config.dt)
+            trajectory = np.vstack((trajectory, x))
+            time += config.dt
+
+        return trajectory
+
+
+    def calc_control_and_trajectory(self, x, dw, config, goal, ob):
+        """
+        calculation final input with dynamic window
+        """
+
+        x_init = x[:]
+        min_cost = float("inf")
+        best_u = [0.0, 0.0]
+        best_trajectory = np.array([x])
+
+        # evaluate all trajectory with sampled input in dynamic window
+        for v in np.arange(dw[0], dw[1], config.v_resolution):
+            for y in np.arange(dw[2], dw[3], config.yaw_rate_resolution):
+
+                trajectory = self.predict_trajectory(x_init, v, y, config)
+                # calc cost
+                to_goal_cost = config.to_goal_cost_gain * self.calc_to_goal_cost(trajectory, goal)
+                speed_cost = config.speed_cost_gain * (config.max_speed - trajectory[-1, 3])
+                ob_cost = config.obstacle_cost_gain * self.calc_obstacle_cost(trajectory, ob, config)
+
+                final_cost = to_goal_cost + speed_cost + ob_cost
+
+                # search minimum trajectory
+                if min_cost >= final_cost:
+                    min_cost = final_cost
+                    best_u = [v, y]
+                    best_trajectory = trajectory
+                    if abs(best_u[0]) < config.robot_stuck_flag_cons \
+                            and abs(x[3]) < config.robot_stuck_flag_cons:
+                        # to ensure the robot do not get stuck in
+                        # best v=0 m/s (in front of an obstacle) and
+                        # best omega=0 rad/s (heading to the goal with
+                        # angle difference of 0)
+                        best_u[1] = -config.max_delta_yaw_rate
+        return best_u, best_trajectory
+
+
+    def calc_obstacle_cost(self, trajectory, ob, config):
+        """
+        calc obstacle cost inf: collision
+        """
+        ox = ob[:, 0]
+        oy = ob[:, 1]
+        dx = trajectory[:, 0] - ox[:, None]
+        dy = trajectory[:, 1] - oy[:, None]
+        r = np.hypot(dx, dy)
+
+        if config.robot_type == RobotType.rectangle:
+            yaw = trajectory[:, 2]
+            rot = np.array([[np.cos(yaw), -np.sin(yaw)], [np.sin(yaw), np.cos(yaw)]])
+            rot = np.transpose(rot, [2, 0, 1])
+            local_ob = ob[:, None] - trajectory[:, 0:2]
+            local_ob = local_ob.reshape(-1, local_ob.shape[-1])
+            local_ob = np.array([local_ob @ x for x in rot])
+            local_ob = local_ob.reshape(-1, local_ob.shape[-1])
+            upper_check = local_ob[:, 0] <= config.robot_length / 2
+            right_check = local_ob[:, 1] <= config.robot_width / 2
+            bottom_check = local_ob[:, 0] >= -config.robot_length / 2
+            left_check = local_ob[:, 1] >= -config.robot_width / 2
+            if (np.logical_and(np.logical_and(upper_check, right_check),
+                            np.logical_and(bottom_check, left_check))).any():
+                return float("Inf")
+        elif config.robot_type == RobotType.circle:
+            if np.array(r <= config.robot_radius).any():
+                return float("Inf")
+
+        min_r = np.min(r)
+        return 1.0 / min_r  # OK
+
+
+    def calc_to_goal_cost(self, trajectory, goal):
+        """
+            calc to goal cost with angle difference
+        """
+
+        dx = goal[0] - trajectory[-1, 0]
+        dy = goal[1] - trajectory[-1, 1]
+        error_angle = math.atan2(dy, dx)
+        cost_angle = error_angle - trajectory[-1, 2]
+        cost = abs(math.atan2(math.sin(cost_angle), math.cos(cost_angle)))
+
+        return cost
+
+
+    def plot_arrow(self, x, y, yaw, length=0.5, width=0.1):  # pragma: no cover
+        plt.arrow(x, y, length * math.cos(yaw), length * math.sin(yaw),
+                head_length=width, head_width=width)
+        plt.plot(x, y)
+
+
+    def plot_robot(self, x, y, yaw, config):  # pragma: no cover
+        if config.robot_type == RobotType.rectangle:
+            outline = np.array([[-config.robot_length / 2, config.robot_length / 2,
+                                (config.robot_length / 2), -config.robot_length / 2,
+                                -config.robot_length / 2],
+                                [config.robot_width / 2, config.robot_width / 2,
+                                - config.robot_width / 2, -config.robot_width / 2,
+                                config.robot_width / 2]])
+            Rot1 = np.array([[math.cos(yaw), math.sin(yaw)],
+                            [-math.sin(yaw), math.cos(yaw)]])
+            outline = (outline.T.dot(Rot1)).T
+            outline[0, :] += x
+            outline[1, :] += y
+            plt.plot(np.array(outline[0, :]).flatten(),
+                    np.array(outline[1, :]).flatten(), "-k")
+        elif config.robot_type == RobotType.circle:
+            circle = plt.Circle((x, y), config.robot_radius, color="b")
+            plt.gcf().gca().add_artist(circle)
+            out_x, out_y = (np.array([x, y]) +
+                            np.array([np.cos(yaw), np.sin(yaw)]) * config.robot_radius)
+            plt.plot([x, out_x], [y, out_y], "-k")
+
+    def dwa_control(self, x, config, goal, ob):
+        """
+        Dynamic Window Approach control
+        """
+        dw = self.calc_dynamic_window(x, config)
+
+        u, trajectory = self.calc_control_and_trajectory(x, dw, config, goal, ob)
+
+        return u, trajectory
+
 
     def cb_image(self, imgmsg):
         image = self.bridge.imgmsg_to_cv2(imgmsg, 'bgr8')
@@ -529,12 +831,7 @@ class Computer_Node(Node):
                     print("\r                                                                     ",end='')
                     print(f"\rCurrent velocity: {action.linear.x} m/s, {action.angular.z} rad/s  (Gamepad)\r", end='')
 
-    def autopilot(self):
 
-        action = Twist()
-        action.linear.x = round(self.maxTransVelocity * -axis_y1,2)
-        action.angular.z = round(self.maxRotVelocity * -(axis_x1*axis_x1*axis_x1),2)
-        self.pub_action.publish(action)
 
 def main(args=None):
     rclpy.init(args=args)
