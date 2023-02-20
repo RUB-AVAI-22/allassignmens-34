@@ -82,23 +82,29 @@ class SensorFusionNode(Node):
 
     def sensor_fusion(self, bboxes, lidar):
         clustered_lidar = self.clusterLidarPoints(lidar)
+        print("Clustered points: ", clustered_lidar)
 
         matchedBBoxes = []
-        for clusterAngle, clusterDistance in clustered_lidar:
-            clusterPixelApprox = (clusterAngle / 64.0) * 640
-            for bbox in bboxes:
-                if clusterPixelApprox > bbox.coordinates[0] and clusterPixelApprox < bbox.coordinates[2]:
-                    bboxPos = self.polarToCartesianMirrored(clusterAngle + 59, clusterDistance)
-                    bboxMsg = BoundingBoxWithRealCoordinates()
-                    bboxMsg.image_coords = bbox.coordinates
-                    bboxMsg.conf = bbox.conf
-                    bboxMsg.cls = bbox.cls
-                    bboxMsg.real_coords = bboxPos
+        for bbox in bboxes:
+            bestMatch = None
+            for clusterAngle, clusterDistance in clustered_lidar:
+                if bestMatch is None:
+                    bestMatch = (clusterAngle, clusterDistance)
+                elif self.distanceToBoxCenter(bbox, clusterAngle) < self.distanceToBoxCenter(bbox, bestMatch[0]):
+                    bestMatch = (clusterAngle, clusterDistance)
 
-                    bboxes = np.delete(bboxes, np.where(bboxes == bbox))
+            if not bestMatch is None:
+                print("bestMatch: ", bestMatch)
+                print("(boxleft, boxright, bestMatchPixel): ", bbox.coordinates[0], bbox.coordinates[2], self.angleToPixel(bestMatch[0]))
+                bboxPos = self.polarToCartesianMirrored(bestMatch[0] + 59, bestMatch[1])
+                bboxMsg = BoundingBoxWithRealCoordinates()
+                bboxMsg.image_coords = bbox.coordinates
+                bboxMsg.conf = bbox.conf
+                bboxMsg.cls = bbox.cls
+                bboxMsg.real_coords = bboxPos
 
-                    matchedBBoxes.append(bboxMsg)
-                    break
+
+                matchedBBoxes.append(bboxMsg)
 
         BBoxesMsg = BoundingBoxesWithRealCoordinates()
         BBoxesMsg.header = Header()
@@ -108,13 +114,18 @@ class SensorFusionNode(Node):
 
         self.get_logger().info('Publishing bounding boxes with real coordinates')
 
+    def angleToPixel(self, angle):
+        return  640 - ((angle / 62.0) * 640)
+    def distanceToBoxCenter(self, bbox, lidar_angle):
+        return np.abs((bbox.coordinates[0] + bbox.coordinates[2])/2 - self.angleToPixel(lidar_angle))
+
     def clusterLidarPoints(self, lidar):
         # reads the lidar data and clusters the points in the camera fov
         # returns an array of points as (middle_point in degree, distance)
         # (31, 1.5) means right in the center of the camera there is a object 1,5m away
         scan_fov = lidar.ranges[149:212]
         index = -1
-        TOLERANCE = 0.05
+        TOLERANCE = 0.01
         last_value = 0
         clusters = []
         results = []

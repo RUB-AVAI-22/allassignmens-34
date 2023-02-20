@@ -21,6 +21,7 @@ class MappingNode(Node):
         super().__init__('mapping_node')
         self.classes = ['blue', 'orange', 'yellow']
         self.map_current = []  # entries denote objects in our map, each object consists of xy coordinates and a corresponding class
+        self.map_clustered = []
         self.position = [0.0, 0.0]
         self.heading_direction = 0.0 #from 0 to 2pi
 
@@ -110,44 +111,58 @@ class MappingNode(Node):
                 map_merged[i] = self.merge_objects(newObject, closest_object)
             else:
                 map_merged[i] = newObject"""
-        map_merged = np.concatenate((map_odometry_integration, self.map_current))
+        if len(self.map_current) == 0:
+            map_merged = map_odometry_integration
+        else:
+            map_merged = np.concatenate((map_odometry_integration, self.map_current))
 
         # Cluster map using density clustering
         # The algorithm starts at a random point.
         # If there are at least min_samples points in a radius of eps around the point they are grouped into a cluster.
         # Each point in the cluster then searches around itself for more points to add into the cluster.
         # This again requires min_samples points in a radius of eps.
-        map_clustered = np.zeros((map_merged.shape[0], 3))
+        map_clustered = np.array([])
         # Cluster only points in map belonging to certain class, since clusters only make sense with same class points
         for cls in range(len(self.classes)):
-            clusterer = DBSCAN(eps=1, min_samples=5)
+            clusterer = DBSCAN(eps=0.1, min_samples=15)
             indices_cls_subset = np.where(map_merged[:, 2] == cls)[0]
 
             map_cls_subset = map_merged[indices_cls_subset][:]
-
+            #print(f"map_cls_subset {map_cls_subset}")
             if len(map_cls_subset) == 0:
-                break
+                continue
 
             cluster_labels = clusterer.fit_predict(map_cls_subset)
-
+            #print(f"cluster_labels {cluster_labels}")
             # Compute mean position of all points in a cluster and place as new point in map
-            for i in range(max(cluster_labels)):
+            for i in range(max(cluster_labels)+1):
                 indices = np.where(cluster_labels == i)[0]
 
-                cluster_center = np.mean(map_cls_subset[indices][:2])
+                #print(f"indices {indices}")
+                cluster_center_x = np.mean(map_cls_subset[indices, 0])
+                cluster_center_y = np.mean(map_cls_subset[indices, 1])
 
-                map_clustered[indices_cls_subset[indices]] = [*cluster_center, cls]
+                if len(map_clustered) == 0:
+                    map_clustered = [[cluster_center_x, cluster_center_y, cls]]
+                else:
+                    map_clustered = np.concatenate((map_clustered, [[cluster_center_x, cluster_center_y, cls]]))
 
             # Take over the remaining points not belonging to any cluster
-            indices = np.where(cluster_labels == -1)[0]
-            for index in indices:
-                map_clustered[indices_cls_subset[index]] = map_cls_subset[index]
+            #indices = np.where(cluster_labels == -1)[0]
+            #print(indices)
+            #map_clustered = np.delete(map_clustered, indices)
+            #print(map_clustered)
+            #for index in indices:
+                #map_clustered[indices_cls_subset[index]] = map_cls_subset[index]
 
-        map_clustered = np.unique(map_clustered, axis=0)
+        #map_clustered = np.unique(map_clustered, axis=0)
 
-        self.map_current = map_clustered
+        self.map_clustered = map_clustered
+        self.map_current = map_merged
+        #print(self.map_current)
+        #print(self.map_clustered)
         self.get_logger().info('Map updated!')
-        self.publish_map(self.map_current)
+        self.publish_map(self.map_clustered)
 
 
 
@@ -156,6 +171,7 @@ class MappingNode(Node):
         msg_map = Map()
         map_objects = []
         for object in map_current:
+            object = np.array(object)
             msg_map_object = MapEntry()
             msg_map_object.coordinates = object[:2].astype(np.float32)
             msg_map_object.cls = int(object[2])
@@ -235,8 +251,8 @@ class MappingNode(Node):
         if len(map_integrated) == 0:
             return map_integrated
 
-        print(map_integrated.shape)
-        print(position_current.shape)
+        #print(map_integrated.shape)
+        #print(position_current.shape)
 
 
         map_integrated[:, 0] += position_current[0]

@@ -69,6 +69,7 @@ class ImgDisplayNode(Node):
 
 
     def video_callback(self, frame):
+        self.get_logger().info('Receiving video frame')
         self.images = np.append(self.images, frame)
 
         current_frame = self.bridge.compressed_imgmsg_to_cv2(frame,'bgr8')
@@ -81,6 +82,7 @@ class ImgDisplayNode(Node):
             self.param_store_imgs = False
 
     def bbox_callback(self, msg):
+        self.get_logger().info('Receiving bounding boxes')
         self.bboxes = np.append(self.bboxes, msg)
 
     def attempt_image_display(self):
