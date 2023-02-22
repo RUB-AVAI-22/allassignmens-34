@@ -93,7 +93,7 @@ class MappingNode(Node):
     def update_map(self, msg_bboxes, msg_odometry):
         map_new = self.extract_xy_and_cls(msg_bboxes)
 
-        odom_pos = np.array([msg_odometry.pose.pose.point.x, msg_odometry.pose.pose.point.y])
+        odom_pos = np.array([msg_odometry.pose.pose.position.x, msg_odometry.pose.pose.position.y])
 
         movement = odom_pos - self.current_pos
 

@@ -135,23 +135,23 @@ class Computer_Node(Node):
         self.desiredMovement = Vector3() #x = translational, z = rotational
         
         self.pub_action = self.create_publisher(Twist, 'cmd_vel', 10)
-        self.lidar_sensor_subscriber = self.create_subscription(LaserScan, '/scan', self.cluster_points_in_fov,
-                                                                qos_profile_sensor_data)
-        self.sub_img = self.create_subscription(Image, '/camera/image_raw', self.cb_image, 10)
-        self.lidar_sensor_subscriber = self.create_subscription(Odometry, '/odom', self.odom, 10)
+        #self.lidar_sensor_subscriber = self.create_subscription(LaserScan, '/scan', self.cluster_points_in_fov,
+        #                                                        qos_profile_sensor_data)
+        #self.sub_img = self.create_subscription(Image, '/camera/image_raw', self.cb_image, 10)
+        #self.lidar_sensor_subscriber = self.create_subscription(Odometry, '/odom', self.odom, 10)
         self.bridge = CvBridge()
 
         self.updateFrequency = 5
         self.acceleration = 0.25/self.updateFrequency
-        self.velocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateVelocity)
+        #self.velocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateVelocity)
         
         self.gamePadvelocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateGamePad)
 
         self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.listener.start()
 
-        plt.ion()
-        plt.show()
+        #plt.ion()
+        #plt.show()
 """
     def odom(self, odommsg):
         #self.twisted = odommsg.pose.pose
@@ -311,8 +311,8 @@ class Computer_Node(Node):
 
     def calc_grid_map_config(self, ox, oy, xy_resolution):
         """
-        Calculates the size, and the maximum distances according to the the
-        measurement center
+        #Calculates the size, and the maximum distances according to the the
+        #measurement center
         """
         min_x = round(min(ox) - EXTEND_AREA / 2.0)
         min_y = round(min(oy) - EXTEND_AREA / 2.0)
@@ -334,9 +334,11 @@ class Computer_Node(Node):
     def init_flood_fill(self, center_point, obstacle_points, xy_points, min_coord,
                         xy_resolution):
         """
+        """
         center_point: center point
         obstacle_points: detected obstacles points (x,y)
         xy_points: (x,y) point pairs
+        """
         """
         center_x, center_y = center_point
         prev_ix, prev_iy = center_x - 1, center_y
@@ -359,8 +361,10 @@ class Computer_Node(Node):
 
     def flood_fill(self, center_point, occupancy_map):
         """
+        """
         center_point: starting point (x,y) of fill
         occupancy_map: occupancy map generated from Bresenham ray-tracing
+        """
         """
         # Fill empty areas with queue method
         sx, sy = occupancy_map.shape
@@ -390,7 +394,7 @@ class Computer_Node(Node):
                     occupancy_map[nx, ny + 1] = 0.0
                     fringe.appendleft((nx, ny + 1))
 
-"""
+
     def generate_ray_casting_grid_map(self, ox, oy, xy_resolution, breshen=True):
         
         #The breshen boolean tells if it's computed with bresenham ray casting
@@ -471,7 +475,7 @@ class Computer_Node(Node):
     
     def motion(self, x, u, dt):
         """
-        motion model
+        #motion model
         """
 
         
@@ -501,7 +505,7 @@ class Computer_Node(Node):
         return x
         
         
-"""
+
 
     def calc_dynamic_window(self, x, config):
 
@@ -669,6 +673,7 @@ class Computer_Node(Node):
         cv2.imshow('image', image)
         cv2.waitKey(1)
 """
+        
     def on_press(self, key):
         speedChange = False
 
