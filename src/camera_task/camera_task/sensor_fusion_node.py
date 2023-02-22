@@ -23,7 +23,7 @@ class SensorFusionNode(Node):
         super().__init__('sensor_fusion_node')
 
         self.boundingBox_subscriber = message_filters.Subscriber(self, BoundingBoxes, '/bboxes')
-        self.lidar_subscriber = message_filters.Subscriber(self, LaserScan, '/scan', qos_profile_sensor_data)
+        self.lidar_subscriber = message_filters.Subscriber(self, LaserScan, '/scan')
         self.odom_subscriber = message_filters.Subscriber(self, Odometry, '/odom')
         self.synchronizer = message_filters.ApproximateTimeSynchronizer([self.boundingBox_subscriber, self.lidar_subscriber, self.odom_subscriber], 100, 0.1)
         self.synchronizer.registerCallback(self.callback_synchronized)
