@@ -140,6 +140,8 @@ class Computer_Node(Node):
                                                                 qos_profile_sensor_data)
         self.sub_img = self.create_subscription(Image, '/camera/image_raw', self.cb_image, 10)
         self.lidar_sensor_subscriber = self.create_subscription(Odometry, '/odom', self.odom, 10)
+        self.timer = self.create_timer(0.1, self.autopilot)
+
         self.bridge = CvBridge()
 
         self.updateFrequency = 5
@@ -167,7 +169,7 @@ class Computer_Node(Node):
         self.pos_stp_sec = odommsg.header.stamp.sec
         self.pos_stp_nanosec = odommsg.header.stamp.nanosec
 
-        self.autopilot()
+
 
     def cluster_points_in_fov(self, lidar):
         #reads the lidar data and clusters the points in the camera fov
@@ -478,23 +480,38 @@ class Computer_Node(Node):
         
         x[3] = u[0] #v(m/s)
         x[4] = u[1] #omega(rad/s)
-
+        print(u[0])
         action = Twist()
-        
+        rotation_t1 = time.perf_counter()
         while True:
+            rotation_t2 = time.perf_counter()
 
             action.angular.z = u[1]
             self.pub_action.publish(action)
-            print(self.theta_turtle)
-            if abs(self.theta_turtle * math.pi /180 - u[1] * dt) < 0.1:
-                break
+            
+            
+            if rotation_t2 - rotation_t1 == 100:
+                action.angular.z = 0
+                break 
+
+        t1 = time.perf_counter()
+        while True:
+            t2 = time.perf_counter()
+
+            action.angular.x = u[0]
+            self.pub_action.publish(action)
+            
+            
+            if t2 - t1 == 100:
+                break 
+        
         #action.angular.x = u[0]
         #self.pub_action.publish(action)
         
         x[2] = self.theta_turtle * math.pi /180 #+= u[1] * dt #yaw(rad)
        
-        x[0] += u[0] * math.cos(x[2]) * dt #x(m)
-        x[1] += u[0] * math.sin(x[2]) * dt #y(m)
+        x[0] = self.turtle_track_x# += u[0] * math.cos(x[2]) * dt #x(m)
+        x[1] = self.turtle_track_y#+= u[0] * math.sin(x[2]) * dt #y(m)
         print("\r                                                                     ",end='')
         print("\r\rCurrent velocity: {:.3} m/s, {:.3} rad/s  (Keyboard)\r".format(action.linear.x,action.angular.z),end='')
 
