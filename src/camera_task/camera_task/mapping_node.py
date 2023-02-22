@@ -35,6 +35,8 @@ class MappingNode(Node):
         self.msgs_bboxes = []
         self.msgs_odometry = []
 
+        self.current_pos = np.array([0.0, 0.0])
+
         self.last_used_bboxes = None
         self.last_used_odometry = None
 

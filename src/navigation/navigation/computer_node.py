@@ -673,7 +673,7 @@ class Computer_Node(Node):
         cv2.imshow('image', image)
         cv2.waitKey(1)
 """
-        
+
     def on_press(self, key):
         speedChange = False
 
