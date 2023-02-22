@@ -25,7 +25,7 @@ from enum import Enum
 import matplotlib.pyplot as plt
 import numpy as np
 
-EXTEND_AREA = 1.0
+"""EXTEND_AREA = 1.0
 
 import pygame
 pygame.init()
@@ -41,9 +41,7 @@ class RobotType(Enum):
     rectangle = 0
     
 class Config:
-    """
-    simulation parameter class
-    """
+    #simulation parameter class
 
     def __init__(self):
         # robot parameter
@@ -84,6 +82,7 @@ class Config:
 
 
 config = Config()
+"""
 
 class Computer_Node(Node):
 
@@ -103,7 +102,7 @@ class Computer_Node(Node):
         # goal position [x(m), y(m)]
         self.goal = np.array([10.0, 10.0])
 
-        config.robot_type = RobotType.circle
+        #config.robot_type = RobotType.circle
         self.trajectory = np.array(self.x)
 
         self.left_right = []
@@ -143,15 +142,178 @@ class Computer_Node(Node):
 
         self.updateFrequency = 5
         self.acceleration = 0.25/self.updateFrequency
-        #self.velocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateVelocity)
+        self.velocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateVelocity)
         
-        self.gamePadvelocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateGamePad)
+        #self.gamePadvelocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateGamePad)
 
         self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.listener.start()
 
         #plt.ion()
         #plt.show()
+
+    def on_press(self, key):
+        speedChange = False
+
+        if hasattr(key, 'char'):#if key != keyboard.Key.up and key != keyboard.Key.down and key != keyboard.Key.left and key != keyboard.Key.right and key != keyboard.Key.shift and key != keyboard.Key.ctrl and key != keyboard.Key.space:
+            if key.char == 'g':
+                self.useGamePad = True
+                print('\ncontrol switch to gamepad')
+
+        if not self.useGamePad:
+            if key == keyboard.Key.up or keyboard.Key.down or keyboard.Key.left or keyboard.Key.right or keyboard.Key.shift or keyboard.Key.ctrl or keyboard.Key.space:
+
+                if key == keyboard.Key.up:
+                    self.desiredMovement.x = self.speed*self.maxTransVelocity
+
+                elif key == keyboard.Key.down:
+                    self.desiredMovement.x = -self.speed*self.maxTransVelocity
+
+                elif key == keyboard.Key.left:
+                    self.desiredMovement.z = self.speed*self.maxRotVelocity# * (2*(self.desiredMovement.x > 0)-1)
+
+
+                elif key == keyboard.Key.right:
+                    self.desiredMovement.z = -self.speed*self.maxRotVelocity# * (2*(self.desiredMovement.x > 0)-1)
+
+
+                elif key == keyboard.Key.shift:
+                    if self.speed < 1:
+                        self.speed =  round(self.speed + 0.1,1)
+                        speedChange = True
+
+                elif key == keyboard.Key.ctrl:
+                    if self.speed > 0:
+                        self.speed =  round(self.speed - 0.1,1)
+                        speedChange = True
+
+                elif key == keyboard.Key.space:
+                    if not self.speed == 0:
+                        self.speed = 0.0
+                        speedChange = True
+
+                if speedChange:
+                    print(f"\nspeed multiplier : {self.speed}")
+
+
+    def on_release(self, key):
+
+        if key == keyboard.Key.up:
+            self.desiredMovement.x = 0.0
+
+        elif key == keyboard.Key.down:
+            self.desiredMovement.x = 0.0
+
+        elif key == keyboard.Key.left:
+            self.desiredMovement.z = 0.0
+
+        elif key == keyboard.Key.right:
+            self.desiredMovement.z = 0.0
+            self.counter = 0
+
+    def updateVelocity(self):
+        action = Twist()
+
+        distanceToDesiredVelocity = Vector3()
+        distanceToDesiredVelocity.x = self.desiredMovement.x - self.currentMovement.x
+        distanceToDesiredVelocity.y = self.desiredMovement.y - self.currentMovement.y
+        distanceToDesiredVelocity.z = self.desiredMovement.z - self.currentMovement.z
+
+        if abs(distanceToDesiredVelocity.x) >= self.acceleration:
+            self.currentMovement.x += self.acceleration * (2*(distanceToDesiredVelocity.x > 0)-1)
+        else:
+            self.currentMovement.x += distanceToDesiredVelocity.x
+
+        if abs(distanceToDesiredVelocity.z) >= 20*self.acceleration:
+            self.currentMovement.z += 20*self.acceleration * (2*(distanceToDesiredVelocity.z > 0)-1)
+        else:
+            self.currentMovement.z += distanceToDesiredVelocity.z
+
+        action.linear.x = round(self.desiredMovement.x,2)
+        action.angular.z = round(self.desiredMovement.z,2)
+
+        self.pub_action.publish(action)
+
+        #time.sleep(abs(round(-90 * (math.pi / 180),2))/1.82)
+
+        if not self.useGamePad:
+            print("\r                                                                     ",end='')
+            print("\r\rCurrent velocity: {:.3} m/s, {:.3} rad/s  (Keyboard)\r".format(action.linear.x,action.angular.z),end='')
+        #print(f"\rDesired velocity: {self.desiredMovement.x} m/s, {self.desiredMovement.z} rad/s",end='')
+
+    def updateGamePad(self):
+
+        if self.useGamePad:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    done = True  # Flag that we are done so we exit this loop.
+
+                #if event.type == pygame.JOYBUTTONDOWN:
+                #    print("Joystick button pressed.")
+
+                #if event.type == pygame.JOYBUTTONUP:
+                #    print("Joystick button released.")
+
+                # Handle hotplugging
+                if event.type == pygame.JOYDEVICEADDED:
+                    # This event will be generated when the program starts for every
+                    # joystick, filling up the list without needing to create them manually.
+                    joy = pygame.joystick.Joystick(event.device_index)
+                    self.joysticks[joy.get_instance_id()] = joy
+                    print(f"Joystick {joy.get_instance_id()} connencted")
+
+                if event.type == pygame.JOYDEVICEREMOVED:
+                    del self.joysticks[event.instance_id]
+                    print(f"Joystick {event.instance_id} disconnected")
+
+            for joystick in self.joysticks.values():
+                action = Twist()
+                axis_x1 = joystick.get_axis(0)
+                axis_y1 = joystick.get_axis(1)
+
+                axis_x2 = joystick.get_axis(3)
+                axis_y2 = joystick.get_axis(4)
+                if 0.5 < axis_x1 < 0.9 and 0.5 < axis_y1 < 0.9 and -0.9 < axis_x2 < -0.5 and 0.5 < axis_y2 < 0.9:
+                    if self.unlockCounter > 0:
+                        self.unlockCounter -= 1
+                        print(f'keep press {self.unlockCounter}s')
+                        time.sleep(1)
+                        break
+                    elif self.Unlock == False:
+                        print('ggamepad is unlocked!')
+                        joystick.rumble(0, 0.5, 1000)
+                        self.Unlock = True
+
+                #else:
+                #    print('unlock failed please try again!')
+                #    self.Unlockchecker == False
+
+                if joystick.get_button(0) == 1:
+
+                    if self.Unlock == True:
+
+                        self.Unlock = False
+                        self.Unlockchecker = False
+                        self.unlockCounter = 3
+                        print('\ngamepad is locked')
+                        joystick.rumble(0, 1, 500)
+
+
+                if joystick.get_button(3) == 1:
+                    self.useGamePad = False
+                    self.unlgockCounter = 3
+                    print('gcontrol switch to keyboard')
+
+                if self.Unlock:
+                    if abs(axis_x1) < 0.05:
+                        axis_x1 = 0
+                    if abs(axis_y1) < 0.05:
+                        axis_y1 = 0
+                    action.linear.x = round(self.maxTransVelocity * -axis_y1,2)
+                    action.angular.z = round(self.maxRotVelocity * -(axis_x1*axis_x1*axis_x1),2)
+                    self.pub_action.publish(action)
+                    print("\r                                                                     ",end='')
+                    print(f"\rCurrent velocity: {action.linear.x} m/s, {action.angular.z} rad/s  (Gamepad)\r", end='')
 """
     def odom(self, odommsg):
         #self.twisted = odommsg.pose.pose
@@ -263,8 +425,7 @@ class Computer_Node(Node):
             # plt.clf()   
 
     def bresenham(self, start, end):
-        """
-        """
+    """ """
         Implementation of Bresenham's line drawing algorithm
         See en.wikipedia.org/wiki/Bresenham's_line_algorithm
         Bresenham's Line Algorithm
@@ -272,8 +433,7 @@ class Computer_Node(Node):
         >>> points1 = bresenham((4, 4), (6, 10))
         >>> print(points1)
         np.array([[4,4], [4,5], [5,6], [5,7], [5,8], [6,9], [6,10]])
-        """
-        """
+        """ """
         # setup initial conditions
         x1, y1 = start
         x2, y2 = end
@@ -309,11 +469,10 @@ class Computer_Node(Node):
         return points
 
 
-    def calc_grid_map_config(self, ox, oy, xy_resolution):
-        """
-        #Calculates the size, and the maximum distances according to the the
-        #measurement center
-        """
+    def calc_grid_map_config(self, ox, oy, xy_resolution): """
+#Calculates the size, and the maximum distances according to the the
+#measurement center
+"""
         min_x = round(min(ox) - EXTEND_AREA / 2.0)
         min_y = round(min(oy) - EXTEND_AREA / 2.0)
         max_x = round(max(ox) + EXTEND_AREA / 2.0)
@@ -333,13 +492,11 @@ class Computer_Node(Node):
 
     def init_flood_fill(self, center_point, obstacle_points, xy_points, min_coord,
                         xy_resolution):
-        """
-        """
+        """ """
         center_point: center point
         obstacle_points: detected obstacles points (x,y)
         xy_points: (x,y) point pairs
-        """
-        """
+        """ """
         center_x, center_y = center_point
         prev_ix, prev_iy = center_x - 1, center_y
         ox, oy = obstacle_points
@@ -360,12 +517,10 @@ class Computer_Node(Node):
 
 
     def flood_fill(self, center_point, occupancy_map):
-        """
-        """
+        """ """
         center_point: starting point (x,y) of fill
         occupancy_map: occupancy map generated from Bresenham ray-tracing
-        """
-        """
+        """ """
         # Fill empty areas with queue method
         sx, sy = occupancy_map.shape
         fringe = self.deque()
@@ -474,9 +629,7 @@ class Computer_Node(Node):
         
     
     def motion(self, x, u, dt):
-        """
-        #motion model
-        """
+        """ """
 
         
         x[3] = u[0] #v(m/s)
@@ -674,168 +827,7 @@ class Computer_Node(Node):
         cv2.waitKey(1)
 """
 
-    def on_press(self, key):
-        speedChange = False
 
-        if hasattr(key, 'char'):#if key != keyboard.Key.up and key != keyboard.Key.down and key != keyboard.Key.left and key != keyboard.Key.right and key != keyboard.Key.shift and key != keyboard.Key.ctrl and key != keyboard.Key.space:
-            if key.char == 'g':
-                self.useGamePad = True
-                print('\ncontrol switch to gamepad')
-
-        if not self.useGamePad:
-            if key == keyboard.Key.up or keyboard.Key.down or keyboard.Key.left or keyboard.Key.right or keyboard.Key.shift or keyboard.Key.ctrl or keyboard.Key.space:
-
-                if key == keyboard.Key.up:
-                    self.desiredMovement.x = self.speed*self.maxTransVelocity
-
-                elif key == keyboard.Key.down:
-                    self.desiredMovement.x = -self.speed*self.maxTransVelocity
-
-                elif key == keyboard.Key.left:
-                    self.desiredMovement.z = self.speed*self.maxRotVelocity# * (2*(self.desiredMovement.x > 0)-1)
-                    
-
-                elif key == keyboard.Key.right:              
-                    self.desiredMovement.z = -self.speed*self.maxRotVelocity# * (2*(self.desiredMovement.x > 0)-1)
-
-
-                elif key == keyboard.Key.shift:
-                    if self.speed < 1:
-                        self.speed =  round(self.speed + 0.1,1)
-                        speedChange = True
-
-                elif key == keyboard.Key.ctrl:
-                    if self.speed > 0:
-                        self.speed =  round(self.speed - 0.1,1)
-                        speedChange = True
-
-                elif key == keyboard.Key.space:
-                    if not self.speed == 0:
-                        self.speed = 0.0
-                        speedChange = True
-
-                if speedChange:
-                    print(f"\nspeed multiplier : {self.speed}")
-            
-
-    def on_release(self, key):
-
-        if key == keyboard.Key.up:
-            self.desiredMovement.x = 0.0
-
-        elif key == keyboard.Key.down:
-            self.desiredMovement.x = 0.0
-
-        elif key == keyboard.Key.left:
-            self.desiredMovement.z = 0.0
-            
-        elif key == keyboard.Key.right:
-            self.desiredMovement.z = 0.0
-            self.counter = 0
-
-    def updateVelocity(self):
-        action = Twist()
-        
-        distanceToDesiredVelocity = Vector3()
-        distanceToDesiredVelocity.x = self.desiredMovement.x - self.currentMovement.x
-        distanceToDesiredVelocity.y = self.desiredMovement.y - self.currentMovement.y
-        distanceToDesiredVelocity.z = self.desiredMovement.z - self.currentMovement.z
-
-        if abs(distanceToDesiredVelocity.x) >= self.acceleration:
-            self.currentMovement.x += self.acceleration * (2*(distanceToDesiredVelocity.x > 0)-1)
-        else:
-            self.currentMovement.x += distanceToDesiredVelocity.x
-
-        if abs(distanceToDesiredVelocity.z) >= 20*self.acceleration:
-            self.currentMovement.z += 20*self.acceleration * (2*(distanceToDesiredVelocity.z > 0)-1)
-        else:
-            self.currentMovement.z += distanceToDesiredVelocity.z
-
-        action.linear.x = round(self.desiredMovement.x,2)
-        action.angular.z = round(self.desiredMovement.z,2)
-        
-        self.pub_action.publish(action)
-        
-        #time.sleep(abs(round(-90 * (math.pi / 180),2))/1.82)
-               
-        if not self.useGamePad:
-            print("\r                                                                     ",end='')
-            print("\r\rCurrent velocity: {:.3} m/s, {:.3} rad/s  (Keyboard)\r".format(action.linear.x,action.angular.z),end='')
-        #print(f"\rDesired velocity: {self.desiredMovement.x} m/s, {self.desiredMovement.z} rad/s",end='')
-
-    def updateGamePad(self):
-
-        if self.useGamePad:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    done = True  # Flag that we are done so we exit this loop.
-
-                #if event.type == pygame.JOYBUTTONDOWN:
-                #    print("Joystick button pressed.")
-
-                #if event.type == pygame.JOYBUTTONUP:
-                #    print("Joystick button released.")
-
-                # Handle hotplugging
-                if event.type == pygame.JOYDEVICEADDED:
-                    # This event will be generated when the program starts for every
-                    # joystick, filling up the list without needing to create them manually.
-                    joy = pygame.joystick.Joystick(event.device_index)
-                    self.joysticks[joy.get_instance_id()] = joy
-                    print(f"Joystick {joy.get_instance_id()} connencted")
-
-                if event.type == pygame.JOYDEVICEREMOVED:
-                    del self.joysticks[event.instance_id]
-                    print(f"Joystick {event.instance_id} disconnected")
-            
-            for joystick in self.joysticks.values():
-                action = Twist()
-                axis_x1 = joystick.get_axis(0)
-                axis_y1 = joystick.get_axis(1)
-
-                axis_x2 = joystick.get_axis(3)
-                axis_y2 = joystick.get_axis(4)
-                if 0.5 < axis_x1 < 0.9 and 0.5 < axis_y1 < 0.9 and -0.9 < axis_x2 < -0.5 and 0.5 < axis_y2 < 0.9:
-                    if self.unlockCounter > 0:
-                        self.unlockCounter -= 1
-                        print(f'keep press {self.unlockCounter}s')
-                        time.sleep(1)
-                        break
-                    elif self.Unlock == False:
-                        print('ggamepad is unlocked!')
-                        joystick.rumble(0, 0.5, 1000)
-                        self.Unlock = True
-                
-                #else:
-                #    print('unlock failed please try again!')
-                #    self.Unlockchecker == False
-
-                if joystick.get_button(0) == 1:
-
-                    if self.Unlock == True:
-                        
-                        self.Unlock = False
-                        self.Unlockchecker = False
-                        self.unlockCounter = 3
-                        print('\ngamepad is locked')
-                        joystick.rumble(0, 1, 500)
-
-
-                if joystick.get_button(3) == 1:
-                    self.useGamePad = False
-                    self.unlgockCounter = 3
-                    print('gcontrol switch to keyboard')
-
-                if self.Unlock:
-                    if abs(axis_x1) < 0.05:
-                        axis_x1 = 0
-                    if abs(axis_y1) < 0.05:
-                        axis_y1 = 0
-                    action.linear.x = round(self.maxTransVelocity * -axis_y1,2)
-                    action.angular.z = round(self.maxRotVelocity * -(axis_x1*axis_x1*axis_x1),2)
-                    self.pub_action.publish(action)
-                    print("\r                                                                     ",end='')
-                    print(f"\rCurrent velocity: {action.linear.x} m/s, {action.angular.z} rad/s  (Gamepad)\r", end='')
 
 
 
@@ -844,7 +836,7 @@ def main(args=None):
 
     node = Computer_Node()
     rclpy.spin(node)
-    
+
     node.destroy_node()
     rclpy.shutdown()
 
