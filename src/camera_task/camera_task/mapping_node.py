@@ -9,8 +9,11 @@ from avai_messages.msg import MapEntry
 from geometry_msgs.msg import _pose_with_covariance
 from geometry_msgs.msg import _twist_with_covariance
 from geometry_msgs.msg import Vector3
+from nav_msgs.msg import Odometry
 
 from sklearn.cluster import DBSCAN
+
+import message_filters
 
 import numpy as np
 import tf2_ros
@@ -22,109 +25,39 @@ class MappingNode(Node):
         self.classes = ['blue', 'orange', 'yellow']
         self.map_current = []  # entries denote objects in our map, each object consists of xy coordinates and a corresponding class
         self.map_clustered = []
-        self.position = [0.0, 0.0]
-        self.heading_direction = 0.0 #from 0 to 2pi
+        self.current_pos = np.array([0.0, 0.0])
 
-        self.subscriber_bboxes_with_real_coordinates = self.create_subscription(BoundingBoxesWithRealCoordinates,
-                                                                             '/bboxes_realCoords', self.callback_bbox,
-                                                                                10)
-        self.subscriber_odometry = self.create_subscription(Odometry, '/odom', self.callback_odometry, 10)
+        self.subscriber_bboxes_with_real_coordinates = message_filters.Subscriber(self, BoundingBoxesWithRealCoordinates,
+                                                                             '/bboxes_realCoords')
+
+        self.odom_subscriber = message_filters.Subscriber(self, Odometry, '/odom')
+        self.synchronizer = message_filters.ApproximateTimeSynchronizer([self.subscriber_bboxes_with_real_coordinates, self.odom_subscriber],
+                                                                        100, 0.1)
+        self.synchronizer.registerCallback(self.callback_synchronized)
 
         self.publisher_map = self.create_publisher(Map, '/map', 10)
 
-        self.msgs_bboxes = []
-        self.msgs_odometry = []
-
-        self.current_pos = np.array([0.0, 0.0])
-
-        self.last_used_bboxes = None
-        self.last_used_odometry = None
-
-        self.timer_message_cleanup = self.create_timer(1, self.remove_old_messages)
-        self.timer_map_update_attempt = self.create_timer(0.1, self.attempt_map_update)
         print("Mapping Node started!")
 
-    def callback_bbox(self, msg):
-        self.get_logger().info('Receiving bboxes')
-        self.msgs_bboxes = np.append(self.msgs_bboxes, msg)
+    def callback_synchronized(self, msg_bbox, msg_odom):
+        self.get_logger().info('Receiving synchronized bboxes and odometry')
+        self.update_map(msg_bbox, msg_odom)
 
-    def callback_odometry(self, msg):
-        self.get_logger().info('Receiving odometry')
-        self.msgs_odometry = np.append(self.msgs_odometry, msg)
+    def update_map(self, msg_bbox, msg_odom):
+        map_new = self.extract_xy_and_cls(msg_bbox)
 
-    # Since we store all messages received we need to clean the array up to prevent infinite growth of memory usage
-    # Every message older than 1 second is discarded
-    def remove_old_messages(self):
-        stamp_current = self.get_clock().now().to_msg()
-        self.msgs_bboxes = np.array([msg_bbox for msg_bbox in self.msgs_bboxes if
-                                     self.message_distance(msg_bbox.header.stamp, stamp_current) < 1])
-        self.msgs_odometry = np.array([msg_odom for msg_odom in self.msgs_odometry if
-                                       self.message_distance(msg_odom.header.stamp, stamp_current) < 1])
+        turtle_pos = np.array([msg_odom.pose.pose.position.x, msg_odom.pose.pose.position.y])
 
-    # Each messages has a header with a timestamp
-    # Each timestamp contains seconds and nanoseconds information
-    # This function computes the distance between the two timestamps in seconds
-    def message_distance(self, timestampA, timestampB):
-        totalTimeA = timestampA.sec + timestampA.nanosec * 10e-9
-        totalTimeB = timestampB.sec + timestampB.nanosec * 10e-9
-        totalDistance = totalTimeB - totalTimeA
-        return totalDistance
+        movement = turtle_pos - self.current_pos
 
-    # Since messages are transmitted over network, there can be delays and also lost packages
-    # For the newest bounding box information we look for the closest odometry data.
-    # If no match is found the map is not updated.
-    def attempt_map_update(self):
-        msg_selected_bboxes = None
-        for msg_bboxes in np.flip(self.msgs_bboxes):
-            closest_odometry_msg = None
-            closest_distance = 0.1
-            for msg_odometry in np.flip(self.msgs_odometry):
-                msg_distance = self.message_distance(msg_bboxes.header.stamp, msg_odometry.header.stamp)
-                if msg_distance < closest_distance:
-                    closest_odometry_msg = msg_odometry
-                    msg_selected_bboxes = msg_bboxes
-                    break
-            if closest_odometry_msg:
-                self.update_map(msg_selected_bboxes, closest_odometry_msg)
-                self.last_used_bboxes = msg_selected_bboxes
-                self.last_used_odometry = closest_odometry_msg
-                np.delete(self.msgs_odometry, np.where(self.msgs_odometry == closest_odometry_msg))
-                np.delete(self.msgs_bboxes, np.where(self.msgs_bboxes == msg_selected_bboxes))
-                break
-
-    def update_map(self, msg_bboxes, msg_odometry):
-        map_new = self.extract_xy_and_cls(msg_bboxes)
-
-        odom_pos = np.array([msg_odometry.pose.pose.position.x, msg_odometry.pose.pose.position.y])
-
-        movement = odom_pos - self.current_pos
-
-        self.current_pos = odom_pos
-
-        map_odometry_integration = self.integrate_odometry(map_new, odom_pos)
+        self.current_pos = turtle_pos
 
         self.map_current = self.integrate_odometry(self.map_current, movement)
 
-        # Maps are merged every iteration
-        # Points are grouped depending on a minimum distance
-        # Their positions are averaged and the result is added to the new map
-        """map_merged = np.empty((len(map_odometry_integration), 3))
-        for i, newObject in enumerate(map_odometry_integration):
-            closest_object = None
-            closest_object_distance = 0.1
-            for currentObject in self.map_current:
-                dist_tmp = self.mapDistance(newObject, currentObject)
-                if newObject[2] == currentObject[2] and dist_tmp < closest_object_distance:
-                    closest_object = currentObject
-                    closest_object_distance = dist_tmp
-            if not closest_object is None:
-                map_merged[i] = self.merge_objects(newObject, closest_object)
-            else:
-                map_merged[i] = newObject"""
         if len(self.map_current) == 0:
-            map_merged = map_odometry_integration
+            map_merged = map_new
         else:
-            map_merged = np.concatenate((map_odometry_integration, self.map_current))
+            map_merged = np.concatenate((map_new, self.map_current))
 
         # Cluster map using density clustering
         # The algorithm starts at a random point.

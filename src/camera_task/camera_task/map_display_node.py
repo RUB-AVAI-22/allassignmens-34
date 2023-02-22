@@ -1,3 +1,4 @@
+import math
 import random
 import sys
 
@@ -26,6 +27,7 @@ class MapDisplayNode(Node):
     main_window = None
     def __init__(self):
         super().__init__('map_display_node')
+        self.current_angle = 0
         self.map_subscriber = self.create_subscription(Map, '/map', self.callback_map, 10)
         self.odom_subscriber = self.create_subscription(Odometry, '/odom', self.callback_odom, 10)
         self.current_pos = (0,0)
@@ -86,11 +88,18 @@ class GUI(QWidget):
             for cls in dataCls:
                 colors_points.append(self.colors[int(cls)])
             circle = plt.Circle(MapDisplayNode.current_pos, 0.1, color='purple')
+
+            if odom_msg.pose.pose.orientation.x > 0:
+                MapDisplayNode.current_angle = round(math.acos(odom_msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
+            elif odom_msg.pose.pose.orientation.x < 0:
+                MapDisplayNode.current_angle = round(-math.acos(odom_msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
+
+            arrow = plt.arrow(MapDisplayNode.current_pos[0], MapDisplayNode.current_pos[1],  r * cos(angle), r * sin(angle))
             ax.add_patch(circle)
             ax.scatter(dataX, dataY, c=colors_points)
             ax.grid()
             ax.set_xlim([-self.graph_lim + MapDisplayNode.current_pos[0], self.graph_lim + MapDisplayNode.current_pos[0]])
-            ax.set_ylim([-self.graph_lim + MapDisplayNode.current_pos[0], self.graph_lim + MapDisplayNode.current_pos[0]])
+            ax.set_ylim([-self.graph_lim + MapDisplayNode.current_pos[1], self.graph_lim + MapDisplayNode.current_pos[1]])
             self.canvas.draw()
 
 
