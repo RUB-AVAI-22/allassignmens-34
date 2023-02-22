@@ -27,7 +27,7 @@ class SensorFusionNode(Node):
         self.odom_subscriber = message_filters.Subscriber(self, Odometry, '/odom')
         self.synchronizer = message_filters.ApproximateTimeSynchronizer([self.boundingBox_subscriber,
                                                                          self.lidar_subscriber,
-                                                                         self.odom_subscriber], 50, 0.2, False)
+                                                                         self.odom_subscriber], 100, 1)
         self.synchronizer.registerCallback(self.callback_synchronized)
 
         self.bboxWithRealCoords_publisher = self.create_publisher(BoundingBoxesWithRealCoordinates, '/bboxes_realCoords', 10)
