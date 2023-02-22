@@ -152,7 +152,7 @@ class Computer_Node(Node):
 
         plt.ion()
         plt.show()
-
+"""
     def odom(self, odommsg):
         #self.twisted = odommsg.pose.pose
         if odommsg.pose.pose.orientation.x > 0:
@@ -264,6 +264,7 @@ class Computer_Node(Node):
 
     def bresenham(self, start, end):
         """
+        """
         Implementation of Bresenham's line drawing algorithm
         See en.wikipedia.org/wiki/Bresenham's_line_algorithm
         Bresenham's Line Algorithm
@@ -271,6 +272,7 @@ class Computer_Node(Node):
         >>> points1 = bresenham((4, 4), (6, 10))
         >>> print(points1)
         np.array([[4,4], [4,5], [5,6], [5,7], [5,8], [6,9], [6,10]])
+        """
         """
         # setup initial conditions
         x1, y1 = start
@@ -388,12 +390,12 @@ class Computer_Node(Node):
                     occupancy_map[nx, ny + 1] = 0.0
                     fringe.appendleft((nx, ny + 1))
 
-
+"""
     def generate_ray_casting_grid_map(self, ox, oy, xy_resolution, breshen=True):
-        """
-        The breshen boolean tells if it's computed with bresenham ray casting
-        (True) or with flood fill (False)
-        """
+        
+        #The breshen boolean tells if it's computed with bresenham ray casting
+        #(True) or with flood fill (False)
+        
         min_x, min_y, max_x, max_y, x_w, y_w = self.calc_grid_map_config(
             ox, oy, xy_resolution)
         # default 0.5 -- [[0.5 for i in range(y_w)] for i in range(x_w)]

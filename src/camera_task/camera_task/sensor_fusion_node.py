@@ -82,7 +82,7 @@ class SensorFusionNode(Node):
 
     def sensor_fusion(self, bboxes, lidar):
         clustered_lidar = self.clusterLidarPoints(lidar)
-        print("Clustered points: ", clustered_lidar)
+        #print("Clustered points: ", clustered_lidar)
 
         matchedBBoxes = []
         for bbox in bboxes:
