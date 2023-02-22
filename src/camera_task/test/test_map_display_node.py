@@ -19,6 +19,8 @@ class MapDisplayNodeTest(TestCase):
     def tearDown(self):
         self.map_display_node.destroy_node()
 
-
+    def test_nothing_receive_after_startup(self):
+        assert self.map_display_node.get_logger() is None
+#        assert self.map_display_node.map_subscriber.
 if __name__ == '__main__':
     unittest.main()
