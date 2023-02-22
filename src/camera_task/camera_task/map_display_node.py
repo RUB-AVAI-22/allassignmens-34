@@ -94,7 +94,7 @@ class GUI(QWidget):
             elif odom_msg.pose.pose.orientation.x < 0:
                 MapDisplayNode.current_angle = round(-math.acos(odom_msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
 
-            arrow = plt.arrow(MapDisplayNode.current_pos[0], MapDisplayNode.current_pos[1],  r * cos(angle), r * sin(angle))
+            arrow = plt.arrow(MapDisplayNode.current_pos[0], MapDisplayNode.current_pos[1],   math.cos(MapDisplayNode.current_angle), math.sin(MapDisplayNode.current_angle))
             ax.add_patch(circle)
             ax.scatter(dataX, dataY, c=colors_points)
             ax.grid()
