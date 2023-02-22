@@ -499,12 +499,12 @@ class Computer_Node(Node):
         return x
         
         
-
+"""
 
     def calc_dynamic_window(self, x, config):
-        """
-        calculation dynamic window based on current state x
-        """
+
+        #calculation dynamic window based on current state x
+
 
         # Dynamic window from robot specification
         Vs = [config.min_speed, config.max_speed,
@@ -524,9 +524,9 @@ class Computer_Node(Node):
 
 
     def predict_trajectory(self, x_init, v, y, config):
-        """
-        predict trajectory with an input
-        """
+
+        #predict trajectory with an input
+
 
         x = np.array(x_init)
         trajectory = np.array(x)
@@ -540,9 +540,9 @@ class Computer_Node(Node):
 
 
     def calc_control_and_trajectory(self, x, dw, config, goal, ob):
-        """
-        calculation final input with dynamic window
-        """
+
+        #calculation final input with dynamic window
+
 
         x_init = x[:]
         min_cost = float("inf")
@@ -577,9 +577,9 @@ class Computer_Node(Node):
 
 
     def calc_obstacle_cost(self, trajectory, ob, config):
-        """
-        calc obstacle cost inf: collision
-        """
+
+        #calc obstacle cost inf: collisio
+
         ox = ob[:, 0]
         oy = ob[:, 1]
         dx = trajectory[:, 0] - ox[:, None]
@@ -610,10 +610,9 @@ class Computer_Node(Node):
 
 
     def calc_to_goal_cost(self, trajectory, goal):
-        """
-            calc to goal cost with angle difference
-        """
-
+        
+        #    calc to goal cost with angle difference
+        
         dx = goal[0] - trajectory[-1, 0]
         dy = goal[1] - trajectory[-1, 1]
         error_angle = math.atan2(dy, dx)
@@ -652,9 +651,9 @@ class Computer_Node(Node):
             plt.plot([x, out_x], [y, out_y], "-k")
 
     def dwa_control(self, x, config, goal, ob):
-        """
-        Dynamic Window Approach control
-        """
+        
+        #Dynamic Window Approach control
+    
         dw = self.calc_dynamic_window(x, config)
 
         u, trajectory = self.calc_control_and_trajectory(x, dw, config, goal, ob)
@@ -667,7 +666,7 @@ class Computer_Node(Node):
 
         cv2.imshow('image', image)
         cv2.waitKey(1)
-
+"""
     def on_press(self, key):
         speedChange = False
 

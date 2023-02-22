@@ -93,7 +93,15 @@ class MappingNode(Node):
     def update_map(self, msg_bboxes, msg_odometry):
         map_new = self.extract_xy_and_cls(msg_bboxes)
 
-        map_odometry_integration = self.integrate_odometry(map_new, msg_odometry)
+        odom_pos = np.array([msg_odometry.pose.pose.point.x, msg_odometry.pose.pose.point.y])
+
+        movement = odom_pos - self.current_pos
+
+        self.current_pos = odom_pos
+
+        map_odometry_integration = self.integrate_odometry(map_new, odom_pos)
+
+        self.map_current = self.integrate_odometry(self.map_current, movement)
 
         # Maps are merged every iteration
         # Points are grouped depending on a minimum distance
@@ -206,45 +214,7 @@ class MappingNode(Node):
     # When the robot moves the map is supposed to change accordingly
     # For this we need to integrate our knowledge about the robots position into the extracted map
     # The odometry message type contains an integrated position vector which can be used for this
-    def integrate_odometry(self, map_without_odometry, msg_odometry):
-        """if self.last_used_odometry and self.last_used_bboxes:
-            orientation_euler_previous = tf2_ros.transformations.euler_from_quaternion(self.last_used_odometry.pose.orientation)
-            velocity_previous = self.last_used_odometry.twist.linear
-            orientation_euler_current = tf2_ros.transformations.euler_from_quaternion(msg_odometry.pose.orientation)
-            velocity_current = msg_odometry.twist.linear
-
-            orientation_averaged = [(orientation_euler_previous[0] + orientation_euler_current[0]) / 2,
-                                    (orientation_euler_previous[1] + orientation_euler_current[1]) / 2,
-                                    (orientation_euler_previous[2] + orientation_euler_current[2]) / 2]
-
-            heading_direction = orientation_averaged[2]
-
-            velocity_averaged = [(velocity_previous.x + velocity_current.x) / 2,
-                                 (velocity_previous.y + velocity_current.y) / 2,
-                                 (velocity_previous.z + velocity_current.z) / 2]
-
-            velocity_forward = velocity_averaged.x
-
-            time_between_messages = self.message_distance(msg_odometry.header.stamp, self.last_used_odometry.header.stamp)
-
-            distance_traveled = velocity_forward * time_between_messages
-
-            translation = self.polarToCartesian(heading_direction, distance_traveled)
-
-            self.position += translation
-
-            position_current = msg_odometry.pose.position
-
-            map_integrated = np.array([entry + msg_odometry for entry in map_without_odometry])
-
-            return map_integrated
-        else:
-            return map_without_odometry"""
-
-        position_point = msg_odometry.pose.pose.position
-
-        position_current = np.array([position_point.x, position_point.y])
-
+    def integrate_odometry(self, map_without_odometry, current_pos):
 
         map_integrated = map_without_odometry.copy()
 
@@ -255,8 +225,8 @@ class MappingNode(Node):
         #print(position_current.shape)
 
 
-        map_integrated[:, 0] += position_current[0]
-        map_integrated[:, 1] += position_current[1]
+        map_integrated[:, 0] += current_pos[0]
+        map_integrated[:, 1] += current_pos[1]
 
         return map_integrated
 

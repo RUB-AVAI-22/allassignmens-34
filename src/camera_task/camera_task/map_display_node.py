@@ -19,6 +19,7 @@ from PyQt5.QtCore import *
 import pandas as pd
 from avai_messages.msg import Map
 from avai_messages.msg import MapEntry
+from nav_msgs.msg import Odometry
 
 class MapDisplayNode(Node):
     current_pos = (0, 0)
@@ -26,6 +27,7 @@ class MapDisplayNode(Node):
     def __init__(self):
         super().__init__('map_display_node')
         self.map_subscriber = self.create_subscription(Map, '/map', self.callback_map, 10)
+        self.odom_subscriber = self.create_subscription(Odometry, '/odom', self.callback_odom, 10)
         self.current_pos = (0,0)
         self.fig, self.ax = plt.subplots()
         self.ln, = plt.plot([], [], 'ro')
@@ -34,6 +36,10 @@ class MapDisplayNode(Node):
         self.get_logger().info("Map Display Node started!")
         #testing purpose
         #self.timer = self.create_timer(1 , self.debug)
+
+    def callback_odom(self, msg):
+        self.get_logger().info("Odometry Data received!")
+        self.current_pos = (msg.pose.pose.position.x, msg.pose.pose.position.y)
 
     def callback_map(self, msg):
         self.get_logger().info("Map Data received!")
@@ -79,7 +85,7 @@ class GUI(QWidget):
             colors_points = []
             for cls in dataCls:
                 colors_points.append(self.colors[int(cls)])
-            circle = plt.Circle((0,0), 0.1, color='purple')
+            circle = plt.Circle(MapDisplayNode.current_pos, 0.1, color='purple')
             ax.add_patch(circle)
             ax.scatter(dataX, dataY, c=colors_points)
             ax.grid()
