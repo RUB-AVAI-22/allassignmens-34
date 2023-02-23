@@ -30,6 +30,7 @@ class MapDisplayNode(Node):
         super().__init__('map_display_node')
         self.map_subscriber = self.create_subscription(Map, '/map', self.callback_map, 10)
         self.odom_subscriber = self.create_subscription(Odometry, '/odom', self.callback_odom, 10)
+        self.current_angle = 0
         self.current_pos = (0,0)
         self.get_logger().info("Map Display Node started!")
         #testing purpose

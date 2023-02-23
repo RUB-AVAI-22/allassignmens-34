@@ -116,7 +116,7 @@ class Computer_Node(Node):
         self.turtle_track_x = []
         self.turtle_track_y = []
 
-        self.maxTransVelocity = 0.26 #in m/s
+        self.maxTransVelocity = 0.24 #in m/s
         self.maxRotVelocity = 1.82 #in rad/s
         self.speed = 0.8
         self.counter = 0

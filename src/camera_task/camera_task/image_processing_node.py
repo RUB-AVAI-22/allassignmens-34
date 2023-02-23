@@ -98,8 +98,7 @@ class ImageProcessingNode(Node):
             prediction = self.image_to_prediction(original_image)
             
             bbox_msg = self.prediction_to_bounding_box_msg(prediction)
-            bbox_msg.header = Header()
-            bbox_msg.header.stamp = msg.header.stamp
+            bbox_msg.header = msg.header
             self.bounding_box_publisher.publish(bbox_msg)
             self.get_logger().info('Publishing bounding boxes')
         else:
@@ -123,8 +122,6 @@ class ImageProcessingNode(Node):
             bbox.conf = float(conf)
             bbox.cls = float(cls)
             msg_data.append(bbox)
-        bbox_msg.header = Header()
-        bbox_msg.header.stamp = self.get_clock().now().to_msg()
         bbox_msg.bboxes = msg_data
 
         return bbox_msg
