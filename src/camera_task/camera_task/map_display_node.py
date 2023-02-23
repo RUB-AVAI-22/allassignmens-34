@@ -47,7 +47,8 @@ class MapDisplayNode(Node):
         self.current_angle = Rotation.from_quat([msg.pose.pose.orientation.x,
                                   msg.pose.pose.orientation.y,
                                   msg.pose.pose.orientation.z,
-                                  msg.pose.pose.orientation.w]).as_euler('xyz', degrees=False)[0]
+                                  msg.pose.pose.orientation.w]).as_euler('xyz', degrees=False)[2]
+
 
         """if msg.pose.pose.orientation.x > 0:
             self.current_angle = round(math.acos(msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
