@@ -89,9 +89,6 @@ class Computer_Node(Node):
     def __init__(self):
         super().__init__('computer_node')
 
-        
-
-
         self.ox = []
         self.oy = []
         self.x_turtle = 0.0
