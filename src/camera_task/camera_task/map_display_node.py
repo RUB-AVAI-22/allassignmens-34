@@ -22,7 +22,7 @@ from avai_messages.msg import Map
 from avai_messages.msg import MapEntry
 from nav_msgs.msg import Odometry
 
-from camera_task.camera_task.map_display_node import MapDisplayNode
+
 
 
 class MapDisplayNode(Node):
@@ -48,7 +48,7 @@ class MapDisplayNode(Node):
             self.current_angle = round(math.acos(msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
         elif msg.pose.pose.orientation.x < 0:
             self.current_angle = round(-math.acos(msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
-
+        print("Callback pos: ", self.current_pos)
     def callback_map(self, msg):
         self.get_logger().info("Map Data received!")
         map = np.empty((len(msg.map_objects), 3))
