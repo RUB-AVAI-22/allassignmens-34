@@ -22,12 +22,17 @@ class SensorFusionNode(Node):
     def __init__(self):
         super().__init__('sensor_fusion_node')
 
+        queue_size = 50 #number of messages to be kept in queue
+        synchronization_threshold = 0.01 #time [in seconds] allowed between message time stamps
+
         self.boundingBox_subscriber = message_filters.Subscriber(self, BoundingBoxes, '/bboxes')
         self.lidar_subscriber = message_filters.Subscriber(self, LaserScan, '/scan', qos_profile=qos_profile_sensor_data)
         self.odom_subscriber = message_filters.Subscriber(self, Odometry, '/odom')
         self.synchronizer = message_filters.ApproximateTimeSynchronizer([self.boundingBox_subscriber,
                                                                          self.lidar_subscriber,
-                                                                         self.odom_subscriber], 1000, 10)
+                                                                         self.odom_subscriber],
+                                                                        queue_size,
+                                                                        synchronization_threshold)
         self.synchronizer.registerCallback(self.callback_synchronized)
 
         self.bboxWithRealCoords_publisher = self.create_publisher(BoundingBoxesWithRealCoordinates, '/bboxes_realCoords', 10)
@@ -117,6 +122,8 @@ class SensorFusionNode(Node):
             # results.append((round(end - start), mean))
             results.append((round((end + start) / 2), mean))
         return results
+
+
     def polarToCartesianMirrored(self, angle, distance):
         angle = (angle/180.0)*np.pi
         x = np.cos(angle) * distance
