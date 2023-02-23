@@ -31,8 +31,8 @@ class SensorFusionNode(Node):
         self.synchronizer = message_filters.ApproximateTimeSynchronizer([self.boundingBox_subscriber,
                                                                          self.lidar_subscriber,
                                                                          self.odom_subscriber],
-                                                                        queue_size,
-                                                                        synchronization_threshold)
+                                                                        queue_size = queue_size,
+                                                                        slop = synchronization_threshold)
         self.synchronizer.registerCallback(self.callback_synchronized)
 
         self.bboxWithRealCoords_publisher = self.create_publisher(BoundingBoxesWithRealCoordinates, '/bboxes_realCoords', 10)

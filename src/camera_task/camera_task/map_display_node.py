@@ -28,7 +28,6 @@ class MapDisplayNode(Node):
     main_window = None
     def __init__(self):
         super().__init__('map_display_node')
-        self.current_angle = 0
         self.map_subscriber = self.create_subscription(Map, '/map', self.callback_map, 10)
         self.odom_subscriber = self.create_subscription(Odometry, '/odom', self.callback_odom, 10)
         self.current_pos = (0,0)
