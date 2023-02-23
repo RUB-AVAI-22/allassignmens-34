@@ -24,6 +24,7 @@ from nav_msgs.msg import Odometry
 
 class MapDisplayNode(Node):
     current_pos = (0, 0)
+    print("s")
     main_window = None
     def __init__(self):
         super().__init__('map_display_node')
