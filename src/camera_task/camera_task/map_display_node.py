@@ -22,7 +22,11 @@ from avai_messages.msg import Map
 from avai_messages.msg import MapEntry
 from nav_msgs.msg import Odometry
 
+from camera_task.camera_task.map_display_node import MapDisplayNode
+
+
 class MapDisplayNode(Node):
+    current_angle = 0
     current_pos = (0, 0)
     print("s")
     main_window = None
@@ -30,8 +34,9 @@ class MapDisplayNode(Node):
         super().__init__('map_display_node')
         self.map_subscriber = self.create_subscription(Map, '/map', self.callback_map, 10)
         self.odom_subscriber = self.create_subscription(Odometry, '/odom', self.callback_odom, 10)
-        self.current_angle = 0
-        self.current_pos = (0,0)
+
+        #self.current_angle = 0
+        #self.current_pos = (0,0)
         self.get_logger().info("Map Display Node started!")
         #testing purpose
         #self.timer = self.create_timer(1 , self.debug)
@@ -39,6 +44,10 @@ class MapDisplayNode(Node):
     def callback_odom(self, msg):
         self.get_logger().info("Odometry Data received!")
         self.current_pos = (msg.pose.pose.position.x, msg.pose.pose.position.y)
+        if msg.pose.pose.orientation.x > 0:
+            self.current_angle = round(math.acos(msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
+        elif msg.pose.pose.orientation.x < 0:
+            self.current_angle = round(-math.acos(msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
 
     def callback_map(self, msg):
         self.get_logger().info("Map Data received!")
@@ -85,16 +94,11 @@ class GUI(QWidget):
             for cls in dataCls:
                 colors_points.append(self.colors[int(cls)])
             circle = plt.Circle(MapDisplayNode.current_pos, 0.1, color='purple')
-
-            if odom_msg.pose.pose.orientation.x > 0:
-                MapDisplayNode.current_angle = round(math.acos(odom_msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
-            elif odom_msg.pose.pose.orientation.x < 0:
-                MapDisplayNode.current_angle = round(-math.acos(odom_msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
-
-            arrow = plt.arrow(MapDisplayNode.current_pos[0], MapDisplayNode.current_pos[1],   math.cos(MapDisplayNode.current_angle), math.sin(MapDisplayNode.current_angle))
+            arrow = plt.arrow(MapDisplayNode.current_pos[0], MapDisplayNode.current_pos[1],   math.cos(MapDisplayNode.current_angle+90), math.sin(MapDisplayNode.current_angle+90))
             ax.add_patch(circle)
             ax.scatter(dataX, dataY, c=colors_points)
             ax.grid()
+            print("Current Pos: ", MapDisplayNode.current_pos)
             ax.set_xlim([-self.graph_lim + MapDisplayNode.current_pos[0], self.graph_lim + MapDisplayNode.current_pos[0]])
             ax.set_ylim([-self.graph_lim + MapDisplayNode.current_pos[1], self.graph_lim + MapDisplayNode.current_pos[1]])
             self.canvas.draw()
