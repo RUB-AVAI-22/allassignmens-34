@@ -92,8 +92,8 @@ class GUI(QWidget):
             colors_points = []
             for cls in dataCls:
                 colors_points.append(self.colors[int(cls)])
-            circle = plt.Circle(self.node.current_pos, 0.1, color='purple')
-            arrow = plt.arrow(self.node.current_pos[0], self.node.current_pos[1],   math.cos(self.node.current_angle+90), math.sin(self.node.current_angle+90))
+                circle = plt.Circle((self.node.current_pos[1], self.node.current_pos[0]), 0.1, color='purple')
+            arrow = plt.arrow(self.node.current_pos[1], self.node.current_pos[0],   math.cos(self.node.current_angle), math.sin(self.node.current_angle))
             ax.add_patch(circle)
             ax.scatter(dataX, dataY, c=colors_points)
             ax.grid()

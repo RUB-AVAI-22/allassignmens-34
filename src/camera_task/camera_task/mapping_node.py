@@ -52,7 +52,7 @@ class MappingNode(Node):
 
         self.current_pos = turtle_pos
 
-        self.map_current = self.integrate_odometry(self.map_current, movement)
+        #self.map_current = self.integrate_odometry(self.map_current, movement)
 
         if len(self.map_current) == 0:
             map_merged = map_new
