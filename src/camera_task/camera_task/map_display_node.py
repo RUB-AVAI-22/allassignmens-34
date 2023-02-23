@@ -21,6 +21,7 @@ import pandas as pd
 from avai_messages.msg import Map
 from avai_messages.msg import MapEntry
 from nav_msgs.msg import Odometry
+from scipy.spatial.transform import Rotation
 
 
 
@@ -43,10 +44,15 @@ class MapDisplayNode(Node):
     def callback_odom(self, msg):
         self.get_logger().info("Odometry Data received!")
         self.current_pos = (msg.pose.pose.position.x, msg.pose.pose.position.y)
-        if msg.pose.pose.orientation.x > 0:
+        self.current_angle = Rotation.from_quat([msg.pose.pose.orientation.x,
+                                  msg.pose.pose.orientation.y,
+                                  msg.pose.pose.orientation.z,
+                                  msg.pose.pose.orientation.w]).as_euler('xyz', degrees=False)[0]
+
+        """if msg.pose.pose.orientation.x > 0:
             self.current_angle = round(math.acos(msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
         elif msg.pose.pose.orientation.x < 0:
-            self.current_angle = round(-math.acos(msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
+            self.current_angle = round(-math.acos(msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)"""
         print("Callback pos: ", self.current_pos)
     def callback_map(self, msg):
         self.get_logger().info("Map Data received!")
@@ -93,6 +99,7 @@ class GUI(QWidget):
             for cls in dataCls:
                 colors_points.append(self.colors[int(cls)])
                 circle = plt.Circle((self.node.current_pos[1], self.node.current_pos[0]), 0.1, color='purple')
+                print("currant angle:", self.node.current_angle)
             arrow = plt.arrow(self.node.current_pos[1], self.node.current_pos[0],   math.cos(self.node.current_angle), math.sin(self.node.current_angle))
             ax.add_patch(circle)
             ax.scatter(dataX, dataY, c=colors_points)

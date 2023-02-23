@@ -13,6 +13,9 @@ from rcl_interfaces.msg import SetParametersResult
 import message_filters
 
 
+from scipy.spatial.transform import Rotation
+
+
 import numpy as np
 import math
 
@@ -53,10 +56,15 @@ class SensorFusionNode(Node):
         bboxes = bbox_msg.bboxes
         #print("Clustered points: ", clustered_lidar)
 
-        if odom_msg.pose.pose.orientation.x > 0:
+        self.current_angle = Rotation.from_quat([odom_msg.pose.pose.orientation.x,
+                                                 odom_msg.pose.pose.orientation.y,
+                                                 odom_msg.pose.pose.orientation.z,
+                                                 odom_msg.pose.pose.orientation.w]).as_euler('xyz', degrees=False)[0]
+
+        """if odom_msg.pose.pose.orientation.x > 0:
             self.current_angle = round(math.acos(odom_msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
         elif odom_msg.pose.pose.orientation.x < 0:
-            self.current_angle = round(-math.acos(odom_msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
+            self.current_angle = round(-math.acos(odom_msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)"""
 
 
         matchedBBoxes = []
