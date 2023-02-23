@@ -66,6 +66,7 @@ class SensorFusionNode(Node):
         elif odom_msg.pose.pose.orientation.x < 0:
             self.current_angle = round(-math.acos(odom_msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)"""
 
+        print(f"Current angle: {self.current_angle}")
 
         matchedBBoxes = []
         for bbox in bboxes:
@@ -80,7 +81,6 @@ class SensorFusionNode(Node):
                 #print("bestMatch: ", bestMatch)
                 #print("(boxleft, boxright, bestMatchPixel): ", bbox.coordinates[0], bbox.coordinates[2], self.angleToPixel(bestMatch[0]))
                 odom_pos = np.array([odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y])
-                print(f"Current angle: {self.current_angle}")
                 bboxPos = self.polarToCartesianMirrored(bestMatch[0] + 59 + self.current_angle, bestMatch[1])
                 bboxPos[0] -= odom_pos[1]
                 bboxPos[1] += odom_pos[0]
