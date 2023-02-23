@@ -22,7 +22,7 @@ class SensorFusionNode(Node):
     def __init__(self):
         super().__init__('sensor_fusion_node')
 
-        queue_size = 50 #number of messages to be kept in queue
+        queue_size = 500 #number of messages to be kept in queue
         synchronization_threshold = 0.1 #time [in seconds] allowed between message time stamps
 
         self.boundingBox_subscriber = message_filters.Subscriber(self, BoundingBoxes, '/bboxes')

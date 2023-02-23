@@ -32,10 +32,10 @@ class MapDisplayNode(Node):
         self.map_subscriber = self.create_subscription(Map, '/map', self.callback_map, 10)
         self.odom_subscriber = self.create_subscription(Odometry, '/odom', self.callback_odom, 10)
         self.current_pos = (0,0)
-        self.fig, self.ax = plt.subplots()
-        self.ln, = plt.plot([], [], 'ro')
-        self.x_data, self.y_data = [], []
-        self.map = np.zeros((1,3))
+        #self.fig, self.ax = plt.subplots()
+        #self.ln, = plt.plot([], [], 'ro')
+        #self.x_data, self.y_data = [], []
+        #self.map = np.zeros((1,3))
         self.get_logger().info("Map Display Node started!")
         #testing purpose
         #self.timer = self.create_timer(1 , self.debug)
