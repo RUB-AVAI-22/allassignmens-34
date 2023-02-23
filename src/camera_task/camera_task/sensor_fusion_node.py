@@ -23,7 +23,7 @@ class SensorFusionNode(Node):
         super().__init__('sensor_fusion_node')
 
         queue_size = 500 #number of messages to be kept in queue
-        synchronization_threshold = 0.1 #time [in seconds] allowed between message time stamps
+        synchronization_threshold = 1 #time [in seconds] allowed between message time stamps
 
         self.boundingBox_subscriber = message_filters.Subscriber(self, BoundingBoxes, '/bboxes')
         self.lidar_subscriber = message_filters.Subscriber(self, LaserScan, '/scan', qos_profile=qos_profile_sensor_data)
