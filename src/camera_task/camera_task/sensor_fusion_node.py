@@ -84,6 +84,10 @@ class SensorFusionNode(Node):
                 bboxPos = self.polarToCartesianMirrored(bestMatch[0] + 59 + (self.current_angle/np.pi)*180, bestMatch[1])
                 bboxPos[0] -= odom_pos[1]
                 bboxPos[1] += odom_pos[0]
+                count = 0
+                if count == 0:
+                    print("BboxPos: ", bboxPos)
+                    count += 1
                 bboxMsg = BoundingBoxWithRealCoordinates()
                 bboxMsg.image_coords = bbox.coordinates
                 bboxMsg.conf = bbox.conf
