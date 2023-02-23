@@ -26,12 +26,11 @@ from nav_msgs.msg import Odometry
 
 
 class MapDisplayNode(Node):
-    current_angle = 0
-    current_pos = (0, 0)
-    print("s")
     main_window = None
     def __init__(self):
         super().__init__('map_display_node')
+        self.current_angle = 0
+        self.current_pos = (0, 0)
         self.map_subscriber = self.create_subscription(Map, '/map', self.callback_map, 10)
         self.odom_subscriber = self.create_subscription(Odometry, '/odom', self.callback_odom, 10)
 
@@ -69,8 +68,6 @@ class MapDisplayNode(Node):
         pub.publish(data)
 
 class GUI(QWidget):
-    node: MapDisplayNode = None
-
     def __init__(self):
         super(GUI, self).__init__()
 
@@ -81,6 +78,8 @@ class GUI(QWidget):
         self.setLayout(self.VBL)
         self.graph_lim = 3
         self.colors = ['#0000FF', '#FF7800', '#FFFF00']
+
+        self.node: MapDisplayNode = None
 
     def update_plot(self, data):
         if len(data) != 0 :
@@ -93,14 +92,14 @@ class GUI(QWidget):
             colors_points = []
             for cls in dataCls:
                 colors_points.append(self.colors[int(cls)])
-            circle = plt.Circle(MapDisplayNode.current_pos, 0.1, color='purple')
-            arrow = plt.arrow(MapDisplayNode.current_pos[0], MapDisplayNode.current_pos[1],   math.cos(MapDisplayNode.current_angle+90), math.sin(MapDisplayNode.current_angle+90))
+            circle = plt.Circle(self.node.current_pos, 0.1, color='purple')
+            arrow = plt.arrow(self.node.current_pos[0], self.node.current_pos[1],   math.cos(self.node.current_angle+90), math.sin(self.node.current_angle+90))
             ax.add_patch(circle)
             ax.scatter(dataX, dataY, c=colors_points)
             ax.grid()
-            print("Current Pos: ", MapDisplayNode.current_pos)
-            ax.set_xlim([-self.graph_lim + MapDisplayNode.current_pos[0], self.graph_lim + MapDisplayNode.current_pos[0]])
-            ax.set_ylim([-self.graph_lim + MapDisplayNode.current_pos[1], self.graph_lim + MapDisplayNode.current_pos[1]])
+            print("Current Pos: ", self.node.current_pos)
+            ax.set_xlim([-self.graph_lim + self.node.current_pos[1], self.graph_lim + self.node.current_pos[1]])
+            ax.set_ylim([-self.graph_lim + self.node.current_pos[0], self.graph_lim + self.node.current_pos[0]])
             self.canvas.draw()
 
 
