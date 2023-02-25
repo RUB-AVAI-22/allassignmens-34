@@ -81,7 +81,7 @@ class SensorFusionNode(Node):
                 #print("bestMatch: ", bestMatch)
                 #print("(boxleft, boxright, bestMatchPixel): ", bbox.coordinates[0], bbox.coordinates[2], self.angleToPixel(bestMatch[0]))
                 odom_pos = np.array([odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y])
-                bboxPos = self.polarToCartesianMirrored(bestMatch[0] + 59 + (self.current_angle/np.pi)*180, bestMatch[1])
+                bboxPos = self.polarToCartesianMirrored(bestMatch[0] + 59 + self.current_angle, bestMatch[1])
                 bboxPos[0] -= odom_pos[1]
                 bboxPos[1] += odom_pos[0]
                 print("BboxPos: ", bboxPos)
