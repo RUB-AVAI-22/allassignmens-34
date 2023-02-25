@@ -106,14 +106,20 @@ class ImageProcessingNode(Node):
             bbox_msg = BoundingBoxes()
             self.bounding_box_publisher.publish(bbox_msg)
             self.get_logger().info('no bounding boxes')
+
+        imageComprStart = self.get_clock().now()
         # convert image to compressed image
         compressed_image = self.bridge.cv2_to_compressed_imgmsg(original_image)
+        imageComprEnd = self.get_clock().now()
+        print("ImageCompressionTime: ", (imageComprEnd-imageComprStart).seconds_nanoseconds())
+
         compressed_image.header = Header()
         compressed_image.header.stamp = self.get_clock().now().to_msg()
         # publish compressed image
         self.compressed_image_publisher.publish(compressed_image)
 
     def prediction_to_bounding_box_msg(self, prediction):
+        start = self.get_clock().now()
         bboxes = prediction
 
         # publish bounding boxes
@@ -128,11 +134,13 @@ class ImageProcessingNode(Node):
         bbox_msg.header = Header()
         bbox_msg.header.stamp = self.get_clock().now().to_msg()
         bbox_msg.bboxes = msg_data
-
+        end = self.get_clock().now()
+        print("prediction_to_bounding_box_msg takes:", (end-start).seconds_nanoseconds())
         return bbox_msg
 
 
     def prepare_image_for_model(self, original_image):
+        start = self.get_clock().now()
         prepared_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
         prepared_image = np.expand_dims(prepared_image, axis=0)
 
@@ -141,12 +149,14 @@ class ImageProcessingNode(Node):
         else:
             prepared_image = prepared_image.astype(np.float32)
             prepared_image /= 255
-
+        end = self.get_clock().now()
+        print("prepare_image_for_model", (end-start).seconds_nanoseconds())
         return prepared_image
 
     # In this section the image is pushed through the yolov5 network.
     # The resulting bounding boxes are reformatted and non-max-suppression is applied to filter out unimportant boxes.
     def image_to_prediction(self, original_image):
+        start = self.get_clock().now()
         if self.cone_detection:
             # preparing image for yolov5 network
             prepared_image = self.prepare_image_for_model(original_image)
@@ -180,6 +190,8 @@ class ImageProcessingNode(Node):
             selected_scores = np.array(tf.gather(scores, selected_indices))
 
             bboxes = list(zip(selected_boxes, selected_scores, selected_cls))
+            end = self.get_clock().now()
+            print("image_to_prediction", (end - start).seconds_nanoseconds())
             return bboxes
 
     def get_last_received_image(self):
