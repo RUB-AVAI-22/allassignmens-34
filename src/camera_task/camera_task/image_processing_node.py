@@ -112,7 +112,7 @@ class ImageProcessingNode(Node):
         # convert image to compressed image
         compressed_image = self.bridge.cv2_to_compressed_imgmsg(original_image)
         imageComprEnd = self.get_clock().now()
-        print("ImageCompressionTime: ", (imageComprEnd-imageComprStart).to_sec())
+        print("ImageCompressionTime: ", (imageComprEnd-imageComprStart).nanoseconds)
 
         compressed_image.header = Header()
         compressed_image.header.stamp = self.get_clock().now().to_msg()
