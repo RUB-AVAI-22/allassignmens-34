@@ -11,6 +11,7 @@ from avai_messages.msg import BoundingBoxesWithRealCoordinates
 from rcl_interfaces.msg import SetParametersResult
 
 import message_filters
+import tf_transformations
 
 
 from scipy.spatial.transform import Rotation
@@ -71,10 +72,11 @@ class SensorFusionNode(Node):
         matchedBBoxes = []
         for bbox in bboxes:
             bestMatch = None
+            matchThreshold = 40
             for clusterAngle, clusterDistance in clustered_lidar:
                 if bestMatch is None:
                     bestMatch = (clusterAngle, clusterDistance)
-                elif self.distanceToBoxCenter(bbox, clusterAngle) < self.distanceToBoxCenter(bbox, bestMatch[0]):
+                elif self.distanceToBoxCenter(bbox, clusterAngle) < matchThreshold/clusterDistance and self.distanceToBoxCenter(bbox, clusterAngle) < self.distanceToBoxCenter(bbox, bestMatch[0]):
                     bestMatch = (clusterAngle, clusterDistance)
 
             if not bestMatch is None:
