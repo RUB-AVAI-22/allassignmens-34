@@ -59,7 +59,7 @@ class SensorFusionNode(Node):
         self.current_angle = Rotation.from_quat([odom_msg.pose.pose.orientation.x,
                                                  odom_msg.pose.pose.orientation.y,
                                                  odom_msg.pose.pose.orientation.z,
-                                                 odom_msg.pose.pose.orientation.w]).as_euler('xyz', degrees=False)[2]
+                                                 odom_msg.pose.pose.orientation.w]).as_euler('xyz', degrees=True)[2]
 
         """if odom_msg.pose.pose.orientation.x > 0:
             self.current_angle = round(math.acos(odom_msg.pose.pose.orientation.w) * 180 / math.pi * 2, 1)
