@@ -154,9 +154,9 @@ class ImageProcessingNode(Node):
             input_details = self.interpreter.get_input_details()[0]
             output_details = self.interpreter.get_output_details()[0]
             self.interpreter.set_tensor(input_details['index'], prepared_image)
-            print("Start invoke:" , self.get_clock().now()*10e-6)
+            print("Start invoke:" , self.get_clock().now().seconds_nanoseconds())
             self.interpreter.invoke()
-            print("End invoke:", self.get_clock().now()*10e-6)
+            print("End invoke:", self.get_clock().now().seconds_nanoseconds())
             prediction = self.interpreter.get_tensor(output_details['index'])
             prediction = prediction[0]
             
