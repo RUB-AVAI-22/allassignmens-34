@@ -111,7 +111,7 @@ class ImageProcessingNode(Node):
         # convert image to compressed image
         compressed_image = self.bridge.cv2_to_compressed_imgmsg(original_image)
         imageComprEnd = self.get_clock().now()
-        print("ImageCompressionTime: ", (imageComprEnd-imageComprStart).seconds_nanoseconds())
+        print("ImageCompressionTime: ", (imageComprEnd-imageComprStart).to_sec())
 
         compressed_image.header = Header()
         compressed_image.header.stamp = self.get_clock().now().to_msg()
@@ -135,7 +135,7 @@ class ImageProcessingNode(Node):
         bbox_msg.header.stamp = self.get_clock().now().to_msg()
         bbox_msg.bboxes = msg_data
         end = self.get_clock().now()
-        print("prediction_to_bounding_box_msg takes:", (end-start).seconds_nanoseconds())
+        print("prediction_to_bounding_box_msg takes:", (end-start).to_sec())
         return bbox_msg
 
 
@@ -150,7 +150,7 @@ class ImageProcessingNode(Node):
             prepared_image = prepared_image.astype(np.float32)
             prepared_image /= 255
         end = self.get_clock().now()
-        print("prepare_image_for_model", (end-start).seconds_nanoseconds())
+        print("prepare_image_for_model", (end-start).to_sec())
         return prepared_image
 
     # In this section the image is pushed through the yolov5 network.
@@ -191,7 +191,7 @@ class ImageProcessingNode(Node):
 
             bboxes = list(zip(selected_boxes, selected_scores, selected_cls))
             end = self.get_clock().now()
-            print("image_to_prediction", (end - start).seconds_nanoseconds())
+            print("image_to_prediction", (end - start).to_sec())
             return bboxes
 
     def get_last_received_image(self):
