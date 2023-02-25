@@ -29,9 +29,7 @@ class MappingNode(Node):
 
         self.subscriber_bboxes_with_real_coordinates = message_filters.Subscriber(self, BoundingBoxesWithRealCoordinates,
                                                                              '/bboxes_realCoords')
-
-        self.odom_subscriber = message_filters.Subscriber(self, Odometry, '/odom')
-        self.synchronizer = message_filters.ApproximateTimeSynchronizer([self.subscriber_bboxes_with_real_coordinates, self.odom_subscriber],
+        self.synchronizer = message_filters.ApproximateTimeSynchronizer([self.subscriber_bboxes_with_real_coordinates],
                                                                         100, 0.1)
         self.synchronizer.registerCallback(self.callback_synchronized)
 
@@ -39,20 +37,12 @@ class MappingNode(Node):
 
         print("Mapping Node started!")
 
-    def callback_synchronized(self, msg_bbox, msg_odom):
-        self.get_logger().info('Receiving synchronized bboxes and odometry')
-        self.update_map(msg_bbox, msg_odom)
+    def callback_synchronized(self, msg_bbox):
+        self.get_logger().info('Receiving bboxes')
+        self.update_map(msg_bbox)
 
-    def update_map(self, msg_bbox, msg_odom):
+    def update_map(self, msg_bbox):
         map_new = self.extract_xy_and_cls(msg_bbox)
-
-        turtle_pos = np.array([msg_odom.pose.pose.position.x, msg_odom.pose.pose.position.y])
-
-        movement = turtle_pos - self.current_pos
-
-        self.current_pos = turtle_pos
-
-        #self.map_current = self.integrate_odometry(self.map_current, movement)
 
         if len(self.map_current) == 0:
             map_merged = map_new
