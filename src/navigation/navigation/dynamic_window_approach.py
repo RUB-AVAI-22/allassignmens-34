@@ -52,7 +52,7 @@ class Config:
 
         # if robot_type == RobotType.circle
         # Also used to check if goal is reached in both types
-        self.robot_radius = 0.3  # [m] for collision check
+        self.robot_radius = 0.306  # [m] for collision check
 
         # if robot_type == RobotType.rectangle
         self.robot_width = 0.5  # [m] for collision check

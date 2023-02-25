@@ -90,9 +90,6 @@ class Computer_Node(Node):
     def __init__(self):
         super().__init__('computer_node')
 
-        
-
-
         self.ox = []
         self.oy = []
         self.x_turtle = 0.0
@@ -207,6 +204,7 @@ class Computer_Node(Node):
         if len(self.turtle_track_x) == 0 or abs(self.turtle_track_x[-1] - self.x_turtle) > 0.01 or abs(self.turtle_track_y[-1] - self.y_turtle) > 0.01:
             self.turtle_track_x.append(round(self.x_turtle,2))
             self.turtle_track_y.append(round(-self.y_turtle,2))
+
         #if len(self.turtle_track_x) > 0 and  abs(self.turtle_track_x[-1] - self.x_turtle) > 0.01 or len(self.turtle_track_y) > 0 and  abs(self.turtle_track_y[-1] - self.y_turtle) > 0.01:
         #    self.turtle_track_x.append(self.x_turtle)
         #    self.turtle_track_y.append(-self.y_turtle)
@@ -437,11 +435,16 @@ class Computer_Node(Node):
                 occupancy_map[ix + 1][iy + 1] = 1.0  # extend the occupied area
         return occupancy_map, min_x, max_x, min_y, max_y, xy_resolution
     
+
     def autopilot(self):
+
         ob = self.crone_position
 
+        if len(ob) == 0:
+            return 0
+
         u, predicted_trajectory = self.dwa_control(self.x, config, self.goal, ob)
-        self.x = self.motion(self.x, u, config.dt)  # simulate robot
+        self.x = self.robot_motion(self.x, u, config.dt)  # simulate robot
         self.trajectory = np.vstack((self.trajectory, self.x))  # store state history
     
 
@@ -469,32 +472,59 @@ class Computer_Node(Node):
         if dist_to_goal <= config.robot_radius:
             print("Goal!!")
         
-    
     def motion(self, x, u, dt):
         """
         motion model
         """
 
-        
+        x[2] += u[1] * dt
+        x[0] += u[0] * math.cos(x[2]) * dt
+        x[1] += u[0] * math.sin(x[2]) * dt
+        x[3] = u[0]
+        x[4] = u[1]
+
+        return x
+
+    def robot_motion(self, x, u, dt):
+        """
+        motion model
+        """
+        x[2] += u[1] * dt
+        x[0] += u[0] * math.cos(x[2]) * dt
+        x[1] += u[0] * math.sin(x[2]) * dt
+
         x[3] = u[0] #v(m/s)
         x[4] = u[1] #omega(rad/s)
 
         action = Twist()
-        
-        while True:
 
+        rotation_t1 = time.perf_counter()
+
+        while True:
+            action.linear.x = 0.0
             action.angular.z = u[1]
             self.pub_action.publish(action)
-            print(self.theta_turtle)
-            if abs(self.theta_turtle * math.pi /180 - u[1] * dt) < 0.1:
+            rotation_t2 = time.perf_counter()
+            if rotation_t2 - rotation_t1 > dt:
+                action.linear.x = 0.0
+                action.angular.z = 0.0
+                self.pub_action.publish(action)
                 break
-        #action.angular.x = u[0]
-        #self.pub_action.publish(action)
-        
-        x[2] = self.theta_turtle * math.pi /180 #+= u[1] * dt #yaw(rad)
-       
-        x[0] += u[0] * math.cos(x[2]) * dt #x(m)
-        x[1] += u[0] * math.sin(x[2]) * dt #y(m)
+
+        t1 = time.perf_counter()
+
+        while True:
+            action.linear.x = u[0]
+            action.angular.z = 0.0
+            self.pub_action.publish(action)
+            t2 = time.perf_counter()
+            if t2 - t1 > dt:
+                action.linear.x = 0.0
+                action.angular.z = 0.0
+                self.pub_action.publish(action)
+                break
+
+
         print("\r                                                                     ",end='')
         print("\r\rCurrent velocity: {:.3} m/s, {:.3} rad/s  (Keyboard)\r".format(action.linear.x,action.angular.z),end='')
 
@@ -653,6 +683,7 @@ class Computer_Node(Node):
             out_x, out_y = (np.array([x, y]) +
                             np.array([np.cos(yaw), np.sin(yaw)]) * config.robot_radius)
             plt.plot([x, out_x], [y, out_y], "-k")
+
 
     def dwa_control(self, x, config, goal, ob):
         """
