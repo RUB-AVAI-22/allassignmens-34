@@ -11,7 +11,6 @@ from avai_messages.msg import BoundingBoxesWithRealCoordinates
 from rcl_interfaces.msg import SetParametersResult
 
 import message_filters
-import tf_transformations
 
 
 from scipy.spatial.transform import Rotation
