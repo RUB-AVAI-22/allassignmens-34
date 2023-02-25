@@ -108,7 +108,8 @@ class ImageProcessingNode(Node):
             self.get_logger().info('no bounding boxes')
         # convert image to compressed image
         compressed_image = self.bridge.cv2_to_compressed_imgmsg(original_image)
-        compressed_image.header = msg.header
+        compressed_image.header = Header()
+        compressed_image.header.stamp = self.get_clock().now().to_msg()
         # publish compressed image
         self.compressed_image_publisher.publish(compressed_image)
 
