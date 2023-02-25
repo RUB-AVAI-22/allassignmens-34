@@ -101,7 +101,7 @@ class GUI(QWidget):
             for cls in dataCls:
                 colors_points.append(self.colors[int(cls)])
                 circle = plt.Circle((-self.node.current_pos[1], self.node.current_pos[0]), 0.1, color='purple')
-                print("currant angle:", self.node.current_angle)
+                print("current angle:", self.node.current_angle)
             arrow = plt.arrow(-self.node.current_pos[1], self.node.current_pos[0],   math.cos(self.node.current_angle+ math.pi*0.5), math.sin(self.node.current_angle+ math.pi*0.5))
             ax.add_patch(circle)
             ax.scatter(dataX, dataY, c=colors_points)
