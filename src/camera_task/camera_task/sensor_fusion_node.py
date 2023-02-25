@@ -71,7 +71,7 @@ class SensorFusionNode(Node):
         matchedBBoxes = []
         for bbox in bboxes:
             bestMatch = None
-            matchThreshold = 40
+            matchThreshold = 20
             for clusterAngle, clusterDistance in clustered_lidar:
                 if bestMatch is None:
                     bestMatch = (clusterAngle, clusterDistance)
