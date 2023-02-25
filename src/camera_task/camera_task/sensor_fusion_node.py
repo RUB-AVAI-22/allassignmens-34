@@ -86,8 +86,9 @@ class SensorFusionNode(Node):
                 bboxPos[0] -= odom_pos[1]
                 bboxPos[1] += odom_pos[0]
                 print("BboxPos: ", bboxPos)
-                print("BboxAngle: ", bestMatch[0] + 59 + (self.current_angle/np.pi)*180)
+                print("BboxAngle: ", bestMatch[0] + 59 + self.current_angle)
                 print("OdomPos: ", odom_pos)
+                print("OdomAngle: ", self.current_angle)
                 bboxMsg = BoundingBoxWithRealCoordinates()
                 bboxMsg.image_coords = bbox.coordinates
                 bboxMsg.conf = bbox.conf
