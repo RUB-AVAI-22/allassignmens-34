@@ -1,4 +1,5 @@
 import rclpy
+from rclpy.duration import Duration
 from rclpy.node import Node
 
 import cv2
@@ -135,7 +136,7 @@ class ImageProcessingNode(Node):
         bbox_msg.header.stamp = self.get_clock().now().to_msg()
         bbox_msg.bboxes = msg_data
         end = self.get_clock().now()
-        print("prediction_to_bounding_box_msg takes:", (end-start).seconds())
+        print("prediction_to_bounding_box_msg takes:", (end-start).nanoseconds)
         return bbox_msg
 
 
@@ -150,7 +151,7 @@ class ImageProcessingNode(Node):
             prepared_image = prepared_image.astype(np.float32)
             prepared_image /= 255
         end = self.get_clock().now()
-        print("prepare_image_for_model", (end-start).seconds())
+        print("prepare_image_for_model", (end-start).nanoseconds)
         return prepared_image
 
     # In this section the image is pushed through the yolov5 network.
@@ -192,7 +193,7 @@ class ImageProcessingNode(Node):
 
             bboxes = list(zip(selected_boxes, selected_scores, selected_cls))
             end = self.get_clock().now()
-            print("image_to_prediction", (end - start).seconds())
+            print("image_to_prediction", (end - start).nanoseconds)
             return bboxes
 
     def get_last_received_image(self):
