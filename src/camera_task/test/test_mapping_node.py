@@ -27,6 +27,11 @@ class MappingNodeTest(TestCase):
         assert self.mapping_node.message_distance is None
         assert self.mapping_node.message_distance(self) <=0
 
+    def test_attempt_map_update(self):
+  #      assert self.mapping_node.attempt_map_update().get_logger()
+
+
+  #  def test_update_map(self):
 
 
 if __name__ == '__main__':
