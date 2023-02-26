@@ -1,5 +1,7 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.callback_groups import ReentrantCallbackGroup
+from rclpy.executors import MultiThreadedExecutor
 
 import cv2
 import time
@@ -11,19 +13,24 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 from nav_msgs.msg import Odometry
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
 from sensor_msgs.msg._laser_scan import LaserScan
+
+import message_filters
+
 import numpy as np
 import matplotlib.pyplot as plt
-import numpy as np
+
 from pynput import keyboard
 import scipy.signal as signal
+
+import _thread
 
 import math
 from enum import Enum
 
 import matplotlib.pyplot as plt
-import numpy as np
+
 
 EXTEND_AREA = 1.0
 
@@ -54,9 +61,9 @@ class Config:
         self.max_delta_yaw_rate =  	1.82  # [rad/ss]
         self.v_resolution = 0.01  # [m/s]
         self.yaw_rate_resolution = 0.1 * math.pi / 180.0  # [rad/s]
-        self.dt = 0.1  # [s] Time tick for motion prediction
+        self.dt = 0.05 # [s] Time tick for motion prediction
         self.predict_time = 2  # [s]
-        self.to_goal_cost_gain = 0.04
+        self.to_goal_cost_gain = 0.1
         self.speed_cost_gain = 1.0
         self.obstacle_cost_gain = 0.4
         self.robot_stuck_flag_cons = 0.001  # constant to prevent robot stucked
@@ -85,6 +92,24 @@ class Config:
 
 config = Config()
 
+
+
+class Odom_Node(Node):
+    def __init__(self):
+        super().__init__('odom_node')
+        self.x_turtle = 0.0
+        self.y_turtle = 0.0
+        self.yaw = 0
+        self.group = ReentrantCallbackGroup()
+        self.odom_turtle = self.create_subscription(Odometry, '/odom', self.odom, 50, callback_group=self.group)
+
+    def odom(self, odommsg1):
+
+        self.x_turtle = odommsg1.pose.pose.position.x
+        self.y_turtle = odommsg1.pose.pose.position.y
+        self.yaw = odommsg1.pose.pose.orientation.w
+
+
 class Computer_Node(Node):
 
     def __init__(self):
@@ -94,6 +119,10 @@ class Computer_Node(Node):
         self.oy = []
         self.x_turtle = 0.0
         self.y_turtle = 0.0
+        self.yaw = 0
+        self.x_turtle_old = 0.0
+        self.y_turtle_old = 0.0
+        self.yaw_old = math.pi / 2.0
 
         # initial state [x(m), y(m), yaw(rad), v(m/s), omega(rad/s)]
         self.x = np.array([self.x_turtle, self.y_turtle , math.pi / 2.0, 0.0, 0.0])
@@ -105,7 +134,7 @@ class Computer_Node(Node):
 
         self.left_right = []
         self.theta_turtle = 0.0
-        self.yaw = 0
+        
 
         self.pos_stp_sec = 0
         self.pos_stp_nanosec = 0
@@ -131,40 +160,110 @@ class Computer_Node(Node):
 
         self.currentMovement = Vector3() #x = translational, z = rotational
         self.desiredMovement = Vector3() #x = translational, z = rotational
-        
+        self.group = ReentrantCallbackGroup()
         self.pub_action = self.create_publisher(Twist, 'cmd_vel', 10)
-        self.lidar_sensor_subscriber = self.create_subscription(LaserScan, '/scan', self.cluster_points_in_fov,
-                                                                qos_profile_sensor_data)
-        self.sub_img = self.create_subscription(Image, '/camera/image_raw', self.cb_image, 10)
-        self.lidar_sensor_subscriber = self.create_subscription(Odometry, '/odom', self.odom, 10)
-        self.bridge = CvBridge()
+        
+        self.autopilotTimer = self.create_timer(0.001, self.autopilot, callback_group=self.group)
+        #self.lidar_sensor_subscriber = self.create_subscription(LaserScan, '/scan', self.cluster_points_in_fov,
+        #                                                        qos_profile_sensor_data)
+        
+        self.sub_img = self.create_subscription(Image, '/camera/image_raw', self.cb_image, qos_profile=qos_profile_sensor_data,callback_group=self.group)
+
+        self.lidar_sensor_subscriber = message_filters.Subscriber(self, LaserScan, 'scan', qos_profile=qos_profile_sensor_data)
+        self.odom_subscriber = message_filters.Subscriber(self, Odometry, 'odom')
+        self.sub_img = message_filters.Subscriber(self, Image, 'camera/image_raw')
+
+        ts = message_filters.ApproximateTimeSynchronizer([self.lidar_sensor_subscriber, self.odom_subscriber], 50, 0.1,False)
+        ts.registerCallback(self.callback)
+
+    
 
         self.updateFrequency = 5
         self.acceleration = 0.25/self.updateFrequency
+
+
         self.velocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateVelocity)
         
-        self.gamePadvelocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateGamePad)
+        
+        #self.gamePadvelocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateGamePad)
 
         self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.listener.start()
-
+        
         plt.ion()
         plt.show()
 
-    def odom(self, odommsg):
-        #self.twisted = odommsg.pose.pose
+    
+
+
+
+    def callback(self, lidar, odommsg):
+
+
+        """
+            get odom info
+        """
         if odommsg.pose.pose.orientation.x > 0:
-           self.theta_turtle = round(math.acos(odommsg.pose.pose.orientation.w)*180/math.pi*2,1)
+           theta_turtle = round(math.acos(odommsg.pose.pose.orientation.w)*180/math.pi*2,1)
         elif odommsg.pose.pose.orientation.x < 0:
-            self.theta_turtle = round(-math.acos(odommsg.pose.pose.orientation.w)*180/math.pi*2,1)
-        self.x_turtle = odommsg.pose.pose.position.x
-        self.y_turtle = odommsg.pose.pose.position.y
-        self.yaw = odommsg.pose.pose.orientation.w
+            theta_turtle = round(-math.acos(odommsg.pose.pose.orientation.w)*180/math.pi*2,1)
+        x_turtle = odommsg.pose.pose.position.x
+        y_turtle = odommsg.pose.pose.position.y
+        yaw = odommsg.pose.pose.orientation.w
 
-        self.pos_stp_sec = odommsg.header.stamp.sec
-        self.pos_stp_nanosec = odommsg.header.stamp.nanosec
+        """
+            get lidar info
+        """
 
-        self.autopilot()
+        laser_scan_list = lidar.ranges
+        laser_scan_list.reverse()
+
+        
+        
+        angles = []
+        distances = []
+        left_right =[]
+        
+        for current_degree, distance in enumerate(laser_scan_list):
+            #if 30 <= current_degree <= 90 or 330 >= current_degree >= 270:
+                if distance != float("inf") and distance < 1 :
+
+                    angles.append((current_degree + theta_turtle) * math.pi / 180)
+                    distances.append(float(distance))
+                    if current_degree <179:
+                        left_right.append("r")
+                    else:
+                        left_right.append("b")
+
+
+        
+        ox = np.round(np.sin(angles) * distances - np.ones(len(distances)) * y_turtle,2) # 
+        oy = np.round(np.cos(angles) * distances + np.ones(len(distances)) * x_turtle,2) #  
+
+        if len(self.turtle_track_x) == 0 or abs(self.turtle_track_x[-1] - self.x_turtle) > 0.01 or abs(self.turtle_track_y[-1] - y_turtle) > 0.01:
+            self.turtle_track_x.append(round(x_turtle,2))
+            self.turtle_track_y.append(round(-y_turtle,2))
+
+        self.ox.extend(ox.tolist())
+        self.oy.extend(oy.tolist())
+        self.left_right.extend(left_right)
+        self.crone_position  = np.array((signal.medfilt(volume=self.ox, kernel_size=5),signal.medfilt(volume=self.oy, kernel_size=5))).T
+
+        #self.autopilot()
+        
+        # if len(self.crone_position)  == 0:
+        #     return 0
+        # plt.scatter(self.crone_position[:, 0], self.crone_position[:, 1], s= 0.5)
+        # plt.xlim(xmin = -5)
+        # plt.xlim(xmax = 5)
+        # plt.ylim(ymin = -5)
+        # plt.ylim(ymax = 5)
+        # plt.grid(True)
+        # plt.pause(0.001)
+        # plt.ioff()
+        # plt.clf()  
+
+        
 
     def cluster_points_in_fov(self, lidar):
         #reads the lidar data and clusters the points in the camera fov
@@ -187,7 +286,7 @@ class Computer_Node(Node):
         
         for current_degree, distance in enumerate(laser_scan_list):
             #if 30 <= current_degree <= 90 or 330 >= current_degree >= 270:
-                if distance != float("inf") and distance < 1 :
+                if distance != float("inf") and distance < 2 :
 
                     angles.append((current_degree + self.theta_turtle) * math.pi / 180)
                     distances.append(float(distance))
@@ -214,7 +313,7 @@ class Computer_Node(Node):
             self.oy.extend(oy.tolist())
             self.left_right.extend(left_right)
             self.crone_position  = np.array((signal.medfilt(volume=self.ox, kernel_size=5),signal.medfilt(volume=self.oy, kernel_size=5))).T
-            
+
             
            
             
@@ -226,15 +325,11 @@ class Computer_Node(Node):
 
 
             #y_pred = DBSCAN(eps = 0.05, min_samples=5).fit_predict(self.crone_position)
-            #plt.scatter(self.crone_position[:, 0], self.crone_position[:, 1], c=y_pred, s= 0.5)
+            
             # plt.scatter(self.crone_position[:, 0], self.crone_position[:, 1], c= self.left_right,  s= 0.5)
             # plt.plot(self.turtle_track_y, self.turtle_track_x)
             # #plt.scatter(X[:, 0], X[:, 1],  s= 2)
-            # plt.xlim(xmin = -5)
-            # plt.xlim(xmax = 5)
-            # plt.ylim(ymin = -5)
-            # plt.ylim(ymax = 5)
-            # plt.grid(True)
+             
             
             # xy_resolution = 0.02
             # self.ox.reverse()
@@ -259,9 +354,7 @@ class Computer_Node(Node):
             # bottom, top = plt.ylim()  # return the current y-lim
             # plt.ylim((top, bottom))  # rescale y axis, to match the grid orientation
             # plt.grid(True)
-            # plt.pause(0.001)
-            # plt.ioff()
-            # plt.clf()   
+            
 
     def bresenham(self, start, end):
         """
@@ -438,39 +531,41 @@ class Computer_Node(Node):
 
     def autopilot(self):
 
-        ob = self.crone_position
-
-        if len(ob) == 0:
+        if len(self.crone_position) == 0:
             return 0
 
+        ob = self.crone_position
+        self.x[0]=self.x_turtle_old
+        self.x[1]=self.y_turtle_old
+        self.x[2]=self.yaw_old
         u, predicted_trajectory = self.dwa_control(self.x, config, self.goal, ob)
         self.x = self.robot_motion(self.x, u, config.dt)  # simulate robot
+        
         self.trajectory = np.vstack((self.trajectory, self.x))  # store state history
     
 
-        if show_animation:
-            plt.cla()
-            # for stopping simulation with the esc key.
-            plt.gcf().canvas.mpl_connect(
-                'key_release_event',
-                lambda event: [exit(0) if event.key == 'escape' else None])
-            plt.plot(predicted_trajectory[:, 0], predicted_trajectory[:, 1], "-g")
-            plt.plot(self.x[0], self.x[1], "xr")
-            plt.plot(self.goal[0], self.goal[1], "xb")
-            plt.plot(ob[:, 0], ob[:, 1], "ok")
-            self.plot_robot(self.x[0], self.x[1], self.x[2], config)
-            self.plot_arrow(self.x[0], self.x[1], self.x[2])
-            plt.axis("equal")
-            plt.grid(True)
-            plt.pause(0.0001)
-            plt.pause(0.001)
-            plt.ioff()
-            plt.clf()   
+        # if show_animation:
+        #     plt.cla()
+        #     # for stopping simulation with the esc key.
+        #     plt.gcf().canvas.mpl_connect(
+        #         'key_release_event',
+        #         lambda event: [exit(0) if event.key == 'escape' else None])
+        #     plt.plot(predicted_trajectory[:, 0], predicted_trajectory[:, 1], "-g")
+        #     plt.plot(self.x[0], self.x[1], "xr")
+        #     plt.plot(self.goal[0], self.goal[1], "xb")
+        #     plt.plot(ob[:, 0], ob[:, 1], "ok")
+        #     self.plot_robot(self.x[0], self.x[1], self.x[2], config)
+        #     self.plot_arrow(self.x[0], self.x[1], self.x[2])
+        #     plt.axis("equal")
+        #     plt.grid(True)
+        #     plt.pause(0.001)
+        #     plt.ioff()
+        #     plt.clf()   
 
         # check reaching goal
-        dist_to_goal = math.hypot(self.x[0] - self.goal[0], self.x[1] - self.goal[1])
-        if dist_to_goal <= config.robot_radius:
-            print("Goal!!")
+        # dist_to_goal = math.hypot(self.x[0] - self.goal[0], self.x[1] - self.goal[1])
+        # if dist_to_goal <= config.robot_radius:
+        #     print("Goal!!")
         
     def motion(self, x, u, dt):
         """
@@ -489,9 +584,10 @@ class Computer_Node(Node):
         """
         motion model
         """
-        x[2] += u[1] * dt
-        x[0] += u[0] * math.cos(x[2]) * dt
-        x[1] += u[0] * math.sin(x[2]) * dt
+        # x[2] += u[1] * dt
+        # x[0] += u[0] * math.cos(x[2]) * dt
+        # x[1] += u[0] * math.sin(x[2]) * dt
+        
 
         x[3] = u[0] #v(m/s)
         x[4] = u[1] #omega(rad/s)
@@ -499,35 +595,41 @@ class Computer_Node(Node):
         action = Twist()
 
         rotation_t1 = time.perf_counter()
-
+        
+        print("old",odom_node.yaw)
         while True:
             action.linear.x = 0.0
             action.angular.z = u[1]
             self.pub_action.publish(action)
             rotation_t2 = time.perf_counter()
+            
             if rotation_t2 - rotation_t1 > dt:
                 action.linear.x = 0.0
                 action.angular.z = 0.0
                 self.pub_action.publish(action)
                 break
+       
+        
+        #print("new", Odom_Node.yaw)
 
-        t1 = time.perf_counter()
+        # t1 = time.perf_counter()
 
-        while True:
-            action.linear.x = u[0]
-            action.angular.z = 0.0
-            self.pub_action.publish(action)
-            t2 = time.perf_counter()
-            if t2 - t1 > dt:
-                action.linear.x = 0.0
-                action.angular.z = 0.0
-                self.pub_action.publish(action)
-                break
-
-
-        print("\r                                                                     ",end='')
-        print("\r\rCurrent velocity: {:.3} m/s, {:.3} rad/s  (Keyboard)\r".format(action.linear.x,action.angular.z),end='')
-
+        # while True:
+        #     action.linear.x = u[0]
+        #     action.angular.z = 0.0
+        #     self.pub_action.publish(action)
+        #     t2 = time.perf_counter()
+        #     if abs(u[0] * math.cos(x[2]) * dt - abs(self.x_turtle-self.x_turtle_old)) < 0.1:
+        #         action.linear.x = 0.0
+        #         action.angular.z = 0.0
+        #         self.pub_action.publish
+        #         break
+        
+        # self.x_turtle_old = self.x_turtle
+        # self.y_turtle_old = self.y_turtle
+        self.yaw_old = self.yaw
+        # print("old",self.x_turtle_old)
+        # print("new",self.x_turtle)
 
         return x
         
@@ -697,7 +799,8 @@ class Computer_Node(Node):
 
 
     def cb_image(self, imgmsg):
-        image = self.bridge.imgmsg_to_cv2(imgmsg, 'bgr8')
+
+        image = CvBridge().imgmsg_to_cv2(imgmsg, 'bgr8')
 
         cv2.imshow('image', image)
         cv2.waitKey(1)
@@ -783,6 +886,7 @@ class Computer_Node(Node):
         action.angular.z = round(self.desiredMovement.z,2)
         
         self.pub_action.publish(action)
+
         
         #time.sleep(abs(round(-90 * (math.pi / 180),2))/1.82)
                
@@ -869,12 +973,28 @@ class Computer_Node(Node):
 
 def main(args=None):
     rclpy.init(args=args)
+    try:
+        node = Computer_Node()
+        odom_node = Odom_Node()
+        # MultiThreadedExecutor executes callbacks with a thread pool. If num_threads is not
+        # specified then num_threads will be multiprocessing.cpu_count() if it is implemented.
+        # Otherwise it will use a single thread. This executor will allow callbacks to happen in
+        # parallel, however the MutuallyExclusiveCallbackGroup in DoubleTalker will only allow its
+        # callbacks to be executed one at a time. The callbacks in Listener are free to execute in
+        # parallel to the ones in DoubleTalker however.
+        executor = MultiThreadedExecutor(num_threads=2)
+        executor.add_node(node)
+        executor.add_node(odom_node)
 
-    node = Computer_Node()
-    rclpy.spin(node)
-    
-    node.destroy_node()
-    rclpy.shutdown()
+        try:
+            executor.spin()
+        finally:
+            executor.shutdown()
+            node.destroy_node()
+    finally:
+        rclpy.shutdown()
+
+
 
 
 if __name__ == '__main__':
