@@ -103,17 +103,19 @@ class Odom_Node(Node):
         self.group = ReentrantCallbackGroup()
         self.odom_turtle = self.create_subscription(Odometry, '/odom', self.odom, 50, callback_group=self.group)
 
-    def odom(self, odommsg1):
+    def odom(self, odommsg):
 
-        self.x_turtle = odommsg1.pose.pose.position.x
-        self.y_turtle = odommsg1.pose.pose.position.y
-        self.yaw = odommsg1.pose.pose.orientation.w
+        self.x_turtle = odommsg.pose.pose.position.x
+        self.y_turtle = odommsg.pose.pose.position.y
+        self.yaw = odommsg.pose.pose.orientation.w
 
 
 class Computer_Node(Node):
 
     def __init__(self):
         super().__init__('computer_node')
+
+        self.node: Odom_Node = None
 
         self.ox = []
         self.oy = []
@@ -584,9 +586,9 @@ class Computer_Node(Node):
         """
         motion model
         """
-        # x[2] += u[1] * dt
-        # x[0] += u[0] * math.cos(x[2]) * dt
-        # x[1] += u[0] * math.sin(x[2]) * dt
+        x[2] += u[1] * dt
+        x[0] += u[0] * math.cos(x[2]) * dt
+        x[1] += u[0] * math.sin(x[2]) * dt
         
 
         x[3] = u[0] #v(m/s)
@@ -595,8 +597,8 @@ class Computer_Node(Node):
         action = Twist()
 
         rotation_t1 = time.perf_counter()
-        
-        print("old",odom_node.yaw)
+
+        before =self.node.x_turtle
         while True:
             action.linear.x = 0.0
             action.angular.z = u[1]
@@ -608,22 +610,23 @@ class Computer_Node(Node):
                 action.angular.z = 0.0
                 self.pub_action.publish(action)
                 break
-       
-        
+        time.sleep(0.3)
+        after = self.node.x_turtle
+        print("Diff:", after-before)
         #print("new", Odom_Node.yaw)
 
-        # t1 = time.perf_counter()
+        t1 = time.perf_counter()
 
-        # while True:
-        #     action.linear.x = u[0]
-        #     action.angular.z = 0.0
-        #     self.pub_action.publish(action)
-        #     t2 = time.perf_counter()
-        #     if abs(u[0] * math.cos(x[2]) * dt - abs(self.x_turtle-self.x_turtle_old)) < 0.1:
-        #         action.linear.x = 0.0
-        #         action.angular.z = 0.0
-        #         self.pub_action.publish
-        #         break
+        while True:
+            action.linear.x = u[0]
+            action.angular.z = 0.0
+            self.pub_action.publish(action)
+            t2 = time.perf_counter()
+            if abs(u[0] * math.cos(x[2]) * dt - abs(self.x_turtle-self.x_turtle_old)) < 0.1:
+                action.linear.x = 0.0
+                action.angular.z = 0.0
+                self.pub_action.publish
+                break
         
         # self.x_turtle_old = self.x_turtle
         # self.y_turtle_old = self.y_turtle
@@ -976,6 +979,7 @@ def main(args=None):
     try:
         node = Computer_Node()
         odom_node = Odom_Node()
+        node.node = odom_node
         # MultiThreadedExecutor executes callbacks with a thread pool. If num_threads is not
         # specified then num_threads will be multiprocessing.cpu_count() if it is implemented.
         # Otherwise it will use a single thread. This executor will allow callbacks to happen in
