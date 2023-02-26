@@ -28,10 +28,10 @@ class ImgDisplayNode(Node):
         # self.timer = self.create_timer(timer_period, self.control_callback)
         # video subscriber
         self.bridge = CvBridge()
-        self.image_subscriber = message_filters.Subscriber(CompressedImage, '/proc_img')
-        self.bbox_subscriber = message_filters.Subscriber(BoundingBoxes, '/bboxes')
+        self.image_subscriber = message_filters.Subscriber(self, CompressedImage, '/proc_img')
+        self.bbox_subscriber = message_filters.Subscriber(self, BoundingBoxes, '/bboxes')
 
-        self.synchronizer = message_filters.ApproximateTimeSynchronizer([self.image_subscriber, self.bbox_subscriber], 100, 0.1)
+        self.synchronizer = message_filters.ApproximateTimeSynchronizer([self.image_subscriber, self.bbox_subscriber], 10, 1)
         self.synchronizer.registerCallback(self.synchronized_callback)
 
         self.classes = ['blue', 'orange', 'yellow']
@@ -42,9 +42,6 @@ class ImgDisplayNode(Node):
 
         self.add_on_set_parameters_callback(self.parameter_callback)
         # self.publisher_ = self.create_publisher(String, 'FPS', 10)
-
-        self.sensorFusionClock = self.create_timer(0.1, self.attempt_image_display)
-        self.msgCleanupClock = self.create_timer(0.1, self.remove_old_messages)
 
         # save video
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
