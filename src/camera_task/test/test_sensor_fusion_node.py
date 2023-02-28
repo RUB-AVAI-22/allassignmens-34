@@ -28,6 +28,9 @@ class SensorFusionNodeTest(TestCase):
 
     def test_angleToPixel(self):
         self.assertLessEqual(self.sensor_fusion_node.angleToPixel(62),0,'angle_out_of_frame')
+        self.assertGreaterEqual(self.sensor_fusion_node.angleToPixel(0),640,'angle_out_of_frame')
+
+
 
 if __name__ == '__main__':
     unittest.main()
