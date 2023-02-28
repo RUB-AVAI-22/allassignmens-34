@@ -27,8 +27,8 @@ class SensorFusionNodeTest(TestCase):
         self.assertNotEqual('/odom',self.sensor_fusion_node.odom_subscriber)
 
     def test_angleToPixel(self):
-        self.assertLessEqual(self.sensor_fusion_node.angleToPixel(62),0,'angle_out_of_frame')
-        self.assertGreaterEqual(self.sensor_fusion_node.angleToPixel(0),640,'angle_out_of_frame')
+        self.assertLessEqual(self.sensor_fusion_node.angleToPixel(62),0,'angle out of frame on right bound')
+        self.assertGreaterEqual(self.sensor_fusion_node.angleToPixel(0),640,'angle out of frame on left bound')
 
 
 
