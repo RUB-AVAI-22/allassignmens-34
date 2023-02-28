@@ -1,8 +1,10 @@
 import unittest
+from unittest import TestCase
+
 import rclpy
+
 from src.camera_task.camera_task.sensor_fusion_node import SensorFusionNode
 
-from unittest import TestCase
 
 class SensorFusionNodeTest(TestCase):
     @classmethod
@@ -23,6 +25,9 @@ class SensorFusionNodeTest(TestCase):
         self.assertNotEqual('/bboxes',self.sensor_fusion_node.boundingBox_subscriber)
         self.assertNotEqual('/scan',self.sensor_fusion_node.lidar_subscriber)
         self.assertNotEqual('/odom',self.sensor_fusion_node.odom_subscriber)
+
+    def test_angleToPixel(self):
+        self.assertLessEqual(self.sensor_fusion_node.angleToPixel(62),0,'angle_out_of_frame')
 
 if __name__ == '__main__':
     unittest.main()
