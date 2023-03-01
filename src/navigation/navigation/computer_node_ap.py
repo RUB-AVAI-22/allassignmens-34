@@ -3,6 +3,7 @@ from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 
+
 import cv2
 import time
 import math
@@ -13,6 +14,7 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 from nav_msgs.msg import Odometry
+
 from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
 from sensor_msgs.msg._laser_scan import LaserScan
 
@@ -30,7 +32,7 @@ import math
 from enum import Enum
 
 import matplotlib.pyplot as plt
-
+from threading import Lock
 
 EXTEND_AREA = 1.0
 
@@ -38,8 +40,6 @@ import pygame
 pygame.init()
 
 show_animation = True
-
-
 
 
 
@@ -61,11 +61,11 @@ class Config:
         self.max_delta_yaw_rate =  	1.82  # [rad/ss]
         self.v_resolution = 0.01  # [m/s]
         self.yaw_rate_resolution = 0.1 * math.pi / 180.0  # [rad/s]
-        self.dt = 0.05 # [s] Time tick for motion prediction
+        self.dt = 0.1 # [s] Time tick for motion prediction
         self.predict_time = 2  # [s]
-        self.to_goal_cost_gain = 0.1
-        self.speed_cost_gain = 1.0
-        self.obstacle_cost_gain = 0.4
+        self.to_goal_cost_gain = 1
+        self.speed_cost_gain = 10
+        self.obstacle_cost_gain = 4
         self.robot_stuck_flag_cons = 0.001  # constant to prevent robot stucked
         self.robot_type = RobotType.circle
 
@@ -97,17 +97,349 @@ config = Config()
 class Odom_Node(Node):
     def __init__(self):
         super().__init__('odom_node')
+
+        self.message_chaged = False
+        self.message_lock = Lock()
+
         self.x_turtle = 0.0
         self.y_turtle = 0.0
-        self.yaw = 0
-        self.group = ReentrantCallbackGroup()
-        self.odom_turtle = self.create_subscription(Odometry, '/odom', self.odom, 50, callback_group=self.group)
+        self.yaw = 0.0
+        
+        self.odom_turtle = self.create_subscription(Odometry, '/odom', self.odom, qos_profile_sensor_data)
 
     def odom(self, odommsg):
+        with self.message_lock:            
+            self.x_turtle = -odommsg.pose.pose.position.y
+            self.y_turtle = odommsg.pose.pose.position.x
+            
+            roll, pitch, yaw = self.euler_from_quaternion(odommsg.pose.pose.orientation)
+            self.yaw = yaw + math.pi/2
+            print(yaw)
+            self.message_chaged = True
 
-        self.x_turtle = odommsg.pose.pose.position.x
-        self.y_turtle = odommsg.pose.pose.position.y
-        self.yaw = odommsg.pose.pose.orientation.w
+    def euler_from_quaternion(self,quaternion):
+        """
+        Converts quaternion (w in last place) to euler roll, pitch, yaw
+        quaternion = [x, y, z, w]
+        Bellow should be replaced when porting for ROS 2 Python tf_conversions is done.
+        """
+        x = quaternion.x
+        y = quaternion.y
+        z = quaternion.z
+        w = quaternion.w
+
+        sinr_cosp = 2 * (w * x + y * z)
+        cosr_cosp = 1 - 2 * (x * x + y * y)
+        roll = np.arctan2(sinr_cosp, cosr_cosp)
+
+        sinp = 2 * (w * y - z * x)
+        pitch = np.arcsin(sinp)
+
+        siny_cosp = 2 * (w * z + x * y)
+        cosy_cosp = 1 - 2 * (y * y + z * z)
+        yaw = np.arctan2(siny_cosp, cosy_cosp)
+
+        return roll, pitch, yaw
+
+    def get_yaw(self):
+        return self.yaw
+    
+class Autopilot_Node(Node):
+
+    def __init__(self):
+        super().__init__('autopilot_node')
+
+        self.odom_node =  Odom_Node()
+        self.computer_node =  Computer_Node()
+
+        # initial state [x(m), y(m), yaw(rad), v(m/s), omega(rad/s)]
+        self.x = np.array([self.odom_node.x_turtle, self.odom_node.y_turtle , math.pi/2, 0.0, 0.0])
+        # goal position [x(m), y(m)]
+        self.goal = np.array([10.0, 10.0])
+
+        config.robot_type = RobotType.circle
+        self.trajectory = np.array(self.x)
+
+        self.pub_action = self.create_publisher(Twist, 'cmd_vel', 10)
+        
+        self.autopilotTimer = self.create_timer(0.1, self.autopilot)
+
+    def autopilot(self):
+
+        if len(self.computer_node.crone_position) == 0:
+            return 0
+
+        ob = self.computer_node.crone_position
+        
+        u, predicted_trajectory = self.dwa_control(self.x, config, self.goal, ob)
+        self.x = self.robot_motion(self.x, u, config.dt)  # simulate robot
+        
+        self.trajectory = np.vstack((self.trajectory, self.x))  # store state history
+   
+        plt.cla()
+        # for stopping simulation with the esc key.
+        plt.gcf().canvas.mpl_connect(
+            'key_release_event',
+            lambda event: [exit(0) if event.key == 'escape' else None])
+        plt.plot(predicted_trajectory[:, 0], predicted_trajectory[:, 1], "-g")
+        plt.plot(self.x[0], self.x[1], "xr")
+        plt.plot(self.goal[0], self.goal[1], "xb")
+        plt.plot(ob[:, 0], ob[:, 1], "ok")
+        self.plot_robot(self.x[0], self.x[1], self.x[2], config)
+        self.plot_arrow(self.x[0], self.x[1], self.x[2])
+        plt.axis("equal")
+        plt.grid(True)
+        plt.pause(0.001)
+        plt.ioff()
+        plt.clf()   
+
+        # check reaching goal
+        # dist_to_goal = math.hypot(self.x[0] - self.goal[0], self.x[1] - self.goal[1])
+        # if dist_to_goal <= config.robot_radius:
+        #     print("Goal!!")
+        
+    def motion(self, x, u, dt):
+        """
+        motion model
+        """
+        # x[2] = self.node.yaw + u[1] * dt
+        # x[0] = self.node.x_turtle + u[0] * math.cos(x[2]) * dt
+        # x[1] = self.node.y_turtle + u[0] * math.sin(x[2]) * dt
+        x[2] += u[1] * dt
+        x[0] += u[0] * math.cos(x[2]) * dt
+        x[1] += u[0] * math.sin(x[2]) * dt
+        x[3] = u[0]
+        x[4] = u[1]
+
+        return x
+
+    def robot_motion(self, x, u, dt):
+        """
+        motion model
+        """
+        x[2] = self.odom_node.yaw + u[1] * dt
+        x[0] = self.odom_node.x_turtle + u[0] * math.cos(x[2]) * dt
+        x[1] = self.odom_node.y_turtle + u[0] * math.sin(x[2]) * dt
+        
+
+        x[3] = u[0] #v(m/s)
+        x[4] = u[1] #omega(rad/s)
+
+        action = Twist()
+
+        
+        while rclpy.ok():   
+            print("current",self.odom_node.get_yaw())
+            # print("goal", x[2])
+            print("diff",round(abs(self.odom_node.get_yaw() - x[2]),2))
+            if round(abs(self.odom_node.get_yaw() - x[2]),2) > abs(round(u[1] * dt,2)):
+                
+                print("rotation speed",-u[1])
+                action.linear.x = 0.0
+                action.angular.z = u[1]
+                self.pub_action.publish(action)
+                print("roated")
+                self.rate.sleep(dt)
+            else:
+                action.linear.x = 0.0
+                action.angular.z = 0.0
+                self.pub_action.publish(action)
+                print("stop roated")
+
+                break
+        
+        while rclpy.ok(): 
+            print("speed", u[0])
+            print("x diff", abs(self.odom_node.x_turtle - x[0]))
+            print("y diff", abs(self.odom_node.y_turtle - x[1]))
+            # print("current",self.odom_node.get_yaw())
+            # print("goal", x[2])
+            print("diff_distence",round(math.hypot(abs(self.odom_node.x_turtle - x[0]), abs(self.odom_node.y_turtle - x[1])),2))
+            if round(math.hypot(abs(self.odom_node.x_turtle - x[0]), abs(self.odom_node.y_turtle - x[1])),2) > abs(round(u[0] * dt,2)):
+                
+
+                action.linear.x = u[0]
+                action.angular.z = 0.0
+                self.pub_action.publish(action)
+                print("go")
+                self.rate.sleep(dt)
+            else:
+                action.linear.x = 0.0
+                action.angular.z = 0.0
+                self.pub_action.publish(action)
+                print("stop go")
+
+                break   
+
+        print("DONE !!!!!")
+        # x[2] = self.odom_node.yaw
+        # x[0] = self.odom_node.x_turtle
+        # x[1] = self.odom_node.y_turtle
+        return x
+        
+        
+
+
+    def calc_dynamic_window(self, x, config):
+        """
+        calculation dynamic window based on current state x
+        """
+
+        # Dynamic window from robot specification
+        Vs = [config.min_speed, config.max_speed,
+            -config.max_yaw_rate, config.max_yaw_rate]
+
+        # Dynamic window from motion model
+        Vd = [x[3] - config.max_accel * config.dt,
+            x[3] + config.max_accel * config.dt,
+            x[4] - config.max_delta_yaw_rate * config.dt,
+            x[4] + config.max_delta_yaw_rate * config.dt]
+
+        #  [v_min, v_max, yaw_rate_min, yaw_rate_max]
+        dw = [max(Vs[0], Vd[0]), min(Vs[1], Vd[1]),
+            max(Vs[2], Vd[2]), min(Vs[3], Vd[3])]
+
+        return dw
+
+
+    def predict_trajectory(self, x_init, v, y, config):
+        """
+        predict trajectory with an input
+        """
+
+        x = np.array(x_init)
+        trajectory = np.array(x)
+        time = 0
+        while time <= config.predict_time:
+            x = self.motion(x, [v, y], config.dt)
+            trajectory = np.vstack((trajectory, x))
+            time += config.dt
+
+        return trajectory
+
+
+    def calc_control_and_trajectory(self, x, dw, config, goal, ob):
+        """
+        calculation final input with dynamic window
+        """
+
+        x_init = x[:]
+        min_cost = float("inf")
+        best_u = [0.0, 0.0]
+        best_trajectory = np.array([x])
+
+        # evaluate all trajectory with sampled input in dynamic window
+        for v in np.arange(dw[0], dw[1], config.v_resolution):
+            for y in np.arange(dw[2], dw[3], config.yaw_rate_resolution):
+
+                trajectory = self.predict_trajectory(x_init, v, y, config)
+                # calc cost
+                to_goal_cost = config.to_goal_cost_gain * self.calc_to_goal_cost(trajectory, goal)
+                speed_cost = config.speed_cost_gain * (config.max_speed - trajectory[-1, 3])
+                ob_cost = config.obstacle_cost_gain * self.calc_obstacle_cost(trajectory, ob, config)
+
+                final_cost = to_goal_cost + speed_cost + ob_cost
+
+                # search minimum trajectory
+                if min_cost >= final_cost:
+                    min_cost = final_cost
+                    best_u = [v, y]
+                    best_trajectory = trajectory
+                    if abs(best_u[0]) < config.robot_stuck_flag_cons \
+                            and abs(x[3]) < config.robot_stuck_flag_cons:
+                        # to ensure the robot do not get stuck in
+                        # best v=0 m/s (in front of an obstacle) and
+                        # best omega=0 rad/s (heading to the goal with
+                        # angle difference of 0)
+                        best_u[1] = -config.max_delta_yaw_rate
+        return best_u, best_trajectory
+
+
+    def calc_obstacle_cost(self, trajectory, ob, config):
+        """
+        calc obstacle cost inf: collision
+        """
+        ox = ob[:, 0]
+        oy = ob[:, 1]
+        dx = trajectory[:, 0] - ox[:, None]
+        dy = trajectory[:, 1] - oy[:, None]
+        r = np.hypot(dx, dy)
+
+        if config.robot_type == RobotType.rectangle:
+            yaw = trajectory[:, 2]
+            rot = np.array([[np.cos(yaw), -np.sin(yaw)], [np.sin(yaw), np.cos(yaw)]])
+            rot = np.transpose(rot, [2, 0, 1])
+            local_ob = ob[:, None] - trajectory[:, 0:2]
+            local_ob = local_ob.reshape(-1, local_ob.shape[-1])
+            local_ob = np.array([local_ob @ x for x in rot])
+            local_ob = local_ob.reshape(-1, local_ob.shape[-1])
+            upper_check = local_ob[:, 0] <= config.robot_length / 2
+            right_check = local_ob[:, 1] <= config.robot_width / 2
+            bottom_check = local_ob[:, 0] >= -config.robot_length / 2
+            left_check = local_ob[:, 1] >= -config.robot_width / 2
+            if (np.logical_and(np.logical_and(upper_check, right_check),
+                            np.logical_and(bottom_check, left_check))).any():
+                return float("Inf")
+        elif config.robot_type == RobotType.circle:
+            if np.array(r <= config.robot_radius).any():
+                return float("Inf")
+
+        min_r = np.min(r)
+        return 1.0 / min_r  # OK
+
+
+    def calc_to_goal_cost(self, trajectory, goal):
+        """
+            calc to goal cost with angle difference
+        """
+
+        dx = goal[0] - trajectory[-1, 0]
+        dy = goal[1] - trajectory[-1, 1]
+        error_angle = math.atan2(dy, dx)
+        cost_angle = error_angle - trajectory[-1, 2]
+        cost = abs(math.atan2(math.sin(cost_angle), math.cos(cost_angle)))
+
+        return cost
+
+
+    def plot_arrow(self, x, y, yaw, length=0.5, width=0.1):  # pragma: no cover
+        plt.arrow(x, y, length * math.cos(yaw), length * math.sin(yaw),
+                head_length=width, head_width=width)
+        plt.plot(x, y)
+
+
+    def plot_robot(self, x, y, yaw, config):  # pragma: no cover
+        if config.robot_type == RobotType.rectangle:
+            outline = np.array([[-config.robot_length / 2, config.robot_length / 2,
+                                (config.robot_length / 2), -config.robot_length / 2,
+                                -config.robot_length / 2],
+                                [config.robot_width / 2, config.robot_width / 2,
+                                - config.robot_width / 2, -config.robot_width / 2,
+                                config.robot_width / 2]])
+            Rot1 = np.array([[math.cos(yaw), math.sin(yaw)],
+                            [-math.sin(yaw), math.cos(yaw)]])
+            outline = (outline.T.dot(Rot1)).T
+            outline[0, :] += x
+            outline[1, :] += y
+            plt.plot(np.array(outline[0, :]).flatten(),
+                    np.array(outline[1, :]).flatten(), "-k")
+        elif config.robot_type == RobotType.circle:
+            circle = plt.Circle((x, y), config.robot_radius, color="b")
+            plt.gcf().gca().add_artist(circle)
+            out_x, out_y = (np.array([x, y]) +
+                            np.array([np.cos(yaw), np.sin(yaw)]) * config.robot_radius)
+            plt.plot([x, out_x], [y, out_y], "-k")
+
+
+    def dwa_control(self, x, config, goal, ob):
+        """
+        Dynamic Window Approach control
+        """
+        dw = self.calc_dynamic_window(x, config)
+
+        u, trajectory = self.calc_control_and_trajectory(x, dw, config, goal, ob)
+
+        return u, trajectory
 
 
 class Computer_Node(Node):
@@ -115,24 +447,19 @@ class Computer_Node(Node):
     def __init__(self):
         super().__init__('computer_node')
 
-        self.node: Odom_Node = None
+        
 
         self.ox = []
         self.oy = []
+
         self.x_turtle = 0.0
         self.y_turtle = 0.0
         self.yaw = 0
         self.x_turtle_old = 0.0
         self.y_turtle_old = 0.0
-        self.yaw_old = math.pi / 2.0
+ 
 
-        # initial state [x(m), y(m), yaw(rad), v(m/s), omega(rad/s)]
-        self.x = np.array([self.x_turtle, self.y_turtle , math.pi / 2.0, 0.0, 0.0])
-        # goal position [x(m), y(m)]
-        self.goal = np.array([10.0, 10.0])
-
-        config.robot_type = RobotType.circle
-        self.trajectory = np.array(self.x)
+        
 
         self.left_right = []
         self.theta_turtle = 0.0
@@ -162,15 +489,15 @@ class Computer_Node(Node):
 
         self.currentMovement = Vector3() #x = translational, z = rotational
         self.desiredMovement = Vector3() #x = translational, z = rotational
+
         self.group = ReentrantCallbackGroup()
+        self.rate = self.create_rate(10)
+
         self.pub_action = self.create_publisher(Twist, 'cmd_vel', 10)
         
-        self.autopilotTimer = self.create_timer(0.001, self.autopilot, callback_group=self.group)
-        #self.lidar_sensor_subscriber = self.create_subscription(LaserScan, '/scan', self.cluster_points_in_fov,
-        #                                                        qos_profile_sensor_data)
         
         self.sub_img = self.create_subscription(Image, '/camera/image_raw', self.cb_image, qos_profile=qos_profile_sensor_data,callback_group=self.group)
-
+        
         self.lidar_sensor_subscriber = message_filters.Subscriber(self, LaserScan, 'scan', qos_profile=qos_profile_sensor_data)
         self.odom_subscriber = message_filters.Subscriber(self, Odometry, 'odom')
         self.sub_img = message_filters.Subscriber(self, Image, 'camera/image_raw')
@@ -187,15 +514,13 @@ class Computer_Node(Node):
         self.velocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateVelocity)
         
         
-        #self.gamePadvelocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateGamePad)
+        self.gamePadvelocityUpdateTimer = self.create_timer(1 / self.updateFrequency, self.updateGamePad)
 
         self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
         self.listener.start()
         
-        plt.ion()
-        plt.show()
-
-    
+        # plt.ion()
+        # plt.show()
 
 
 
@@ -267,55 +592,55 @@ class Computer_Node(Node):
 
         
 
-    def cluster_points_in_fov(self, lidar):
-        #reads the lidar data and clusters the points in the camera fov
-        #returns an array of points as (middle_point in degree, distance)
-        #(31, 1.5) means right in the center of the camera there is a object 1,5m away
+    # def cluster_points_in_fov(self, lidar):
+    #     #reads the lidar data and clusters the points in the camera fov
+    #     #returns an array of points as (middle_point in degree, distance)
+    #     #(31, 1.5) means right in the center of the camera there is a object 1,5m away
 
         
-        laser_scan_list = lidar.ranges
+    #     laser_scan_list = lidar.ranges
 
-        self.lidar_stp_sec = lidar.header.stamp.sec
-        self.lidar_stp_nanosec = lidar.header.stamp.nanosec
+    #     self.lidar_stp_sec = lidar.header.stamp.sec
+    #     self.lidar_stp_nanosec = lidar.header.stamp.nanosec
 
-        laser_scan_list.reverse()
-
-        
-        
-        angles = []
-        distances = []
-        left_right =[]
-        
-        for current_degree, distance in enumerate(laser_scan_list):
-            #if 30 <= current_degree <= 90 or 330 >= current_degree >= 270:
-                if distance != float("inf") and distance < 2 :
-
-                    angles.append((current_degree + self.theta_turtle) * math.pi / 180)
-                    distances.append(float(distance))
-                    if current_degree <179:
-                        left_right.append("r")
-                    else:
-                        left_right.append("b")
-
+    #     laser_scan_list.reverse()
 
         
-        ox = np.round(np.sin(angles) * distances - np.ones(len(distances)) * self.y_turtle,2) # 
-        oy = np.round(np.cos(angles) * distances + np.ones(len(distances)) * self.x_turtle,2) #  
+        
+    #     angles = []
+    #     distances = []
+    #     left_right =[]
+        
+    #     for current_degree, distance in enumerate(laser_scan_list):
+    #         #if 30 <= current_degree <= 90 or 330 >= current_degree >= 270:
+    #             if distance != float("inf") and distance < 2 :
 
-        if len(self.turtle_track_x) == 0 or abs(self.turtle_track_x[-1] - self.x_turtle) > 0.01 or abs(self.turtle_track_y[-1] - self.y_turtle) > 0.01:
-            self.turtle_track_x.append(round(self.x_turtle,2))
-            self.turtle_track_y.append(round(-self.y_turtle,2))
+    #                 angles.append((current_degree + self.theta_turtle) * math.pi / 180)
+    #                 distances.append(float(distance))
+    #                 if current_degree <179:
+    #                     left_right.append("r")
+    #                 else:
+    #                     left_right.append("b")
 
-        #if len(self.turtle_track_x) > 0 and  abs(self.turtle_track_x[-1] - self.x_turtle) > 0.01 or len(self.turtle_track_y) > 0 and  abs(self.turtle_track_y[-1] - self.y_turtle) > 0.01:
-        #    self.turtle_track_x.append(self.x_turtle)
-        #    self.turtle_track_y.append(-self.y_turtle)
+
+        
+    #     ox = np.round(np.sin(angles) * distances - np.ones(len(distances)) * self.y_turtle,2) # 
+    #     oy = np.round(np.cos(angles) * distances + np.ones(len(distances)) * self.x_turtle,2) #  
+
+    #     if len(self.turtle_track_x) == 0 or abs(self.turtle_track_x[-1] - self.x_turtle) > 0.01 or abs(self.turtle_track_y[-1] - self.y_turtle) > 0.01:
+    #         self.turtle_track_x.append(round(self.x_turtle,2))
+    #         self.turtle_track_y.append(round(-self.y_turtle,2))
+
+    #     #if len(self.turtle_track_x) > 0 and  abs(self.turtle_track_x[-1] - self.x_turtle) > 0.01 or len(self.turtle_track_y) > 0 and  abs(self.turtle_track_y[-1] - self.y_turtle) > 0.01:
+    #     #    self.turtle_track_x.append(self.x_turtle)
+    #     #    self.turtle_track_y.append(-self.y_turtle)
             
-        if abs(self.lidar_stp_sec - self.pos_stp_sec) == 0 and abs(self.lidar_stp_nanosec - self.pos_stp_nanosec) < 13000000:
-            self.ox.extend(ox.tolist())
-            self.oy.extend(oy.tolist())
-            self.left_right.extend(left_right)
-            self.crone_position  = np.array((signal.medfilt(volume=self.ox, kernel_size=5),signal.medfilt(volume=self.oy, kernel_size=5))).T
-
+    #     if abs(self.lidar_stp_sec - self.pos_stp_sec) == 0 and abs(self.lidar_stp_nanosec - self.pos_stp_nanosec) < 13000000:
+    #         self.ox.extend(ox.tolist())
+    #         self.oy.extend(oy.tolist())
+    #         self.left_right.extend(left_right)
+    #         self.crone_position  = np.array((signal.medfilt(volume=self.ox, kernel_size=5),signal.medfilt(volume=self.oy, kernel_size=5))).T
+    #         print(self.crone_position)
             
            
             
@@ -531,274 +856,7 @@ class Computer_Node(Node):
         return occupancy_map, min_x, max_x, min_y, max_y, xy_resolution
     
 
-    def autopilot(self):
 
-        if len(self.crone_position) == 0:
-            return 0
-
-        ob = self.crone_position
-        self.x[0]=self.x_turtle_old
-        self.x[1]=self.y_turtle_old
-        self.x[2]=self.yaw_old
-        u, predicted_trajectory = self.dwa_control(self.x, config, self.goal, ob)
-        self.x = self.robot_motion(self.x, u, config.dt)  # simulate robot
-        
-        self.trajectory = np.vstack((self.trajectory, self.x))  # store state history
-    
-
-        # if show_animation:
-        #     plt.cla()
-        #     # for stopping simulation with the esc key.
-        #     plt.gcf().canvas.mpl_connect(
-        #         'key_release_event',
-        #         lambda event: [exit(0) if event.key == 'escape' else None])
-        #     plt.plot(predicted_trajectory[:, 0], predicted_trajectory[:, 1], "-g")
-        #     plt.plot(self.x[0], self.x[1], "xr")
-        #     plt.plot(self.goal[0], self.goal[1], "xb")
-        #     plt.plot(ob[:, 0], ob[:, 1], "ok")
-        #     self.plot_robot(self.x[0], self.x[1], self.x[2], config)
-        #     self.plot_arrow(self.x[0], self.x[1], self.x[2])
-        #     plt.axis("equal")
-        #     plt.grid(True)
-        #     plt.pause(0.001)
-        #     plt.ioff()
-        #     plt.clf()   
-
-        # check reaching goal
-        # dist_to_goal = math.hypot(self.x[0] - self.goal[0], self.x[1] - self.goal[1])
-        # if dist_to_goal <= config.robot_radius:
-        #     print("Goal!!")
-        
-    def motion(self, x, u, dt):
-        """
-        motion model
-        """
-
-        x[2] += u[1] * dt
-        x[0] += u[0] * math.cos(x[2]) * dt
-        x[1] += u[0] * math.sin(x[2]) * dt
-        x[3] = u[0]
-        x[4] = u[1]
-
-        return x
-
-    def robot_motion(self, x, u, dt):
-        """
-        motion model
-        """
-        x[2] += u[1] * dt
-        x[0] += u[0] * math.cos(x[2]) * dt
-        x[1] += u[0] * math.sin(x[2]) * dt
-        
-
-        x[3] = u[0] #v(m/s)
-        x[4] = u[1] #omega(rad/s)
-
-        action = Twist()
-
-        rotation_t1 = time.perf_counter()
-
-        before =self.node.x_turtle
-        while True:
-            action.linear.x = 0.0
-            action.angular.z = u[1]
-            self.pub_action.publish(action)
-            rotation_t2 = time.perf_counter()
-            
-            if rotation_t2 - rotation_t1 > dt:
-                action.linear.x = 0.0
-                action.angular.z = 0.0
-                self.pub_action.publish(action)
-                break
-        time.sleep(0.3)
-        after = self.node.x_turtle
-        print("Diff:", after-before)
-        #print("new", Odom_Node.yaw)
-
-        t1 = time.perf_counter()
-
-        while True:
-            action.linear.x = u[0]
-            action.angular.z = 0.0
-            self.pub_action.publish(action)
-            t2 = time.perf_counter()
-            if abs(u[0] * math.cos(x[2]) * dt - abs(self.x_turtle-self.x_turtle_old)) < 0.1:
-                action.linear.x = 0.0
-                action.angular.z = 0.0
-                self.pub_action.publish
-                break
-        
-        # self.x_turtle_old = self.x_turtle
-        # self.y_turtle_old = self.y_turtle
-        self.yaw_old = self.yaw
-        # print("old",self.x_turtle_old)
-        # print("new",self.x_turtle)
-
-        return x
-        
-        
-
-
-    def calc_dynamic_window(self, x, config):
-        """
-        calculation dynamic window based on current state x
-        """
-
-        # Dynamic window from robot specification
-        Vs = [config.min_speed, config.max_speed,
-            -config.max_yaw_rate, config.max_yaw_rate]
-
-        # Dynamic window from motion model
-        Vd = [x[3] - config.max_accel * config.dt,
-            x[3] + config.max_accel * config.dt,
-            x[4] - config.max_delta_yaw_rate * config.dt,
-            x[4] + config.max_delta_yaw_rate * config.dt]
-
-        #  [v_min, v_max, yaw_rate_min, yaw_rate_max]
-        dw = [max(Vs[0], Vd[0]), min(Vs[1], Vd[1]),
-            max(Vs[2], Vd[2]), min(Vs[3], Vd[3])]
-
-        return dw
-
-
-    def predict_trajectory(self, x_init, v, y, config):
-        """
-        predict trajectory with an input
-        """
-
-        x = np.array(x_init)
-        trajectory = np.array(x)
-        time = 0
-        while time <= config.predict_time:
-            x = self.motion(x, [v, y], config.dt)
-            trajectory = np.vstack((trajectory, x))
-            time += config.dt
-
-        return trajectory
-
-
-    def calc_control_and_trajectory(self, x, dw, config, goal, ob):
-        """
-        calculation final input with dynamic window
-        """
-
-        x_init = x[:]
-        min_cost = float("inf")
-        best_u = [0.0, 0.0]
-        best_trajectory = np.array([x])
-
-        # evaluate all trajectory with sampled input in dynamic window
-        for v in np.arange(dw[0], dw[1], config.v_resolution):
-            for y in np.arange(dw[2], dw[3], config.yaw_rate_resolution):
-
-                trajectory = self.predict_trajectory(x_init, v, y, config)
-                # calc cost
-                to_goal_cost = config.to_goal_cost_gain * self.calc_to_goal_cost(trajectory, goal)
-                speed_cost = config.speed_cost_gain * (config.max_speed - trajectory[-1, 3])
-                ob_cost = config.obstacle_cost_gain * self.calc_obstacle_cost(trajectory, ob, config)
-
-                final_cost = to_goal_cost + speed_cost + ob_cost
-
-                # search minimum trajectory
-                if min_cost >= final_cost:
-                    min_cost = final_cost
-                    best_u = [v, y]
-                    best_trajectory = trajectory
-                    if abs(best_u[0]) < config.robot_stuck_flag_cons \
-                            and abs(x[3]) < config.robot_stuck_flag_cons:
-                        # to ensure the robot do not get stuck in
-                        # best v=0 m/s (in front of an obstacle) and
-                        # best omega=0 rad/s (heading to the goal with
-                        # angle difference of 0)
-                        best_u[1] = -config.max_delta_yaw_rate
-        return best_u, best_trajectory
-
-
-    def calc_obstacle_cost(self, trajectory, ob, config):
-        """
-        calc obstacle cost inf: collision
-        """
-        ox = ob[:, 0]
-        oy = ob[:, 1]
-        dx = trajectory[:, 0] - ox[:, None]
-        dy = trajectory[:, 1] - oy[:, None]
-        r = np.hypot(dx, dy)
-
-        if config.robot_type == RobotType.rectangle:
-            yaw = trajectory[:, 2]
-            rot = np.array([[np.cos(yaw), -np.sin(yaw)], [np.sin(yaw), np.cos(yaw)]])
-            rot = np.transpose(rot, [2, 0, 1])
-            local_ob = ob[:, None] - trajectory[:, 0:2]
-            local_ob = local_ob.reshape(-1, local_ob.shape[-1])
-            local_ob = np.array([local_ob @ x for x in rot])
-            local_ob = local_ob.reshape(-1, local_ob.shape[-1])
-            upper_check = local_ob[:, 0] <= config.robot_length / 2
-            right_check = local_ob[:, 1] <= config.robot_width / 2
-            bottom_check = local_ob[:, 0] >= -config.robot_length / 2
-            left_check = local_ob[:, 1] >= -config.robot_width / 2
-            if (np.logical_and(np.logical_and(upper_check, right_check),
-                            np.logical_and(bottom_check, left_check))).any():
-                return float("Inf")
-        elif config.robot_type == RobotType.circle:
-            if np.array(r <= config.robot_radius).any():
-                return float("Inf")
-
-        min_r = np.min(r)
-        return 1.0 / min_r  # OK
-
-
-    def calc_to_goal_cost(self, trajectory, goal):
-        """
-            calc to goal cost with angle difference
-        """
-
-        dx = goal[0] - trajectory[-1, 0]
-        dy = goal[1] - trajectory[-1, 1]
-        error_angle = math.atan2(dy, dx)
-        cost_angle = error_angle - trajectory[-1, 2]
-        cost = abs(math.atan2(math.sin(cost_angle), math.cos(cost_angle)))
-
-        return cost
-
-
-    def plot_arrow(self, x, y, yaw, length=0.5, width=0.1):  # pragma: no cover
-        plt.arrow(x, y, length * math.cos(yaw), length * math.sin(yaw),
-                head_length=width, head_width=width)
-        plt.plot(x, y)
-
-
-    def plot_robot(self, x, y, yaw, config):  # pragma: no cover
-        if config.robot_type == RobotType.rectangle:
-            outline = np.array([[-config.robot_length / 2, config.robot_length / 2,
-                                (config.robot_length / 2), -config.robot_length / 2,
-                                -config.robot_length / 2],
-                                [config.robot_width / 2, config.robot_width / 2,
-                                - config.robot_width / 2, -config.robot_width / 2,
-                                config.robot_width / 2]])
-            Rot1 = np.array([[math.cos(yaw), math.sin(yaw)],
-                            [-math.sin(yaw), math.cos(yaw)]])
-            outline = (outline.T.dot(Rot1)).T
-            outline[0, :] += x
-            outline[1, :] += y
-            plt.plot(np.array(outline[0, :]).flatten(),
-                    np.array(outline[1, :]).flatten(), "-k")
-        elif config.robot_type == RobotType.circle:
-            circle = plt.Circle((x, y), config.robot_radius, color="b")
-            plt.gcf().gca().add_artist(circle)
-            out_x, out_y = (np.array([x, y]) +
-                            np.array([np.cos(yaw), np.sin(yaw)]) * config.robot_radius)
-            plt.plot([x, out_x], [y, out_y], "-k")
-
-
-    def dwa_control(self, x, config, goal, ob):
-        """
-        Dynamic Window Approach control
-        """
-        dw = self.calc_dynamic_window(x, config)
-
-        u, trajectory = self.calc_control_and_trajectory(x, dw, config, goal, ob)
-
-        return u, trajectory
 
 
     def cb_image(self, imgmsg):
@@ -977,24 +1035,28 @@ class Computer_Node(Node):
 def main(args=None):
     rclpy.init(args=args)
     try:
-        node = Computer_Node()
+        computer_node = Computer_Node()
         odom_node = Odom_Node()
-        node.node = odom_node
+        autopilot_node = Autopilot_Node()
+        autopilot_node.computer_node = computer_node
+        autopilot_node.odom_node = odom_node
         # MultiThreadedExecutor executes callbacks with a thread pool. If num_threads is not
         # specified then num_threads will be multiprocessing.cpu_count() if it is implemented.
         # Otherwise it will use a single thread. This executor will allow callbacks to happen in
         # parallel, however the MutuallyExclusiveCallbackGroup in DoubleTalker will only allow its
         # callbacks to be executed one at a time. The callbacks in Listener are free to execute in
         # parallel to the ones in DoubleTalker however.
-        executor = MultiThreadedExecutor(num_threads=2)
-        executor.add_node(node)
+        executor = MultiThreadedExecutor(num_threads=3)
+        executor.add_node(computer_node)
         executor.add_node(odom_node)
-
+        executor.add_node(autopilot_node)
         try:
             executor.spin()
         finally:
             executor.shutdown()
-            node.destroy_node()
+            computer_node.destroy_node()
+            odom_node.destroy_node()
+            autopilot_node.destroy_node()
     finally:
         rclpy.shutdown()
 
