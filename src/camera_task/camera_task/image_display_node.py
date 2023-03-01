@@ -8,6 +8,8 @@ from avai_messages.msg import BoundingBox
 from avai_messages.msg import BoundingBoxes
 from rcl_interfaces.msg import SetParametersResult
 
+import message_filters
+
 from yolov5.utils.plots import Annotator
 import numpy as np
 
@@ -26,11 +28,12 @@ class ImgDisplayNode(Node):
         # self.timer = self.create_timer(timer_period, self.control_callback)
         # video subscriber
         self.bridge = CvBridge()
-        self.subscriber = self.create_subscription(CompressedImage, '/proc_img', self.video_callback, 10)
-        self.bbox_subscriber = self.create_subscription(BoundingBoxes, '/bboxes', self.bbox_callback, 10)
+        self.image_subscriber = message_filters.Subscriber(self, CompressedImage, '/proc_img')
+        self.bbox_subscriber = message_filters.Subscriber(self, BoundingBoxes, '/bboxes')
 
-        self.bboxes = []
-        self.images = []
+        self.synchronizer = message_filters.ApproximateTimeSynchronizer([self.image_subscriber, self.bbox_subscriber], 10, 1)
+        self.synchronizer.registerCallback(self.synchronized_callback)
+
         self.classes = ['blue', 'orange', 'yellow']
 
         # set parameters
@@ -40,9 +43,6 @@ class ImgDisplayNode(Node):
         self.add_on_set_parameters_callback(self.parameter_callback)
         # self.publisher_ = self.create_publisher(String, 'FPS', 10)
 
-        self.sensorFusionClock = self.create_timer(0.1, self.attempt_image_display)
-        self.msgCleanupClock = self.create_timer(0.1, self.remove_old_messages)
-
         # save video
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         self.out = cv2.VideoWriter('out.mp4', fourcc, 20.0, (640, 480), True)
@@ -51,56 +51,10 @@ class ImgDisplayNode(Node):
 
         print("Image Display Node started!")
 
-    def message_distance(self, timestampA, timestampB):
-        totalTimeA = timestampA.sec + timestampA.nanosec * 10e-9
-        totalTimeB = timestampB.sec + timestampB.nanosec * 10e-9
-        totalDistance = totalTimeB - totalTimeA
-        return totalDistance
+    def synchronized_callback(self, msg_image, msg_bbox):
+        self.get_logger().info('Receiving video frame and bounding boxes')
+        self.image_display(msg_bbox.bboxes, self.bridge.compressed_imgmsg_to_cv2(msg_image, 'bgr8'))
 
-    def remove_old_messages(self):
-        currentStamp = self.get_clock().now().to_msg()
-        remainingBoxes = np.array([bboxMsg for bboxMsg in self.bboxes if
-                                             self.message_distance(bboxMsg.header.stamp, currentStamp) < 1])
-
-        self.bboxes = remainingBoxes
-        remainingImages = np.array([imageMsg for imageMsg in self.images if
-                                                 self.message_distance(imageMsg.header.stamp, currentStamp) < 1])
-        self.images = remainingImages
-
-
-    def video_callback(self, frame):
-        self.get_logger().info('Receiving video frame')
-        self.images = np.append(self.images, frame)
-
-        current_frame = self.bridge.compressed_imgmsg_to_cv2(frame,'bgr8')
-        if self.param_store_imgs:
-            if not os.path.exists(self.param_imgs_path.value):
-                os.makedirs(self.param_imgs_path.value)
-            cv2.imwrite(
-                os.path.join(self.param_imgs_path.value, str(datetime.datetime.now()).replace(' ', '_') + '.jpeg'),
-                current_frame)
-            self.param_store_imgs = False
-
-    def bbox_callback(self, msg):
-        self.get_logger().info('Receiving bounding boxes')
-        self.bboxes = np.append(self.bboxes, msg)
-
-    def attempt_image_display(self):
-        selectedBboxesMsg = None
-        for receivedBboxes in np.flip(self.bboxes):
-            closestImageMsg = None
-            closestDistance = 0.1
-            for receivedImage in np.flip(self.images):
-                msgDistance = self.message_distance(receivedBboxes.header.stamp, receivedImage.header.stamp)
-                if msgDistance < closestDistance:
-                    closestImageMsg = receivedImage
-                    selectedBboxesMsg = receivedBboxes
-                    break
-            if closestImageMsg:
-                self.image_display(selectedBboxesMsg.bboxes, self.bridge.compressed_imgmsg_to_cv2(closestImageMsg,'bgr8'))
-                np.delete(self.images, np.where(self.images == closestImageMsg))
-                np.delete(self.bboxes, np.where(self.bboxes == selectedBboxesMsg))
-                break
 
     def image_display(self, bboxes, image):
         # annotating image with detected bounding boxes
