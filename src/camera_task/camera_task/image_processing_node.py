@@ -43,7 +43,7 @@ class ImageProcessingNode(Node):
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
                 print("Loading edge tpu model!")
-                self.interpreter = tflite.Interpreter('src/camera_task/models/best-int8_edgetpu.tflite',
+                self.interpreter = tflite.Interpreter('src/camera_task/models/small_best-int8_edgetpu.tflite',
                                                        experimental_delegates=[
                                                            tflite.load_delegate('libedgetpu.so.1')])
             else:
@@ -71,7 +71,7 @@ class ImageProcessingNode(Node):
 
     #Necessary step for working with edge tpu data which returns values between 0 and 127
     def normalizeBoxes(self, boxes):
-        edge_tpu_max_value = 145.0
+        edge_tpu_max_value = 112.0
         normalizedBoxes = np.zeros((len(boxes), 4))
         normalizedBoxes[:, 0] = boxes[:, 0] / edge_tpu_max_value
         normalizedBoxes[:, 2] = boxes[:, 2] / edge_tpu_max_value
