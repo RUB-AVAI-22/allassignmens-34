@@ -10,6 +10,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import imageio
 
+from rclpy.node import Node
+import rclpy
+
 
 show_animation = True
 ims = []
@@ -714,12 +717,26 @@ def plot_robot(x, y, yaw, config):  # pragma: no cover
 
 
         
-           
+def DWA_Node(Node):
 
+    def __init__(self):
+        super().__init__('dynamic_window_approach_node')
+
+        self.get_logger().info('Dynamic Window Node started!')
     
             
-def main(gx=2.0, gy=2.0, robot_type=RobotType.circle):
+def main(args=None, gx=2.0, gy=2.0, robot_type=RobotType.circle):
     print(__file__ + " start!!")
+
+
+    rclpy.init(args=args)
+
+    node = DWA_Node()
+    rclpy.spin(node)
+
+    node.destroy_node()
+    rclpy.shutdown()
+
     # initial state [x(m), y(m), yaw(rad), v(m/s), omega(rad/s)]
     x = np.array([0.0, 0.0, math.pi/2, 0.0, 0.0])
     # goal position [x(m), y(m)]

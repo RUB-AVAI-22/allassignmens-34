@@ -173,16 +173,10 @@ class ImageProcessingNode(Node):
 
             
             boxes = prediction[:, :4]
-            boxes = self.xywh2xyxy(boxes)
             scores = prediction[:, 4]
             cls = [np.argmax(score) for score in prediction[:, 5:]]
 
-            if self.edge_tpu:
-                boxes = self.normalizeBoxes(boxes)
 
-            boxes = self.clipBoxes(boxes)
-
-            boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
 
             print("Start max_supp:", self.get_clock().now().seconds_nanoseconds())
             selected_indices = tf.image.non_max_suppression(boxes, scores/200, max_output_size=10, iou_threshold=0.15, score_threshold=0.35)
@@ -190,6 +184,15 @@ class ImageProcessingNode(Node):
             selected_boxes = np.array(tf.gather(boxes, selected_indices))
             selected_cls = np.array(tf.gather(cls, selected_indices))
             selected_scores = np.array(tf.gather(scores, selected_indices))
+
+            selected_boxes = self.xywh2xyxy(selected_boxes)
+
+            if self.edge_tpu:
+                selected_boxes = self.normalizeBoxes(selected_boxes)
+
+            selected_boxes = self.clipBoxes(selected_boxes)
+
+            selected_boxes = self.normalizedBoxesToImageSize(selected_boxes, 640, 640)
 
             bboxes = list(zip(selected_boxes, selected_scores, selected_cls))
             end = self.get_clock().now()
