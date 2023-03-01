@@ -43,7 +43,7 @@ class ImageProcessingNode(Node):
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
                 print("Loading edge tpu model!")
-                self.interpreter = tflite.Interpreter('src/camera_task/models/best-int8_edgetpu.tflite',
+                self.interpreter = tflite.Interpreter('src/camera_task/models/small_best-int8_edgetpu.tflite',
                                                        experimental_delegates=[
                                                            tflite.load_delegate('libedgetpu.so.1')])
             else:
