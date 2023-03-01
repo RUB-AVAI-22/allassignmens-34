@@ -218,18 +218,28 @@ class Autopilot_Node(Node):
         """
         motion model
         """
-        x[2] = self.odom_node.yaw + u[1] * dt
-        x[0] = self.odom_node.x_turtle + u[0] * math.cos(x[2]) * dt
-        x[1] = self.odom_node.y_turtle + u[0] * math.sin(x[2]) * dt
+        action = Twist()
+
+        
+        goal_distance = round(math.hypot(u[0] * math.cos(x[2]) * dt, u[0] * math.sin(x[2]) * dt),2)
+
+        goal_z = self.odom_node.yaw + u[1] * dt
+        goal_x = self.odom_node.x_turtle + u[0] * math.cos(x[2]) * dt
+        goal_y = self.odom_node.y_turtle + u[0] * math.sin(x[2]) * dt
         
 
         x[3] = u[0] #v(m/s)
         x[4] = u[1] #omega(rad/s)
 
-        action = Twist()
-
         
-        while rclpy.ok():   
+        distance = goal_distance
+        
+        while distance > 0.05: 
+
+            x_start = self.odom_node.x_turtle
+            y_start = self.odom_node.y_turtle
+            yaw_start = self.odom_node.yaw
+  
             print("current",self.odom_node.get_yaw())
             # print("goal", x[2])
             print("diff",round(abs(self.odom_node.get_yaw() - x[2]),2))
@@ -255,7 +265,7 @@ class Autopilot_Node(Node):
             print("y diff", abs(self.odom_node.y_turtle - x[1]))
             # print("current",self.odom_node.get_yaw())
             # print("goal", x[2])
-            print("diff_distence",round(math.hypot(abs(self.odom_node.x_turtle - x[0]), abs(self.odom_node.y_turtle - x[1])),2))
+            print("diff_distence",)
             if round(math.hypot(abs(self.odom_node.x_turtle - x[0]), abs(self.odom_node.y_turtle - x[1])),2) > abs(round(u[0] * dt,2)):
                 
 
@@ -1011,6 +1021,9 @@ class Computer_Node(Node):
                         self.Unlock = False
                         self.Unlockchecker = False
                         self.unlockCounter = 3
+                        action.linear.x = 0.0
+                        action.angular.z = 0.0
+                        self.pub_action.publish(action)
                         print('\ngamepad is locked')
                         joystick.rumble(0, 1, 500)
 
