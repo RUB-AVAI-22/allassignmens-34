@@ -19,7 +19,7 @@ import argparse
 
 class ImageProcessingNode(Node):
 
-    def __init__(self, cone_detection, edge_tpu):
+    def __init__(self, cone_detection, edge_tpu, gazebo):
         super().__init__('image_processing_node')
         print("Starting image processing node!")
         self.bridge = CvBridge()
@@ -36,7 +36,7 @@ class ImageProcessingNode(Node):
         self.last_received_image = None
         self.cone_detection = cone_detection
         self.edge_tpu = edge_tpu
-        
+        self.gazebo = gazebo
         # Initializing the yolov5 model
         if cone_detection:
             self.classes = ['blue', 'orange', 'yellow']
@@ -92,6 +92,11 @@ class ImageProcessingNode(Node):
         self.get_logger().info(f"Received new raw image!")
 
         original_image = self.bridge.imgmsg_to_cv2(msg)
+
+        if self.gazebo:
+            original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+        cv2.imshow("frame",original_image)
+        cv2.waitKey(1)
         original_image = cv2.resize(original_image, (self.targetWidth, self.targetHeight))
         self.last_received_image = original_image
 
@@ -99,8 +104,9 @@ class ImageProcessingNode(Node):
             prediction = self.image_to_prediction(original_image)
             
             bbox_msg = self.prediction_to_bounding_box_msg(prediction)
-            #bbox_msg.header = Header()
-            #bbox_msg.header.stamp = msg.header.stamp
+            if self.gazebo:
+                bbox_msg.header = Header()
+                bbox_msg.header.stamp = msg.header.stamp
             self.bounding_box_publisher.publish(bbox_msg)
             self.get_logger().info('Publishing bounding boxes')
         else:
@@ -185,7 +191,10 @@ class ImageProcessingNode(Node):
             boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
 
             print("Start max_supp:", self.get_clock().now().seconds_nanoseconds())
-            selected_indices = tf.image.non_max_suppression(boxes, scores/200, max_output_size=10, iou_threshold=0.15, score_threshold=0.35)
+            if self.gazebo:
+                selected_indices = tf.image.non_max_suppression(boxes, scores, max_output_size=10, iou_threshold=0.15, score_threshold=0.35)
+            else:
+                selected_indices = tf.image.non_max_suppression(boxes, scores, max_output_size=10, iou_threshold=0.15, score_threshold=0.35)
             print("End max_supp:", self.get_clock().now().seconds_nanoseconds())
             selected_boxes = np.array(tf.gather(boxes, selected_indices))
             selected_cls = np.array(tf.gather(cls, selected_indices))
@@ -216,11 +225,12 @@ def main(args=None):
     parser = argparse.ArgumentParser(description='Image Processing Node')
     parser.add_argument('-c', '--cone_detection', type=str2bool, default=True, help='Enable cone detection')
     parser.add_argument('-e', '--edge_tpu', type=str2bool, default=True, help='Enable Edge TPU')
+    parser.add_argument('-g', '--gazebo', type=str2bool, default=False, help='Enable Edge TPU')
     args = parser.parse_args()
 
     print(f'Cone detection {"enabled" if args.cone_detection else "disabled"}')
     print(f'Edge TPU {"enabled" if args.edge_tpu else "disabled"}')
-    node = ImageProcessingNode(args.cone_detection, args.edge_tpu)
+    node = ImageProcessingNode(args.cone_detection, args.edge_tpu, args.gazebo)
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
