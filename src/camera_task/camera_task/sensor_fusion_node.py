@@ -122,11 +122,11 @@ class SensorFusionNode(Node):
         clusters = []
         results = []
         for current_degree, distance in enumerate(scan_fov):
-            if abs(distance - last_value) > distance * TOLERANCE and distance != 0:
+            if abs(distance - last_value) > distance * TOLERANCE and distance != 0 and distance != float("inf"):
                 clusters.append((current_degree, current_degree, distance))
                 last_value = distance
                 index += 1
-            elif distance != 0:
+            elif distance != 0 and distance != float("inf"):
                 start, end, mean = clusters[index]
                 new_mean = mean + (distance - mean) / (current_degree - start + 1)
                 clusters[index] = (start, current_degree, new_mean)
