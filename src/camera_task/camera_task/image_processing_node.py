@@ -43,7 +43,7 @@ class ImageProcessingNode(Node):
             # edge_tpu model only runs on tpu so a different model has to be loaded when not run on tpu
             if edge_tpu:
                 print("Loading edge tpu model!")
-                self.interpreter = tflite.Interpreter('src/camera_task/models/small_best-int8_edgetpu.tflite',
+                self.interpreter = tflite.Interpreter('src/camera_task/models/best-int8_edgetpu.tflite',
                                                        experimental_delegates=[
                                                            tflite.load_delegate('libedgetpu.so.1')])
             else:
@@ -160,53 +160,36 @@ class ImageProcessingNode(Node):
         start = self.get_clock().now()
         if self.cone_detection:
             # preparing image for yolov5 network
-
             prepared_image = self.prepare_image_for_model(original_image)
-            end = self.get_clock().now()
-            print("prepare_image_for_model", (end - start).nanoseconds)
-            start2 = self.get_clock().now()
+
             input_details = self.interpreter.get_input_details()[0]
             output_details = self.interpreter.get_output_details()[0]
-
-            end = self.get_clock().now()
-            print("get input/output", (end - start2).nanoseconds)
-
-            start2 = self.get_clock().now()
             self.interpreter.set_tensor(input_details['index'], prepared_image)
-
-            end = self.get_clock().now()
-            print("setTensor", (end - start2).nanoseconds)
             print("Start invoke:" , self.get_clock().now().seconds_nanoseconds())
             self.interpreter.invoke()
             print("End invoke:", self.get_clock().now().seconds_nanoseconds())
             prediction = self.interpreter.get_tensor(output_details['index'])
             prediction = prediction[0]
 
-            start2 = self.get_clock().now()
+            
             boxes = prediction[:, :4]
+            boxes = self.xywh2xyxy(boxes)
             scores = prediction[:, 4]
             cls = [np.argmax(score) for score in prediction[:, 5:]]
 
+            if self.edge_tpu:
+                boxes = self.normalizeBoxes(boxes)
 
-            end = self.get_clock().now()
-            print("normalizeImageSize", (end - start2).nanoseconds)
+            boxes = self.clipBoxes(boxes)
+
+            boxes = self.normalizedBoxesToImageSize(boxes, 640, 640)
 
             print("Start max_supp:", self.get_clock().now().seconds_nanoseconds())
             selected_indices = tf.image.non_max_suppression(boxes, scores/200, max_output_size=10, iou_threshold=0.15, score_threshold=0.35)
             print("End max_supp:", self.get_clock().now().seconds_nanoseconds())
-            start2 = self.get_clock().now()
             selected_boxes = np.array(tf.gather(boxes, selected_indices))
             selected_cls = np.array(tf.gather(cls, selected_indices))
             selected_scores = np.array(tf.gather(scores, selected_indices))
-
-            selected_boxes = self.xywh2xyxy(selected_boxes)
-
-            if self.edge_tpu:
-                selected_boxes = self.normalizeBoxes(selected_boxes)
-
-            selected_boxes = self.clipBoxes(selected_boxes)
-
-            selected_boxes = self.normalizedBoxesToImageSize(selected_boxes, 640, 640)
 
             bboxes = list(zip(selected_boxes, selected_scores, selected_cls))
             end = self.get_clock().now()
