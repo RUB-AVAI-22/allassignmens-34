@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
+import tf_transformations
 
 
 import cv2
@@ -234,7 +235,7 @@ class Autopilot_Node(Node):
             print("diff",round(abs(self.odom_node.get_yaw() - x[2]),2))
             if round(abs(self.odom_node.get_yaw() - x[2]),2) > abs(round(u[1] * dt,2)):
                 
-                print("rotation speed",-u[1])
+                print("rotation speed",u[1])
                 action.linear.x = 0.0
                 action.angular.z = u[1]
                 self.pub_action.publish(action)
